@@ -1,4 +1,4 @@
-defmodule FeriendatenWeb.Plugs.SetToday do
+defmodule FeriendatenWeb.Plugs.SetDates do
   import Plug.Conn
 
   def init(default), do: default
@@ -13,16 +13,20 @@ defmodule FeriendatenWeb.Plugs.SetToday do
           {Date.utc_today(), false}
       end
 
+    today = Date.utc_today()
+
     conn
     |> assign(:noindex, noindex)
-    |> assign(:today, date)
+    |> assign(:requested_date, date)
+    |> assign(:today, today)
   end
 
   def call(conn, _default) do
-    date = Date.utc_today()
+    today = Date.utc_today()
 
     conn
     |> assign(:noindex, false)
-    |> assign(:today, date)
+    |> assign(:requested_date, today)
+    |> assign(:today, today)
   end
 end
