@@ -12,6 +12,8 @@ defmodule Feriendaten.Application do
       FeriendatenWeb.Telemetry,
       # Start the Ecto repository
       Feriendaten.Repo,
+      # Start the LegacyEcto repository
+      Feriendaten.LegacyRepo,
       # Start the PubSub system
       {Phoenix.PubSub, name: Feriendaten.PubSub},
       # Start Finch
