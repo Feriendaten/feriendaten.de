@@ -41,5 +41,11 @@ defmodule FeriendatenWeb.Router do
       live_dashboard "/dashboard", metrics: FeriendatenWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+
+    scope "/admin", FeriendatenWeb.Admin, as: :admin do
+      pipe_through :browser
+
+      resources "/levels", LevelController
+    end
   end
 end

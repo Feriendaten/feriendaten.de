@@ -1,0 +1,17 @@
+<.header>
+  Level <%= @level.id %>
+  <:subtitle>This is a level record from your database.</:subtitle>
+  <:actions>
+    <.link href={~p"/admin/levels/#{@level}/edit"}>
+      <.button>Edit level</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @level.name %></:item>
+  <:item title="Order"><%= @level.order %></:item>
+  <:item title="Slug"><%= @level.slug %></:item>
+</.list>
+
+<.back navigate={~p"/admin/levels"}>Back to levels</.back>

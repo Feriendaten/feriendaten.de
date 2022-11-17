@@ -1,0 +1,25 @@
+<.header>
+  Listing Levels
+  <:actions>
+    <.link href={~p"/admin/levels/new"}>
+      <.button>New Level</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="levels" rows={@levels} row_click={&JS.navigate(~p"/admin/levels/#{&1}")}>
+  <:col :let={level} label="Name"><%= level.name %></:col>
+  <:col :let={level} label="Order"><%= level.order %></:col>
+  <:col :let={level} label="Slug"><%= level.slug %></:col>
+  <:action :let={level}>
+    <div class="sr-only">
+      <.link navigate={~p"/admin/levels/#{level}"}>Show</.link>
+    </div>
+    <.link navigate={~p"/admin/levels/#{level}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={level}>
+    <.link href={~p"/admin/levels/#{level}"} method="delete" data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
