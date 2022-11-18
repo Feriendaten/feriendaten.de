@@ -3,9 +3,9 @@ defmodule FeriendatenWeb.Admin.LevelControllerTest do
 
   import Feriendaten.MapsFixtures
 
-  @create_attrs %{name: "some name", order: 42, slug: "some slug"}
-  @update_attrs %{name: "some updated name", order: 43, slug: "some updated slug"}
-  @invalid_attrs %{name: nil, order: nil, slug: nil}
+  @create_attrs %{name: "some name", order: 42}
+  @update_attrs %{name: "some updated name", order: 43}
+  @invalid_attrs %{name: nil, order: nil}
 
   describe "index" do
     test "lists all levels", %{conn: conn} do

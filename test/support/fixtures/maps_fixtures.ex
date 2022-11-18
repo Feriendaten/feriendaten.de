@@ -15,11 +15,6 @@ defmodule Feriendaten.MapsFixtures do
   def unique_level_order, do: System.unique_integer([:positive])
 
   @doc """
-  Generate a unique level slug.
-  """
-  def unique_level_slug, do: "some slug#{System.unique_integer([:positive])}"
-
-  @doc """
   Generate a level.
   """
   def level_fixture(attrs \\ %{}) do
@@ -27,8 +22,7 @@ defmodule Feriendaten.MapsFixtures do
       attrs
       |> Enum.into(%{
         name: unique_level_name(),
-        order: unique_level_order(),
-        slug: unique_level_slug()
+        order: unique_level_order()
       })
       |> Feriendaten.Maps.create_level()
 

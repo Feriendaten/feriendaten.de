@@ -21,12 +21,12 @@ defmodule Feriendaten.MapsTest do
     end
 
     test "create_level/1 with valid data creates a level" do
-      valid_attrs = %{name: "some name", order: 42, slug: "some slug"}
+      valid_attrs = %{name: "some name", order: 42}
 
       assert {:ok, %Level{} = level} = Maps.create_level(valid_attrs)
       assert level.name == "some name"
       assert level.order == 42
-      assert level.slug == "some slug"
+      assert level.slug == "some-name"
     end
 
     test "create_level/1 with invalid data returns error changeset" do
@@ -35,12 +35,12 @@ defmodule Feriendaten.MapsTest do
 
     test "update_level/2 with valid data updates the level" do
       level = level_fixture()
-      update_attrs = %{name: "some updated name", order: 43, slug: "some updated slug"}
+      update_attrs = %{name: "some updated name", order: 43}
 
       assert {:ok, %Level{} = level} = Maps.update_level(level, update_attrs)
       assert level.name == "some updated name"
       assert level.order == 43
-      assert level.slug == "some updated slug"
+      assert level.slug == "some-updated-name"
     end
 
     test "update_level/2 with invalid data returns error changeset" do

@@ -48,4 +48,13 @@ defmodule FeriendatenWeb.Router do
       resources "/levels", LevelController
     end
   end
+
+  # Enable admin routes in test
+  if Mix.env() == :test do
+    scope "/admin", FeriendatenWeb.Admin, as: :admin do
+      pipe_through :browser
+
+      resources "/levels", LevelController
+    end
+  end
 end
