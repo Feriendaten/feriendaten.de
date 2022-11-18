@@ -4,6 +4,15 @@ Anzeige von Schulferien, Feiertagen und anderen Terminen für Deutschland.
 
 # Für Entwickler
 
+## Import legacy data
+
+```
+$ mix legacy_import
+$ mix analyse_ga_data
+```
+
+## Start the server
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
