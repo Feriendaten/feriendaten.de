@@ -46,6 +46,7 @@ defmodule FeriendatenWeb.Router do
       pipe_through :browser
 
       resources "/levels", LevelController
+      resources "/locations", LocationController
     end
   end
 
@@ -55,6 +56,7 @@ defmodule FeriendatenWeb.Router do
       pipe_through :browser
 
       resources "/levels", LevelController
+      resources "/locations", LocationController
     end
   end
 end

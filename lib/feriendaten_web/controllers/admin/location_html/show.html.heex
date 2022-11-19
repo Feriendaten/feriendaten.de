@@ -1,0 +1,25 @@
+<.header>
+  Location <%= @location.id %>
+  <:subtitle>This is a location record from your database.</:subtitle>
+  <:actions>
+    <.link href={~p"/admin/locations/#{@location}/edit"}>
+      <.button>Edit location</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="ID"><%= @location.id %></:item>
+  <:item title="Name"><%= @location.name %></:item>
+  <:item title="Code"><%= @location.code %></:item>
+  <:item title="Parent ID"><%= @location.parent_id %></:item>
+  <:item title="Level ID"><%= @location.level_id %></:item>
+  <:item title="Legacy"><%= @location.legacy_id %></:item>
+  <:item title="Legacy name"><%= @location.legacy_name %></:item>
+  <:item title="Legacy parent"><%= @location.legacy_parent_id %></:item>
+  <:item title="Legacy slug"><%= @location.legacy_slug %></:item>
+  <:item title="Is active"><%= @location.is_active %></:item>
+  <:item title="Slug"><%= @location.slug %></:item>
+</.list>
+
+<.back navigate={~p"/admin/locations"}>Back to locations</.back>

@@ -28,4 +28,30 @@ defmodule Feriendaten.MapsFixtures do
 
     level
   end
+
+  @doc """
+  Generate a unique location legacy_id.
+  """
+  def unique_location_legacy_id, do: System.unique_integer([:positive])
+
+  @doc """
+  Generate a location.
+  """
+  def location_fixture(attrs \\ %{}) do
+    {:ok, location} =
+      attrs
+      |> Enum.into(%{
+        code: "some code",
+        is_active: true,
+        legacy_id: unique_location_legacy_id(),
+        legacy_name: "some legacy name",
+        legacy_parent_id: 42,
+        legacy_slug: "some-legacy-slug",
+        name: "some name",
+        level_id: level_fixture().id
+      })
+      |> Feriendaten.Maps.create_location()
+
+    location
+  end
 end

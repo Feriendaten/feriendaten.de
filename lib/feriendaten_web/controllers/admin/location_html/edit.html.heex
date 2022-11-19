@@ -1,0 +1,22 @@
+<.header>
+  Edit Location <%= @location.id %>
+  <:subtitle>Use this form to manage location records in your database.</:subtitle>
+</.header>
+
+<.simple_form :let={f} for={@changeset} method="put" action={~p"/admin/locations/#{@location}"}>
+  <.error :if={@changeset.action}>
+    Oops, something went wrong! Please check the errors below.
+  </.error>
+  <.input field={{f, :name}} type="text" label="name" />
+  <.input field={{f, :code}} type="text" label="code" />
+  <.input field={{f, :legacy_id}} type="number" label="legacy_id" />
+  <.input field={{f, :legacy_name}} type="text" label="legacy_name" />
+  <.input field={{f, :legacy_parent_id}} type="number" label="legacy_parent_id" />
+  <.input field={{f, :legacy_slug}} type="text" label="legacy_slug" />
+  <.input field={{f, :is_active}} type="checkbox" label="is_active" />
+  <:actions>
+    <.button>Save Location</.button>
+  </:actions>
+</.simple_form>
+
+<.back navigate={~p"/admin/locations"}>Back to locations</.back>

@@ -40,7 +40,6 @@ defmodule Feriendaten.MapsTest do
       assert {:ok, %Level{} = level} = Maps.update_level(level, update_attrs)
       assert level.name == "some updated name"
       assert level.order == 43
-      assert level.slug == "some-updated-name"
     end
 
     test "update_level/2 with invalid data returns error changeset" do
@@ -58,6 +57,95 @@ defmodule Feriendaten.MapsTest do
     test "change_level/1 returns a level changeset" do
       level = level_fixture()
       assert %Ecto.Changeset{} = Maps.change_level(level)
+    end
+  end
+
+  describe "locations" do
+    alias Feriendaten.Maps.Location
+
+    import Feriendaten.MapsFixtures
+
+    @invalid_attrs %{
+      level_id: nil,
+      name: nil
+    }
+
+    test "list_locations/0 returns all locations" do
+      location = location_fixture()
+      assert Maps.list_locations() == [location]
+    end
+
+    test "get_location!/1 returns the location with given id" do
+      location = location_fixture()
+      assert Maps.get_location!(location.id) == location
+    end
+
+    test "create_location/1 with valid data creates a location" do
+      level = level_fixture()
+
+      valid_attrs = %{
+        is_active: true,
+        legacy_id: 42,
+        legacy_name: "some legacy name",
+        legacy_parent_id: 42,
+        legacy_slug: "some-legacy-slug",
+        name: "some name",
+        level_id: level.id
+      }
+
+      assert {:ok, %Location{} = location} = Maps.create_location(valid_attrs)
+      assert location.is_active == true
+      assert location.legacy_id == 42
+      assert location.legacy_name == "some legacy name"
+      assert location.legacy_parent_id == 42
+      assert location.legacy_slug == "some-legacy-slug"
+      assert location.name == "some name"
+      assert location.slug == "some-name"
+    end
+
+    test "create_location/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Maps.create_location(@invalid_attrs)
+    end
+
+    test "update_location/2 with valid data updates the location" do
+      location = location_fixture()
+
+      update_attrs = %{
+        code: "some updated code",
+        is_active: false,
+        legacy_id: 43,
+        legacy_name: "some updated legacy_name",
+        legacy_parent_id: 43,
+        legacy_slug: "some updated legacy_slug",
+        name: "some updated name"
+      }
+
+      assert {:ok, %Location{} = location} = Maps.update_location(location, update_attrs)
+      assert location.code == "some updated code"
+      assert location.is_active == false
+      assert location.legacy_id == 43
+      assert location.legacy_name == "some updated legacy_name"
+      assert location.legacy_parent_id == 43
+      assert location.legacy_slug == "some updated legacy_slug"
+      assert location.name == "some updated name"
+      assert location.slug == "some-name"
+    end
+
+    test "update_location/2 with invalid data returns error changeset" do
+      location = location_fixture()
+      assert {:error, %Ecto.Changeset{}} = Maps.update_location(location, @invalid_attrs)
+      assert location == Maps.get_location!(location.id)
+    end
+
+    test "delete_location/1 deletes the location" do
+      location = location_fixture()
+      assert {:ok, %Location{}} = Maps.delete_location(location)
+      assert_raise Ecto.NoResultsError, fn -> Maps.get_location!(location.id) end
+    end
+
+    test "change_location/1 returns a location changeset" do
+      location = location_fixture()
+      assert %Ecto.Changeset{} = Maps.change_location(location)
     end
   end
 end

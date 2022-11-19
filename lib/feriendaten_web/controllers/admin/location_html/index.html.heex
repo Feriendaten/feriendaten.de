@@ -1,0 +1,33 @@
+<.header>
+  Listing Locations
+  <:actions>
+    <.link href={~p"/admin/locations/new"}>
+      <.button>New Location</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="locations" rows={@locations} row_click={&JS.navigate(~p"/admin/locations/#{&1}")}>
+  <:col :let={location} label="ID"><%= location.id %></:col>
+  <:col :let={location} label="Name"><%= location.name %></:col>
+  <:col :let={location} label="Code"><%= location.code %></:col>
+  <:col :let={location} label="Parent ID"><%= location.parent_id %></:col>
+  <:col :let={location} label="Level ID"><%= location.level_id %></:col>
+  <:col :let={location} label="Legacy"><%= location.legacy_id %></:col>
+  <:col :let={location} label="Legacy name"><%= location.legacy_name %></:col>
+  <:col :let={location} label="Legacy parent"><%= location.legacy_parent_id %></:col>
+  <:col :let={location} label="Legacy slug"><%= location.legacy_slug %></:col>
+  <:col :let={location} label="Is active"><%= location.is_active %></:col>
+  <:col :let={location} label="Slug"><%= location.slug %></:col>
+  <:action :let={location}>
+    <div class="sr-only">
+      <.link navigate={~p"/admin/locations/#{location}"}>Show</.link>
+    </div>
+    <.link navigate={~p"/admin/locations/#{location}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={location}>
+    <.link href={~p"/admin/locations/#{location}"} method="delete" data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
