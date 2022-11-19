@@ -3,9 +3,45 @@ defmodule FeriendatenWeb.Admin.VacationControllerTest do
 
   import Feriendaten.CalendarsFixtures
 
-  @create_attrs %{colloquial: "some colloquial", for_everybody: true, for_students: true, legacy_id: 42, listed: true, name: "some name", priority: 42, public_holiday: true, school_vacation: true, slug: "some slug", wikipedia_url: "some wikipedia_url"}
-  @update_attrs %{colloquial: "some updated colloquial", for_everybody: false, for_students: false, legacy_id: 43, listed: false, name: "some updated name", priority: 43, public_holiday: false, school_vacation: false, slug: "some updated slug", wikipedia_url: "some updated wikipedia_url"}
-  @invalid_attrs %{colloquial: nil, for_everybody: nil, for_students: nil, legacy_id: nil, listed: nil, name: nil, priority: nil, public_holiday: nil, school_vacation: nil, slug: nil, wikipedia_url: nil}
+  @create_attrs %{
+    colloquial: "some colloquial",
+    for_everybody: true,
+    for_students: true,
+    legacy_id: 42,
+    listed: true,
+    name: "some name",
+    priority: 42,
+    public_holiday: true,
+    school_vacation: true,
+    slug: "some slug",
+    wikipedia_url: "some wikipedia_url"
+  }
+  @update_attrs %{
+    colloquial: "some updated colloquial",
+    for_everybody: false,
+    for_students: false,
+    legacy_id: 43,
+    listed: false,
+    name: "some updated name",
+    priority: 43,
+    public_holiday: false,
+    school_vacation: false,
+    slug: "some updated slug",
+    wikipedia_url: "some updated wikipedia_url"
+  }
+  @invalid_attrs %{
+    colloquial: nil,
+    for_everybody: nil,
+    for_students: nil,
+    legacy_id: nil,
+    listed: nil,
+    name: nil,
+    priority: nil,
+    public_holiday: nil,
+    school_vacation: nil,
+    slug: nil,
+    wikipedia_url: nil
+  }
 
   describe "index" do
     test "lists all vacations", %{conn: conn} do
