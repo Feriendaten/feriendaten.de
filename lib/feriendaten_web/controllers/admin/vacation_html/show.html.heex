@@ -1,0 +1,25 @@
+<.header>
+  Vacation <%= @vacation.id %>
+  <:subtitle>This is a vacation record from your database.</:subtitle>
+  <:actions>
+    <.link href={~p"/admin/vacations/#{@vacation}/edit"}>
+      <.button>Edit vacation</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @vacation.name %></:item>
+  <:item title="Colloquial"><%= @vacation.colloquial %></:item>
+  <:item title="For everybody"><%= @vacation.for_everybody %></:item>
+  <:item title="For students"><%= @vacation.for_students %></:item>
+  <:item title="Public holiday"><%= @vacation.public_holiday %></:item>
+  <:item title="School vacation"><%= @vacation.school_vacation %></:item>
+  <:item title="Listed"><%= @vacation.listed %></:item>
+  <:item title="Priority"><%= @vacation.priority %></:item>
+  <:item title="Slug"><%= @vacation.slug %></:item>
+  <:item title="Wikipedia url"><%= @vacation.wikipedia_url %></:item>
+  <:item title="Legacy"><%= @vacation.legacy_id %></:item>
+</.list>
+
+<.back navigate={~p"/admin/vacations"}>Back to vacations</.back>

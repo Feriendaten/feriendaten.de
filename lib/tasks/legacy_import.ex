@@ -6,6 +6,7 @@ defmodule Mix.Tasks.LegacyImport do
   alias Feriendaten.LegacyRepo
   alias Feriendaten.{Repo, LegacyRepo, Maps, Legacy}
   alias Maps.Location
+  alias Feriendaten.Calendars.Vacation
 
   @requirements ["app.start"]
 
@@ -18,8 +19,7 @@ defmodule Mix.Tasks.LegacyImport do
     create_locations_for_cities()
     create_locations_for_schools()
     create_addresses()
-    # create_import_holiday_and_vacation_types()
-    # create_periods()
+    import_vacations()
   end
 
   defp create_levels do
@@ -241,6 +241,40 @@ defmodule Mix.Tasks.LegacyImport do
           lat: a.lat,
           lon: a.lon,
           school_type: a.school_type
+        })
+    end)
+  end
+
+  defp import_vacations do
+    query = from(t in Legacy.HolidayOrVacationType)
+    types = LegacyRepo.all(query)
+
+    Enum.each(types, fn t ->
+      {for_everybody, public_holiday} =
+        case t.default_html_class do
+          nil -> {true, true}
+          _ -> {false, false}
+        end
+
+      for_everybody =
+        if t.name == "Wochenende" do
+          true
+        else
+          for_everybody
+        end
+
+      {:ok, _type} =
+        Feriendaten.Calendars.create_vacation(%{
+          name: t.name,
+          colloquial: t.colloquial,
+          listed: t.default_is_listed_below_month,
+          for_students: t.default_is_valid_for_students,
+          for_everybody: for_everybody,
+          priority: t.default_display_priority,
+          public_holiday: public_holiday,
+          school_vacation: t.default_is_school_vacation,
+          wikipedia_url: t.wikipedia_url,
+          legacy_id: t.id
         })
     end)
   end

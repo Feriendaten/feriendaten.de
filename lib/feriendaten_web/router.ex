@@ -48,6 +48,7 @@ defmodule FeriendatenWeb.Router do
       resources "/levels", LevelController
       resources "/locations", LocationController
       resources "/addresses", AddressController
+      resources "/vacations", VacationController
     end
   end
 
@@ -59,6 +60,7 @@ defmodule FeriendatenWeb.Router do
       resources "/levels", LevelController
       resources "/locations", LocationController
       resources "/addresses", AddressController
+      resources "/vacations", VacationController
     end
   end
 end

@@ -1,0 +1,26 @@
+<.header>
+  New Vacation
+  <:subtitle>Use this form to manage vacation records in your database.</:subtitle>
+</.header>
+
+<.simple_form :let={f} for={@changeset} action={~p"/admin/vacations"}>
+  <.error :if={@changeset.action}>
+    Oops, something went wrong! Please check the errors below.
+  </.error>
+  <.input field={{f, :name}} type="text" label="name" />
+  <.input field={{f, :colloquial}} type="text" label="colloquial" />
+  <.input field={{f, :for_everybody}} type="checkbox" label="for_everybody" />
+  <.input field={{f, :for_students}} type="checkbox" label="for_students" />
+  <.input field={{f, :public_holiday}} type="checkbox" label="public_holiday" />
+  <.input field={{f, :school_vacation}} type="checkbox" label="school_vacation" />
+  <.input field={{f, :listed}} type="checkbox" label="listed" />
+  <.input field={{f, :priority}} type="number" label="priority" />
+  <.input field={{f, :slug}} type="text" label="slug" />
+  <.input field={{f, :wikipedia_url}} type="text" label="wikipedia_url" />
+  <.input field={{f, :legacy_id}} type="number" label="legacy_id" />
+  <:actions>
+    <.button>Save Vacation</.button>
+  </:actions>
+</.simple_form>
+
+<.back navigate={~p"/admin/vacations"}>Back to vacations</.back>

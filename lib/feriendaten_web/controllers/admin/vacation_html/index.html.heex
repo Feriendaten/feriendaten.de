@@ -1,0 +1,33 @@
+<.header>
+  Listing Vacations
+  <:actions>
+    <.link href={~p"/admin/vacations/new"}>
+      <.button>New Vacation</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="vacations" rows={@vacations} row_click={&JS.navigate(~p"/admin/vacations/#{&1}")}>
+  <:col :let={vacation} label="Name"><%= vacation.name %></:col>
+  <:col :let={vacation} label="Colloquial"><%= vacation.colloquial %></:col>
+  <:col :let={vacation} label="For everybody"><%= vacation.for_everybody %></:col>
+  <:col :let={vacation} label="For students"><%= vacation.for_students %></:col>
+  <:col :let={vacation} label="Public holiday"><%= vacation.public_holiday %></:col>
+  <:col :let={vacation} label="School vacation"><%= vacation.school_vacation %></:col>
+  <:col :let={vacation} label="Listed"><%= vacation.listed %></:col>
+  <:col :let={vacation} label="Priority"><%= vacation.priority %></:col>
+  <:col :let={vacation} label="Slug"><%= vacation.slug %></:col>
+  <:col :let={vacation} label="Wikipedia url"><%= vacation.wikipedia_url %></:col>
+  <:col :let={vacation} label="Legacy"><%= vacation.legacy_id %></:col>
+  <:action :let={vacation}>
+    <div class="sr-only">
+      <.link navigate={~p"/admin/vacations/#{vacation}"}>Show</.link>
+    </div>
+    <.link navigate={~p"/admin/vacations/#{vacation}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={vacation}>
+    <.link href={~p"/admin/vacations/#{vacation}"} method="delete" data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
