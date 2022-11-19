@@ -1,0 +1,27 @@
+<.header>
+  New Address
+  <:subtitle>Use this form to manage address records in your database.</:subtitle>
+</.header>
+
+<.simple_form :let={f} for={@changeset} action={~p"/admin/addresses"}>
+  <.error :if={@changeset.action}>
+    Oops, something went wrong! Please check the errors below.
+  </.error>
+  <.input field={{f, :city}} type="text" label="city" />
+  <.input field={{f, :email}} type="text" label="email" />
+  <.input field={{f, :fax}} type="text" label="fax" />
+  <.input field={{f, :lat}} type="number" label="lat" step="any" />
+  <.input field={{f, :lon}} type="number" label="lon" step="any" />
+  <.input field={{f, :legacy_id}} type="number" label="legacy_id" />
+  <.input field={{f, :line1}} type="text" label="line1" />
+  <.input field={{f, :phone}} type="text" label="phone" />
+  <.input field={{f, :school_type}} type="text" label="school_type" />
+  <.input field={{f, :street}} type="text" label="street" />
+  <.input field={{f, :url}} type="text" label="url" />
+  <.input field={{f, :zip_code}} type="text" label="zip_code" />
+  <:actions>
+    <.button>Save Address</.button>
+  </:actions>
+</.simple_form>
+
+<.back navigate={~p"/admin/addresses"}>Back to addresses</.back>

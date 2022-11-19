@@ -1,0 +1,34 @@
+<.header>
+  Listing Addresses
+  <:actions>
+    <.link href={~p"/admin/addresses/new"}>
+      <.button>New Address</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="addresses" rows={@addresses} row_click={&JS.navigate(~p"/admin/addresses/#{&1}")}>
+  <:col :let={address} label="City"><%= address.city %></:col>
+  <:col :let={address} label="Email"><%= address.email %></:col>
+  <:col :let={address} label="Fax"><%= address.fax %></:col>
+  <:col :let={address} label="Lat"><%= address.lat %></:col>
+  <:col :let={address} label="Lon"><%= address.lon %></:col>
+  <:col :let={address} label="Legacy"><%= address.legacy_id %></:col>
+  <:col :let={address} label="Line1"><%= address.line1 %></:col>
+  <:col :let={address} label="Phone"><%= address.phone %></:col>
+  <:col :let={address} label="School type"><%= address.school_type %></:col>
+  <:col :let={address} label="Street"><%= address.street %></:col>
+  <:col :let={address} label="Url"><%= address.url %></:col>
+  <:col :let={address} label="Zip code"><%= address.zip_code %></:col>
+  <:action :let={address}>
+    <div class="sr-only">
+      <.link navigate={~p"/admin/addresses/#{address}"}>Show</.link>
+    </div>
+    <.link navigate={~p"/admin/addresses/#{address}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={address}>
+    <.link href={~p"/admin/addresses/#{address}"} method="delete" data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>

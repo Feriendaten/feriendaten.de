@@ -1,0 +1,26 @@
+<.header>
+  Address <%= @address.id %>
+  <:subtitle>This is a address record from your database.</:subtitle>
+  <:actions>
+    <.link href={~p"/admin/addresses/#{@address}/edit"}>
+      <.button>Edit address</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="City"><%= @address.city %></:item>
+  <:item title="Email"><%= @address.email %></:item>
+  <:item title="Fax"><%= @address.fax %></:item>
+  <:item title="Lat"><%= @address.lat %></:item>
+  <:item title="Lon"><%= @address.lon %></:item>
+  <:item title="Legacy"><%= @address.legacy_id %></:item>
+  <:item title="Line1"><%= @address.line1 %></:item>
+  <:item title="Phone"><%= @address.phone %></:item>
+  <:item title="School type"><%= @address.school_type %></:item>
+  <:item title="Street"><%= @address.street %></:item>
+  <:item title="Url"><%= @address.url %></:item>
+  <:item title="Zip code"><%= @address.zip_code %></:item>
+</.list>
+
+<.back navigate={~p"/admin/addresses"}>Back to addresses</.back>

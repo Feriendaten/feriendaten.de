@@ -17,6 +17,9 @@ defmodule Mix.Tasks.LegacyImport do
     create_locations_for_counties()
     create_locations_for_cities()
     create_locations_for_schools()
+    create_addresses()
+    # create_import_holiday_and_vacation_types()
+    # create_periods()
   end
 
   defp create_levels do
@@ -200,6 +203,44 @@ defmodule Mix.Tasks.LegacyImport do
           level_id: schule.id,
           parent_id: parent_city.id,
           is_active: false
+        })
+    end)
+  end
+
+  defp create_addresses do
+    query = from(a in Legacy.Address)
+    addresses = LegacyRepo.all(query)
+
+    Enum.each(addresses, fn a ->
+      query = from(l in Location, where: l.legacy_id == ^a.school_location_id, limit: 1)
+      location = Repo.one(query)
+
+      email =
+        case a.email_address do
+          nil ->
+            nil
+
+          email ->
+            email
+            |> String.replace("(@)", "@")
+            |> String.downcase()
+        end
+
+      {:ok, _address} =
+        Feriendaten.Schools.create_address(%{
+          line1: location.name,
+          street: a.street,
+          zip_code: a.zip_code,
+          city: a.city,
+          location_id: location.id,
+          legacy_id: a.id,
+          phone: a.phone_number,
+          fax: a.fax_number,
+          email: email,
+          url: a.homepage_url,
+          lat: a.lat,
+          lon: a.lon,
+          school_type: a.school_type
         })
     end)
   end
