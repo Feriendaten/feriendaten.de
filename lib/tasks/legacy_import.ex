@@ -3,10 +3,8 @@ defmodule Mix.Tasks.LegacyImport do
   use Mix.Task
   import Ecto.Query
 
-  alias Feriendaten.LegacyRepo
-  alias Feriendaten.{Repo, LegacyRepo, Maps, Legacy}
-  alias Maps.Location
-  alias Feriendaten.Calendars.Vacation
+  alias Feriendaten.{Repo, LegacyRepo, Maps, Legacy, Maps.Location}
+  alias Feriendaten.Calendars.{Vacation, Enty}
 
   @requirements ["app.start"]
 
@@ -20,6 +18,7 @@ defmodule Mix.Tasks.LegacyImport do
     create_locations_for_schools()
     create_addresses()
     import_vacations()
+    import_legacy_entries()
   end
 
   defp create_levels do
@@ -280,6 +279,45 @@ defmodule Mix.Tasks.LegacyImport do
         else
           {:ok, nil}
         end
+    end)
+  end
+
+  defp import_legacy_entries do
+    query = from(p in Legacy.Period)
+    periods = LegacyRepo.all(query)
+
+    Enum.each(periods, fn p ->
+      query =
+        from(v in Vacation,
+          where: v.legacy_id == ^p.holiday_or_vacation_type_id
+        )
+
+      vacation = Repo.one(query)
+
+      unless vacation == nil do
+        query =
+          from(l in Location,
+            where: l.legacy_id == ^p.location_id
+          )
+
+        location = Repo.one(query)
+
+        {:ok, _period} =
+          Feriendaten.Calendars.create_entry(%{
+            starts_on: p.starts_on,
+            ends_on: p.ends_on,
+            vacation_id: vacation.id,
+            legacy_id: p.id,
+            memo: p.memo,
+            location_id: location.id,
+            listed: p.is_listed_below_month,
+            for_students: p.is_valid_for_students,
+            for_everybody: p.is_valid_for_everybody,
+            priority: p.display_priority,
+            public_holiday: p.is_public_holiday,
+            school_vacation: p.is_school_vacation
+          })
+      end
     end)
   end
 end

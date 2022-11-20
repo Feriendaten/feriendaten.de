@@ -1,0 +1,23 @@
+<.header>
+  Entry <%= @entry.id %>
+  <:subtitle>This is a entry record from your database.</:subtitle>
+  <:actions>
+    <.link href={~p"/admin/entries/#{@entry}/edit"}>
+      <.button>Edit entry</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Starts on"><%= @entry.starts_on %></:item>
+  <:item title="Ends on"><%= @entry.ends_on %></:item>
+  <:item title="For everybody"><%= @entry.for_everybody %></:item>
+  <:item title="For students"><%= @entry.for_students %></:item>
+  <:item title="Public holiday"><%= @entry.public_holiday %></:item>
+  <:item title="School vacation"><%= @entry.school_vacation %></:item>
+  <:item title="Listed"><%= @entry.listed %></:item>
+  <:item title="Memo"><%= @entry.memo %></:item>
+  <:item title="Legacy"><%= @entry.legacy_id %></:item>
+</.list>
+
+<.back navigate={~p"/admin/entries"}>Back to entries</.back>

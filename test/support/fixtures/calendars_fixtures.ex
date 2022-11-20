@@ -1,4 +1,6 @@
 defmodule Feriendaten.CalendarsFixtures do
+  import Feriendaten.MapsFixtures
+
   @moduledoc """
   This module defines test helpers for creating
   entities via the `Feriendaten.Calendars` context.
@@ -35,5 +37,32 @@ defmodule Feriendaten.CalendarsFixtures do
       |> Feriendaten.Calendars.create_vacation()
 
     vacation
+  end
+
+  @doc """
+  Generate a entry.
+  """
+  def entry_fixture(attrs \\ %{}) do
+    location = location_fixture()
+    vacation = vacation_fixture()
+
+    {:ok, entry} =
+      attrs
+      |> Enum.into(%{
+        location_id: location.id,
+        vacation_id: vacation.id,
+        ends_on: ~D[2022-11-19],
+        for_everybody: true,
+        for_students: true,
+        legacy_id: 42,
+        listed: true,
+        memo: "some memo",
+        public_holiday: true,
+        school_vacation: true,
+        starts_on: ~D[2022-11-19]
+      })
+      |> Feriendaten.Calendars.create_entry()
+
+    entry
   end
 end

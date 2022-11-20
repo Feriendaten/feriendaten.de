@@ -3,6 +3,9 @@ defmodule Feriendaten.CalendarsTest do
 
   alias Feriendaten.Calendars
 
+  import Feriendaten.CalendarsFixtures
+  import Feriendaten.MapsFixtures
+
   describe "vacations" do
     alias Feriendaten.Calendars.Vacation
 
@@ -104,6 +107,112 @@ defmodule Feriendaten.CalendarsTest do
     test "change_vacation/1 returns a vacation changeset" do
       vacation = vacation_fixture()
       assert %Ecto.Changeset{} = Calendars.change_vacation(vacation)
+    end
+  end
+
+  describe "entries" do
+    alias Feriendaten.Calendars.Entry
+
+    import Feriendaten.CalendarsFixtures
+
+    @invalid_attrs %{
+      ends_on: nil,
+      for_everybody: nil,
+      for_students: nil,
+      legacy_id: nil,
+      listed: nil,
+      memo: nil,
+      public_holiday: nil,
+      school_vacation: nil,
+      starts_on: nil
+    }
+
+    test "list_entries/0 returns all entries" do
+      entry = entry_fixture()
+      assert Calendars.list_entries() == [entry]
+    end
+
+    test "get_entry!/1 returns the entry with given id" do
+      entry = entry_fixture()
+      assert Calendars.get_entry!(entry.id) == entry
+    end
+
+    test "create_entry/1 with valid data creates a entry" do
+      location = location_fixture()
+      vacation = vacation_fixture()
+
+      valid_attrs = %{
+        ends_on: ~D[2022-11-19],
+        for_everybody: true,
+        for_students: true,
+        legacy_id: 42,
+        listed: true,
+        memo: "some memo",
+        public_holiday: true,
+        school_vacation: true,
+        starts_on: ~D[2022-11-19],
+        location_id: location.id,
+        vacation_id: vacation.id
+      }
+
+      assert {:ok, %Entry{} = entry} = Calendars.create_entry(valid_attrs)
+      assert entry.ends_on == ~D[2022-11-19]
+      assert entry.for_everybody == true
+      assert entry.for_students == true
+      assert entry.legacy_id == 42
+      assert entry.listed == true
+      assert entry.memo == "some memo"
+      assert entry.public_holiday == true
+      assert entry.school_vacation == true
+      assert entry.starts_on == ~D[2022-11-19]
+    end
+
+    test "create_entry/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Calendars.create_entry(@invalid_attrs)
+    end
+
+    test "update_entry/2 with valid data updates the entry" do
+      entry = entry_fixture()
+
+      update_attrs = %{
+        ends_on: ~D[2022-11-20],
+        for_everybody: false,
+        for_students: false,
+        legacy_id: 43,
+        listed: false,
+        memo: "some updated memo",
+        public_holiday: false,
+        school_vacation: false,
+        starts_on: ~D[2022-11-20]
+      }
+
+      assert {:ok, %Entry{} = entry} = Calendars.update_entry(entry, update_attrs)
+      assert entry.ends_on == ~D[2022-11-20]
+      assert entry.for_everybody == false
+      assert entry.for_students == false
+      assert entry.legacy_id == 43
+      assert entry.listed == false
+      assert entry.memo == "some updated memo"
+      assert entry.public_holiday == false
+      assert entry.school_vacation == false
+      assert entry.starts_on == ~D[2022-11-20]
+    end
+
+    test "update_entry/2 with invalid data returns error changeset" do
+      entry = entry_fixture()
+      assert {:error, %Ecto.Changeset{}} = Calendars.update_entry(entry, @invalid_attrs)
+      assert entry == Calendars.get_entry!(entry.id)
+    end
+
+    test "delete_entry/1 deletes the entry" do
+      entry = entry_fixture()
+      assert {:ok, %Entry{}} = Calendars.delete_entry(entry)
+      assert_raise Ecto.NoResultsError, fn -> Calendars.get_entry!(entry.id) end
+    end
+
+    test "change_entry/1 returns a entry changeset" do
+      entry = entry_fixture()
+      assert %Ecto.Changeset{} = Calendars.change_entry(entry)
     end
   end
 end

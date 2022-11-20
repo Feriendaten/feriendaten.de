@@ -1,0 +1,31 @@
+<.header>
+  Listing Entries
+  <:actions>
+    <.link href={~p"/admin/entries/new"}>
+      <.button>New Entry</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="entries" rows={@entries} row_click={&JS.navigate(~p"/admin/entries/#{&1}")}>
+  <:col :let={entry} label="Starts on"><%= entry.starts_on %></:col>
+  <:col :let={entry} label="Ends on"><%= entry.ends_on %></:col>
+  <:col :let={entry} label="For everybody"><%= entry.for_everybody %></:col>
+  <:col :let={entry} label="For students"><%= entry.for_students %></:col>
+  <:col :let={entry} label="Public holiday"><%= entry.public_holiday %></:col>
+  <:col :let={entry} label="School vacation"><%= entry.school_vacation %></:col>
+  <:col :let={entry} label="Listed"><%= entry.listed %></:col>
+  <:col :let={entry} label="Memo"><%= entry.memo %></:col>
+  <:col :let={entry} label="Legacy"><%= entry.legacy_id %></:col>
+  <:action :let={entry}>
+    <div class="sr-only">
+      <.link navigate={~p"/admin/entries/#{entry}"}>Show</.link>
+    </div>
+    <.link navigate={~p"/admin/entries/#{entry}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={entry}>
+    <.link href={~p"/admin/entries/#{entry}"} method="delete" data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
