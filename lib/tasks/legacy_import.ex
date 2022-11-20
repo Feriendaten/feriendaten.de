@@ -264,18 +264,22 @@ defmodule Mix.Tasks.LegacyImport do
         end
 
       {:ok, _type} =
-        Feriendaten.Calendars.create_vacation(%{
-          name: t.name,
-          colloquial: t.colloquial,
-          listed: t.default_is_listed_below_month,
-          for_students: t.default_is_valid_for_students,
-          for_everybody: for_everybody,
-          priority: t.default_display_priority,
-          public_holiday: public_holiday,
-          school_vacation: t.default_is_school_vacation,
-          wikipedia_url: t.wikipedia_url,
-          legacy_id: t.id
-        })
+        unless t.colloquial == "Corona-Schulschließung" do
+          Feriendaten.Calendars.create_vacation(%{
+            name: t.name,
+            colloquial: t.colloquial,
+            listed: t.default_is_listed_below_month,
+            for_students: t.default_is_valid_for_students,
+            for_everybody: for_everybody,
+            priority: t.default_display_priority,
+            public_holiday: public_holiday,
+            school_vacation: t.default_is_school_vacation,
+            wikipedia_url: t.wikipedia_url,
+            legacy_id: t.id
+          })
+        else
+          {:ok, nil}
+        end
     end)
   end
 end
