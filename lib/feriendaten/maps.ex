@@ -257,4 +257,24 @@ defmodule Feriendaten.Maps do
       set: [is_active: true]
     )
   end
+
+  @doc """
+  Lists all locations from a level with a given name.
+
+  ## Examples
+
+      iex> list_locations_by_level_name("Bundesland")
+      [%Location{}, ...]
+
+  """
+  # Find Level by name and return all locations which belong to this level
+  def list_locations_by_level_name(name) do
+    Repo.all(
+      from l in Location,
+        join: lv in Level,
+        on: l.level_id == lv.id,
+        where: lv.name == ^name,
+        order_by: [asc: l.name]
+    )
+  end
 end

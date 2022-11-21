@@ -18,7 +18,9 @@ defmodule FeriendatenWeb.Router do
   scope "/", FeriendatenWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    get "/", PageController, :index
+    # get "/ferien/:slug", FerienController, :location
+    # get "/ferien/:slug/:year", FerienController, :year
   end
 
   # Other scopes may use custom stacks.

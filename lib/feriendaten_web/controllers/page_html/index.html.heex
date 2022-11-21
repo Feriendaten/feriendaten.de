@@ -1,0 +1,7 @@
+<.header>
+  Bundesländer
+</.header>
+
+<.table id="locations" rows={@locations} row_click={&JS.navigate(~p"/admin/locations/#{&1}")}>
+  <:col :let={location} label="Name"><%= location.name %></:col>
+</.table>

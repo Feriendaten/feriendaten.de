@@ -160,5 +160,16 @@ defmodule Feriendaten.MapsTest do
                location1.id
              ]
     end
+
+    test "check for recursive parent locations with no parent" do
+      location = location_fixture()
+      location1 = location_fixture()
+      location2 = location_fixture(%{parent_id: location1.id})
+      _location3 = location_fixture(%{parent_id: location2.id})
+
+      assert Feriendaten.Maps.recursive_parent_ids(location) == [
+               location.id
+             ]
+    end
   end
 end
