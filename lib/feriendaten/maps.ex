@@ -215,4 +215,46 @@ defmodule Feriendaten.Maps do
   def change_location(%Location{} = location, attrs \\ %{}) do
     Location.changeset(location, attrs)
   end
+
+  @doc """
+  Returns a list of all parent_ids of a location.
+
+  ## Examples
+
+      iex> koblenz = get_location!(325)
+      iex> recursive_parent_ids(koblenz)
+      [325, 12, 1]
+
+  """
+  def recursive_parent_ids(%Location{} = location) do
+    query =
+      "WITH RECURSIVE cte_location AS(SELECT id,parent_id FROM locations WHERE id=" <>
+        Integer.to_string(location.id) <>
+        " UNION ALL SELECT e.id,e.parent_id FROM locations e INNER JOIN cte_location o ON o.parent_id=e.id)SELECT*FROM cte_location;"
+
+    result = Ecto.Adapters.SQL.query!(Repo, query, [])
+
+    result.rows
+    |> Enum.map(fn [id, _] -> id end)
+  end
+
+  @doc """
+  Sets is_active to TRUE for this location and all the parent locations.
+
+  ## Examples
+
+      iex> koblenz = get_location!(325)
+      iex> activate_location_recursively(koblenz)
+
+  """
+  def activate_location_recursively(%Location{} = location) do
+    ids = recursive_parent_ids(location)
+
+    Repo.update_all(
+      from(l in Location,
+        where: l.id in ^ids
+      ),
+      set: [is_active: true]
+    )
+  end
 end

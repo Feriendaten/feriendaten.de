@@ -8,7 +8,7 @@ Anzeige von Schulferien, Feiertagen und anderen Terminen für Deutschland.
 
 ```
 $ mix legacy_import
-$ mix analyse_ga_data
+$ mix activate_most_popular_locations
 ```
 
 ## Start the server
