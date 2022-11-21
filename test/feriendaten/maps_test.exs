@@ -147,5 +147,18 @@ defmodule Feriendaten.MapsTest do
       location = location_fixture()
       assert %Ecto.Changeset{} = Maps.change_location(location)
     end
+
+    test "check for recursive parent locations" do
+      location1 = location_fixture()
+      location2 = location_fixture(%{parent_id: location1.id})
+      location3 = location_fixture(%{parent_id: location2.id})
+      _location = location_fixture()
+
+      assert Feriendaten.Maps.recursive_parent_ids(location3) == [
+               location3.id,
+               location2.id,
+               location1.id
+             ]
+    end
   end
 end
