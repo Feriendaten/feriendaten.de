@@ -152,6 +152,24 @@ defmodule Feriendaten.Maps do
   def get_location!(id), do: Repo.get!(Location, id)
 
   @doc """
+  Gets a single location by slug.
+
+  Raises `Ecto.NoResultsError` if the Location does not exist.
+
+  ## Examples
+
+      iex> get_location_by_slug!("koblenz")
+      %Location{}
+
+      iex> get_location_by_slug!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_location_by_slug!(slug) do
+    Repo.one(from l in Location, where: l.slug == ^slug)
+  end
+
+  @doc """
   Creates a location.
 
   ## Examples
