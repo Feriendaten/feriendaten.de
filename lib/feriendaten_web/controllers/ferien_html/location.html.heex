@@ -62,12 +62,6 @@
                          <%= if length(termine) != 1 && hd(Enum.take(termine, -2)) == termin,
                           do: " und" %>
                       <% end %>
-                      <dl class="font-normal xs:hidden">
-                        <dt class="sr-only">Dauer</dt>
-                        <dd class="mt-1 text-gray-500 whitespace-nowrap">
-                          <%= period.days %> Tag<%= unless period.days == 1, do: "e" %>
-                        </dd>
-                      </dl>
                     </td>
                     <td class="hidden px-3 py-4 text-sm text-right text-gray-500 align-top whitespace-nowrap dark:text-gray-300 xs:table-cell tabular-nums">
                       <%= period.days %> Tag<%= unless period.days == 1, do: "e" %>
