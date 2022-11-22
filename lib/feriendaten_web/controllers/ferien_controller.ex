@@ -13,6 +13,7 @@ defmodule FeriendatenWeb.FerienController do
         requested_date,
         last_day_of_following_year
       )
+      |> Feriendaten.Calendars.compress_ferientermine()
 
     conn
     |> assign(:location, location)
