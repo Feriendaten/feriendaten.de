@@ -202,38 +202,6 @@ defmodule Feriendaten.Calendars do
   end
 
   @doc """
-    Returns a list of school vacation periods for the given location.
-
-    ## Examples
-
-    iex> koblenz = get_location!(325)
-    iex> school_vacation_periods(koblenz)
-  """
-
-  # def school_vacation_periods(%Location{} = location) do
-  #   today = Date.utc_today()
-  #   last_day_of_next_year = Date.new!(today.year + 100, 12, 31)
-
-  #   school_vacation_periods(location, today, last_day_of_next_year)
-  # end
-
-  @doc """
-    Returns a list of school vacation periods for the given location.
-
-    ## Examples
-
-    iex> koblenz = get_location!(325)
-    iex> school_vacation_periods_till_end_of_next_year(koblenz)
-  """
-
-  # def school_vacation_periods_till_end_of_next_year(%Location{} = location) do
-  #   today = Date.utc_today()
-  #   last_day_of_next_year = Date.new!(today.year + 1, 12, 31)
-
-  #   school_vacation_periods(location, today, last_day_of_next_year)
-  # end
-
-  @doc """
     Returns a list of school vacation periods for the given location and date range.
 
     ## Examples
