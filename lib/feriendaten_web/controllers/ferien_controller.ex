@@ -4,22 +4,38 @@ defmodule FeriendatenWeb.FerienController do
   def location(conn, %{"slug" => slug} = _params) do
     location = Feriendaten.Maps.get_location_by_slug!(slug)
     requested_date = conn.assigns.requested_date
-    last_day_of_following_year = Date.new!(requested_date.year + 1, 12, 31)
-    following_year = requested_date.year + 1
+    end_date = end_date(requested_date)
 
     entries =
       Feriendaten.Calendars.school_vacation_periods(
         location,
         requested_date,
-        last_day_of_following_year
+        end_date
       )
       |> Feriendaten.Calendars.compress_ferientermine()
 
     conn
     |> assign(:location, location)
     |> assign(:entries, entries)
-    |> assign(:following_year, following_year)
+    |> assign(:end_date, end_date)
     |> put_root_layout(:ferien)
     |> render(:location, page_title: "Ferien #{location.name}")
+  end
+
+  # If the requested date is in the last quarter of the year
+  # (October, November, December) return the last day of the following year.
+  # If the requested date is in the first quarter of the year
+  # (January, February, March, April) return the last day of the current year.
+  # Otherwise return the 1. August of the follwing year.
+  defp end_date(date) do
+    if date.month >= 10 do
+      Date.new!(date.year + 1, 12, 31)
+    else
+      if date.month <= 4 do
+        Date.new!(date.year, 12, 31)
+      else
+        Date.new!(date.year + 1, 8, 1)
+      end
+    end
   end
 end

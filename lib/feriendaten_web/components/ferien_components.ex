@@ -6,6 +6,18 @@ defmodule FeriendatenWeb.FerienComponents do
 
   attr :entries, :list, required: true
 
+  def vacations_table(%{entries: []} = assigns) do
+    ~H"""
+    <div class="sm:flex sm:items-center">
+      <div class="sm:flex-auto">
+        <p class="mt-2 text-sm text-gray-700 dark:text-gray-100">
+          Für dieses Datum sind noch keine Termine in unserer Datenbank gespeichert.
+        </p>
+      </div>
+    </div>
+    """
+  end
+
   def vacations_table(assigns) do
     ~H"""
     <div class="flex flex-col mt-8">
@@ -71,5 +83,47 @@ defmodule FeriendatenWeb.FerienComponents do
       </div>
     </div>
     """
+  end
+
+  attr :entries, :list, required: true
+  attr :today, :any, required: true
+  attr :requested_date, :any, required: true
+  attr :end_date, :any, required: true
+
+  def pre_text_to_vacation_table(%{entries: []} = assigns) do
+    ~H"""
+
+    """
+  end
+
+  def pre_text_to_vacation_table(assigns) do
+    case assigns.end_date.month do
+      8 ->
+        ~H"""
+        <p class="mt-2 text-sm text-gray-700 dark:text-gray-100">
+          Alle <%= Enum.count(@entries) %> Ferientermine <%= if @requested_date == @today,
+            do: "von heute",
+            else: "vom #{Calendar.strftime(@requested_date, "%d.%m.%Y")}" %> bis zu den Sommerferien <%= @end_date.year %>.
+        </p>
+        """
+
+      12 ->
+        ~H"""
+        <p class="mt-2 text-sm text-gray-700 dark:text-gray-100">
+          Alle <%= Enum.count(@entries) %> Ferientermine <%= if @requested_date == @today,
+            do: "von heute",
+            else: "vom #{Calendar.strftime(@requested_date, "%d.%m.%Y")}" %> bis zum Jahresende <%= @end_date.year %>.
+        </p>
+        """
+
+      _ ->
+        ~H"""
+        <p class="mt-2 text-sm text-gray-700 dark:text-gray-100">
+          Alle <%= Enum.count(@entries) %> Ferientermine <%= if @requested_date == @today,
+            do: "von heute",
+            else: "vom #{Calendar.strftime(@requested_date, "%d.%m.%Y")}" %> bis zum <%= "#{Calendar.strftime(@end_date, "%d.%m.%Y")}" %>.
+        </p>
+        """
+    end
   end
 end
