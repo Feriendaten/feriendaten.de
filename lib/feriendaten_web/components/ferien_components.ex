@@ -97,33 +97,32 @@ defmodule FeriendatenWeb.FerienComponents do
   end
 
   def pre_text_to_vacation_table(assigns) do
-    case assigns.end_date.month do
-      8 ->
-        ~H"""
-        <p class="mt-2 text-sm text-gray-700 dark:text-gray-100">
-          Alle <%= Enum.count(@entries) %> Ferientermine <%= if @requested_date == @today,
-            do: "von heute",
-            else: "vom #{Calendar.strftime(@requested_date, "%d.%m.%Y")}" %> bis zu den Sommerferien <%= @end_date.year %>.
-        </p>
-        """
+    ~H"""
+    <p class="mt-2 text-sm text-gray-700 dark:text-gray-100">
+      Alle <%= Enum.count(@entries) %> Ferientermine <%= from(@today, @requested_date) %> bis <%= till(
+        @end_date
+      ) %>.
+    </p>
+    """
+  end
 
-      12 ->
-        ~H"""
-        <p class="mt-2 text-sm text-gray-700 dark:text-gray-100">
-          Alle <%= Enum.count(@entries) %> Ferientermine <%= if @requested_date == @today,
-            do: "von heute",
-            else: "vom #{Calendar.strftime(@requested_date, "%d.%m.%Y")}" %> bis zum Jahresende <%= @end_date.year %>.
-        </p>
-        """
+  defp from(today, requested_date) do
+    if requested_date == today do
+      "von heute"
+    else
+      "vom #{Calendar.strftime(requested_date, "%d.%m.%Y")}"
+    end
+  end
 
-      _ ->
-        ~H"""
-        <p class="mt-2 text-sm text-gray-700 dark:text-gray-100">
-          Alle <%= Enum.count(@entries) %> Ferientermine <%= if @requested_date == @today,
-            do: "von heute",
-            else: "vom #{Calendar.strftime(@requested_date, "%d.%m.%Y")}" %> bis zum <%= "#{Calendar.strftime(@end_date, "%d.%m.%Y")}" %>.
-        </p>
-        """
+  defp till(end_date) do
+    if end_date.month >= 10 do
+      "zum Jahresende #{end_date.year}"
+    else
+      if end_date.month <= 4 do
+        "zum Jahresende #{end_date.year}"
+      else
+        "zu den Sommerferien #{end_date.year}"
+      end
     end
   end
 end
