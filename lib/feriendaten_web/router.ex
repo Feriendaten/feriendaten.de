@@ -20,7 +20,7 @@ defmodule FeriendatenWeb.Router do
 
     get "/", PageController, :index
     get "/ferien/:slug", FerienController, :location
-    # get "/ferien/:slug/:year", FerienController, :year
+    get "/ferien/:slug/:year", FerienController, :year
   end
 
   # Other scopes may use custom stacks.
