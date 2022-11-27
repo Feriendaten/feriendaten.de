@@ -5,6 +5,7 @@ defmodule FeriendatenWeb.FerienComponents do
   use Phoenix.Component
 
   attr :entries, :list, required: true
+  attr :dont_list_year, :integer, default: nil
 
   def vacations_table(%{entries: []} = assigns) do
     ~H"""
@@ -48,7 +49,7 @@ defmodule FeriendatenWeb.FerienComponents do
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-600">
-                <%= for {period, index} <- Enum.with_index(@entries) do %>
+                <%= for {entry, index} <- Enum.with_index(@entries) do %>
                   <tr class={
                     if rem(index, 2) == 0 do
                       "bg-white dark:bg-black"
@@ -57,9 +58,12 @@ defmodule FeriendatenWeb.FerienComponents do
                     end
                   }>
                     <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
-                      <%= period.colloquial %> <%= period.starts_on.year %>
+                      <%= entry.colloquial %>
+                      <%= unless @dont_list_year && @dont_list_year == entry.starts_on.year do %>
+                        <%= entry.starts_on.year %>
+                      <% end %>
                     </td>
-                    <% termine = String.split(period.ferientermin, ",") %>
+                    <% termine = String.split(entry.ferientermin, ",") %>
                     <td class="px-3 py-4 text-sm text-gray-900 align-top dark:text-gray-300 tabular-nums">
                       <%= for termin <- termine do %>
                         <div class="whitespace-nowrap">
@@ -72,7 +76,7 @@ defmodule FeriendatenWeb.FerienComponents do
                       <% end %>
                     </td>
                     <td class="hidden px-3 py-4 text-sm text-right text-gray-500 align-top whitespace-nowrap dark:text-gray-300 xs:table-cell tabular-nums">
-                      <%= period.days %> Tag<%= unless period.days == 1, do: "e" %>
+                      <%= entry.days %> Tag<%= unless entry.days == 1, do: "e" %>
                     </td>
                   </tr>
                 <% end %>
