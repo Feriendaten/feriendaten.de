@@ -18,6 +18,7 @@ defmodule FeriendatenWeb.FerienController do
     |> assign(:location, location)
     |> assign(:entries, entries)
     |> assign(:end_date, end_date)
+    |> assign(:year, nil)
     |> put_root_layout(:ferien)
     |> render(:location, page_title: "Ferien #{location.name}")
   end
@@ -39,6 +40,7 @@ defmodule FeriendatenWeb.FerienController do
     |> assign(:location, location)
     |> assign(:entries, entries)
     |> assign(:end_date, end_date)
+    |> assign(:year, year)
     |> put_root_layout(:ferien)
     |> render(:year, page_title: "Ferien #{location.name}")
   end
