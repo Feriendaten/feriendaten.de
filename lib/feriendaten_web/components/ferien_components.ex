@@ -6,6 +6,7 @@ defmodule FeriendatenWeb.FerienComponents do
 
   attr :entries, :list, required: true
   attr :dont_list_year, :integer, default: nil
+  attr :is_school_year, :boolean, default: false
 
   def vacations_table(%{entries: []} = assigns) do
     ~H"""
@@ -59,8 +60,13 @@ defmodule FeriendatenWeb.FerienComponents do
                   }>
                     <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
                       <%= entry.colloquial %>
-                      <%= unless @dont_list_year && @dont_list_year == entry.starts_on.year do %>
+
+                      <%= if @is_school_year do %>
                         <%= entry.starts_on.year %>
+                      <% else %>
+                        <%= unless @dont_list_year == entry.starts_on.year do %>
+                          <%= entry.starts_on.year %>
+                        <% end %>
                       <% end %>
                     </td>
                     <% termine = String.split(entry.ferientermin, ",") %>

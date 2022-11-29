@@ -5,15 +5,8 @@
         <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
           Schulferien <%= @location.name %>
         </h1>
-
-        <.pre_text_to_vacation_table
-          entries={@entries}
-          end_date={@end_date}
-          requested_date={@requested_date}
-          today={@today}
-        />
+        <.vacations_table entries={@entries} />
       </div>
     </div>
-    <.vacations_table entries={@entries} />
   </div>
 </div>

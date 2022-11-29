@@ -69,7 +69,14 @@
                           <ul>
                             <%= for year <- [@today.year, @today.year + 1] do %>
                               <li>
-                                <%= "#{String.slice(Integer.to_string(year), 2..3) <> "/" <> String.slice(Integer.to_string(year + 1), 2..3)}" %>
+                                <.link
+                                  class="text-blue-600 hover:underline dark:text-blue-400"
+                                  href={
+                                    ~p"/ferien/#{location.slug}/#{Integer.to_string(year) <> "-" <> Integer.to_string(year + 1)}"
+                                  }
+                                >
+                                  <%= "#{String.slice(Integer.to_string(year), 2..3) <> "/" <> String.slice(Integer.to_string(year + 1), 2..3)}" %>
+                                </.link>
                               </li>
                             <% end %>
                           </ul>
