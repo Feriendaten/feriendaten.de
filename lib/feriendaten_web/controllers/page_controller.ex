@@ -9,6 +9,12 @@ defmodule FeriendatenWeb.PageController do
 
   def index(conn, _params) do
     locations = Feriendaten.Maps.list_locations_by_level_name("Bundesland")
-    render(conn, :index, locations: locations)
+
+    conn
+    |> put_root_layout(:ferien)
+    |> assign(:year, nil)
+    |> assign(:location, nil)
+    |> assign(:locations, locations)
+    |> render(:index, page_title: "Ferien")
   end
 end

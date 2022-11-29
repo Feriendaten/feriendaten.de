@@ -292,6 +292,7 @@ defmodule Feriendaten.Maps do
         join: lv in Level,
         on: l.level_id == lv.id,
         where: lv.name == ^name,
+        where: l.is_active == true,
         order_by: [asc: l.name]
     )
   end
