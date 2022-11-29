@@ -1,7 +1,5 @@
 defmodule FeriendatenWeb.PageControllerTest do
   use FeriendatenWeb.ConnCase
-  # import Feriendaten.MapsFixtures
-  # import Feriendaten.CalendarsFixtures
 
   alias Feriendaten.Maps
 
