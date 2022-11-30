@@ -4,7 +4,7 @@ defmodule Mix.Tasks.LegacyImport do
   import Ecto.Query
 
   alias Feriendaten.{Repo, LegacyRepo, Maps, Legacy, Maps.Location}
-  alias Feriendaten.Calendars.{Vacation, Enty}
+  alias Feriendaten.Calendars.{Vacation}
 
   @requirements ["app.start"]
 
