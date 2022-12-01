@@ -31,3 +31,13 @@ config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# Legacy database
+config :feriendaten, Feriendaten.LegacyRepo,
+  username: "postgres",
+  password: "postgres",
+  database: "mehr_schulferien_dev",
+  hostname: "localhost",
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10,
+  read_only: true
