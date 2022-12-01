@@ -62,8 +62,7 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "feriendaten.de"
-  # port = String.to_integer(System.get_env("PORT") || "4030")
-  port = 4015
+  port = String.to_integer(System.get_env("PORT") || "4015")
 
   config :feriendaten, FeriendatenWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
