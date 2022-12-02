@@ -58,7 +58,7 @@ defmodule FeriendatenWeb.PageControllerTest do
       "#{String.slice(Integer.to_string(year), 2..3) <> "/" <> String.slice(Integer.to_string(year + 1), 2..3)}"
 
     conn = get(conn, ~p"/")
-    assert html_response(conn, 200) =~ "Schulferientermine Deutschland"
+    assert html_response(conn, 200) =~ "Schulferien Deutschland"
     assert html_response(conn, 200) =~ "Bayern"
     assert html_response(conn, 200) =~ "Hessen"
     refute html_response(conn, 200) =~ "Not active Example Federal State"

@@ -20,7 +20,7 @@ defmodule FeriendatenWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :feriendaten,
-    gzip: false,
+    gzip: true,
     only: FeriendatenWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
