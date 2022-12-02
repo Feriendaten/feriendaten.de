@@ -11,6 +11,16 @@
     <%= if @noindex do %>
       <meta name="robots" content="noindex" />
     <% end %>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CK74BKNW9Z">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-CK74BKNW9Z');
+    </script>
   </head>
   <body class="antialiased bg-white dark:bg-gray-900">
     <%= if @year do %>
@@ -49,7 +59,9 @@
           </div>
         </nav>
 
-        <p class="mt-8 text-base text-center text-gray-400"><a href="https://www.wintermeyer-consulting.de">&copy; 2022 Wintermeyer Consulting</a></p>
+        <p class="mt-8 text-base text-center text-gray-400">
+          <a href="https://www.wintermeyer-consulting.de">&copy; 2022 Wintermeyer Consulting</a>
+        </p>
       </div>
     </footer>
   </body>
