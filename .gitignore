@@ -32,3 +32,5 @@ feriendaten-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# macOS
+.DS_Store
