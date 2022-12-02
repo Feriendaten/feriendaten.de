@@ -79,7 +79,7 @@ defmodule Feriendaten.MixProject do
       tag_prefix: "release-",
       commit_msg: "new version: %s",
       annotation: "tag release-%s created with mix_version",
-      annotate: true
+      annotate: false
     ]
   end
 end
