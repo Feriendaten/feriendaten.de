@@ -9,7 +9,8 @@ defmodule Feriendaten.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      versioning: versioning()
     ]
   end
 
@@ -52,7 +53,8 @@ defmodule Feriendaten.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:ecto_autoslug_field, "~> 3.0"},
-      {:csv, "~> 2.5"}
+      {:csv, "~> 2.5"},
+      {:mix_version, "~> 2.0.5"}
     ]
   end
 
@@ -69,6 +71,15 @@ defmodule Feriendaten.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
+    ]
+  end
+
+  defp versioning do
+    [
+      tag_prefix: "release-",
+      commit_msg: "new version: %s",
+      annotation: "tag release-%s created with mix_version",
+      annotate: true
     ]
   end
 end
