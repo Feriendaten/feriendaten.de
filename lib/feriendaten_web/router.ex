@@ -19,6 +19,7 @@ defmodule FeriendatenWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/datenschutzerklaerung", PageController, :datenschutzerklaerung
     get "/ferien/:slug", FerienController, :location
     get "/ferien/:slug/:year", FerienController, :year
   end

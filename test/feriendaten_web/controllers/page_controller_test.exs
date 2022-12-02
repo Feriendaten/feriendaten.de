@@ -66,4 +66,9 @@ defmodule FeriendatenWeb.PageControllerTest do
     assert html_response(conn, 200) =~ "#{next_year}"
     assert html_response(conn, 200) =~ "#{school_year}"
   end
+
+  test "GET /datenschutzerklaerung", %{conn: conn} do
+    conn = get(conn, ~p"/datenschutzerklaerung")
+    assert html_response(conn, 200) =~ "Datenschutzerklärung"
+  end
 end

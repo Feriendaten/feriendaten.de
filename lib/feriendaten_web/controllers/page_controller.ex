@@ -17,4 +17,14 @@ defmodule FeriendatenWeb.PageController do
     |> assign(:locations, locations)
     |> render(:index, page_title: "Ferien")
   end
+
+  def datenschutzerklaerung(conn, _params) do
+    conn
+    |> assign(:location, nil)
+    |> assign(:entries, nil)
+    |> assign(:end_date, nil)
+    |> assign(:year, nil)
+    |> put_root_layout(:ferien)
+    |> render(:datenschutzerklaerung)
+  end
 end
