@@ -59,7 +59,7 @@ defmodule FeriendatenWeb.FerienController do
     |> assign(:year, year)
     |> assign(:is_school_year, false)
     |> put_root_layout(:ferien)
-    |> render(:year, page_title: "Ferien #{location.name}")
+    |> render(:year, page_title: "Ferien #{location.name} #{year}")
   end
 
   def school_year(conn, %{"slug" => slug, "year" => school_year} = _params) do
@@ -106,7 +106,10 @@ defmodule FeriendatenWeb.FerienController do
       |> assign(:year, start_year)
       |> assign(:is_school_year, true)
       |> put_root_layout(:ferien)
-      |> render(:year, page_title: "Ferien #{location.name}")
+      |> render(:year,
+        page_title:
+          "Ferien #{location.name} Schuljahr #{start_year}-#{String.to_integer(start_year) + 1}"
+      )
     end
   end
 
