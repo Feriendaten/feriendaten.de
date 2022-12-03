@@ -246,13 +246,14 @@ defmodule Feriendaten.Calendars do
   def school_vacation_periods(%Location{} = location, starts_on, ends_on) do
     location_tree_initial_query =
       from l in Location,
-        where: l.id == ^location.id,
+        where: l.id == ^location.id and l.is_active == true,
         select: %{id: l.id, parent_id: l.parent_id}
 
     location_tree_recursion_query =
       from l in Location,
         join: lt in "cte_location",
         on: lt.parent_id == l.id,
+        where: l.is_active == true,
         select: %{id: l.id, parent_id: l.parent_id}
 
     location_tree_query =
@@ -286,6 +287,111 @@ defmodule Feriendaten.Calendars do
           colloquial: type.colloquial,
           days: p.ends_on - p.starts_on + 1,
           vacation_slug: type.slug,
+          location_name: l.name,
+          location_slug: l.slug,
+          level_name: level.name,
+          school_vacation: type.school_vacation,
+          public_holiday: type.public_holiday,
+          listed: type.listed,
+          for_everybody: type.for_everybody,
+          for_students: type.for_students,
+          wikipedia_url: type.wikipedia_url,
+          memo: p.memo,
+          priority: type.priority
+        }
+
+    Repo.all(query)
+    |> Enum.map(fn period ->
+      ferientermin =
+        if period.starts_on == period.ends_on do
+          Calendar.strftime(period.ends_on, "%d.%m.")
+        else
+          "#{Calendar.strftime(period.starts_on, "%d.%m.")} - #{Calendar.strftime(period.ends_on, "%d.%m.")}"
+        end
+
+      Map.put(period, :ferientermin, ferientermin)
+    end)
+  end
+
+  @doc """
+  Returns a list of school vacation periods for Germany within the given date range.
+
+  ## Examples
+
+  iex> school_vacation_periods_for_germany()
+  [
+  %{
+    colloquial: "Weihnachtsferien",
+    days: 16,
+    ends_on: ~D[2023-01-05],
+    ferientermin: "21.12. - 05.01.",
+    for_everybody: false,
+    for_students: true,
+    id: 990,
+    level_name: "Bundesland",
+    listed: true,
+    location_name: "Sachsen-Anhalt",
+    location_slug: "sachsen-anhalt",
+    memo: nil,
+    name: "Weihnachten",
+    priority: 5,
+    public_holiday: false,
+    school_vacation: true,
+    starts_on: ~D[2022-12-21],
+    vacation_slug: "weihnachten",
+    wikipedia_url: "https://de.m.wikipedia.org/wiki/Schulferien#Weihnachtsferien"
+  },
+  ...
+  ]
+  """
+  def school_vacation_periods_for_germany(
+        starts_on \\ Date.utc_today(),
+        ends_on \\ Date.add(Date.utc_today(), 365)
+      ) do
+    location_tree_initial_query =
+      from l in Location,
+        where: l.parent_id == 1 and l.is_active == true,
+        select: %{id: l.id, parent_id: l.parent_id}
+
+    location_tree_recursion_query =
+      from l in Location,
+        join: lt in "cte_location",
+        on: lt.parent_id == l.id,
+        where: l.is_active == true,
+        select: %{id: l.id, parent_id: l.parent_id}
+
+    location_tree_query =
+      location_tree_initial_query
+      |> union_all(^location_tree_recursion_query)
+
+    cte_location =
+      {"cte_location", Location}
+      |> recursive_ctes(true)
+      |> with_cte("cte_location", as: ^location_tree_query)
+      |> select([l], l.id)
+
+    query =
+      from p in Entry,
+        join: type in "vacations",
+        on: p.vacation_id == type.id,
+        join: l in "locations",
+        on: p.location_id == l.id,
+        join: level in "levels",
+        on: l.level_id == level.id,
+        where: p.ends_on >= ^starts_on,
+        where: p.starts_on <= ^ends_on,
+        where: type.school_vacation,
+        where: p.location_id in subquery(cte_location),
+        order_by: p.starts_on,
+        select: %{
+          id: p.id,
+          starts_on: p.starts_on,
+          ends_on: p.ends_on,
+          name: type.name,
+          colloquial: type.colloquial,
+          days: p.ends_on - p.starts_on + 1,
+          vacation_slug: type.slug,
+          location_name: l.name,
           location_slug: l.slug,
           level_name: level.name,
           school_vacation: type.school_vacation,

@@ -11,6 +11,67 @@
           <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div class="inline-block min-w-full align-middle">
               <div class="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5">
+                <table class="min-w-full divide-y divide-gray-300">
+                  <thead class="bg-gray-100 dark:bg-gray-800">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100 tracking-tight md:tracking-normal"
+                      >
+                        Bundesland
+                      </th>
+                      <%= for {vacation, index} <- Enum.with_index(@vacations) do %>
+                        <th
+                          scope="col"
+                          class={"py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100 " <> if index > 1, do: "hidden md:table-cell", else: ""}
+                        >
+                          <div class="tracking-tight md:hidden md:tracking-normal">
+                            <%= String.replace(vacation, "ferien", "f.") %>
+                          </div>
+                          <div class="hidden tracking-tight md:block md:tracking-normal">
+                            <%= vacation %>
+                          </div>
+                        </th>
+                      <% end %>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-600">
+                    <%= for {federal_state, _index} <- Enum.with_index(@federal_states) do %>
+                      <tr>
+                        <td class="py-4 pl-4 pr-3 text-sm font-medium tracking-tight text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100 md:tracking-normal">
+                          <.link href={~p"/ferien/#{federal_state.slug}"}>
+                            <%= federal_state.name %>
+                          </.link>
+                        </td>
+
+                        <%= for {vacation, index2} <- Enum.with_index(@vacations) do %>
+                          <td class={"px-3 py-4 text-sm tracking-tight text-center text-gray-900 align-top dark:text-gray-300 md:tracking-normal " <> if index2 > 1, do: "hidden md:table-cell", else: ""}>
+                            <%= for entry <- @entries |> Enum.filter(fn x -> x.location_slug == federal_state.slug && x.colloquial == vacation end) |> Feriendaten.Calendars.compress_ferientermine() do %>
+                              <ul>
+                                <%= for e <- String.split(entry.ferientermin, ", ") do %>
+                                  <li class="hidden md:block"><%= e %></li>
+                                  <li class="md:hidden"><%= String.replace(e, " ", "") %></li>
+                                <% end %>
+                              </ul>
+                            <% end %>
+                          </td>
+                        <% end %>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h1 class="pt-6 text-xl font-semibold text-gray-900 dark:text-gray-100">
+          Jahres- und Schuljahresübersicht
+        </h1>
+        <div class="flex flex-col mt-8">
+          <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full align-middle">
+              <div class="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5">
                 <table class="min-w-full divide-y divide-gray-300 table-auto dark:divide-gray-100">
                   <thead class="bg-gray-100 dark:bg-gray-800">
                     <tr>
