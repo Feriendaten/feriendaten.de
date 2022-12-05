@@ -140,15 +140,12 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
 
   defp zeugnisausgabetermin(assigns) do
     ~H"""
-    <% sommerferien = Enum.filter(@entries, fn x -> x.colloquial == "Sommerferien" end) %>
-    <%= unless sommerferien == [] do %>
-      <% entry = hd(sommerferien) %> Die Zeugnisse in <%= @location.name %> werden am <%= Calendar.strftime(
-        Date.add(
-          entry.starts_on,
-          -1
-        ),
+    <% ausgabetag = ausgabetag(@entries) %>
+    <%= unless ausgabetag == nil do %>
+      Die Zeugnisse in <%= @location.name %> werden am <%= Calendar.strftime(
+        ausgabetag,
         "%d.%m.%Y"
-      ) %> ausgeteilt. Abschlussklassen bekommen die Zeugnisse früher.
+      ) %> (<%= wochentag(ausgabetag) %>) ausgeteilt. Abschlussklassen bekommen die Zeugnisse früher.
     <% else %>
       Dazu gibt es leider gerade keine Information in unserem System.
     <% end %>
@@ -176,6 +173,32 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
 
       [_, _] ->
         0
+    end
+  end
+
+  defp wochentag(date) do
+    case Date.day_of_week(date) do
+      1 -> "Montag"
+      2 -> "Dienstag"
+      3 -> "Mittwoch"
+      4 -> "Donnerstag"
+      5 -> "Freitag"
+      6 -> "Samstag"
+      7 -> "Sonntag"
+    end
+  end
+
+  defp ausgabetag(entries) do
+    case Enum.filter(entries, fn x -> x.colloquial == "Sommerferien" end) do
+      [entry] ->
+        case Date.day_of_week(Date.add(entry.starts_on, -1)) do
+          7 -> Date.add(entry.starts_on, -3)
+          6 -> Date.add(entry.starts_on, -2)
+          _ -> Date.add(entry.starts_on, -1)
+        end
+
+      _ ->
+        nil
     end
   end
 end
