@@ -47,6 +47,18 @@ defmodule FeriendatenWeb.LocationFaqComponents do
                   />
                 </dd>
               </div>
+              <div>
+                <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                  Wann fangen in <%= @location.name %> die Ferien an?
+                </dt>
+                <dd class="mt-2 text-base text-gray-500">
+                  <.answer_wann_sind_ferien_in
+                    location={@location}
+                    entries={@entries}
+                    requested_date={@requested_date}
+                  />
+                </dd>
+              </div>
             </dl>
           </div>
         </div>
