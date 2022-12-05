@@ -105,32 +105,11 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
     ~H"""
     <% [first_entry | other_entries] = @entries %>
     <%= if first_entry.colloquial == "Weihnachtsferien" do %>
-      Das Jahr <%= @year %> startet mit den <%= first_entry.colloquial %> des Vorjahres (<%= first_entry.ferientermin %>). Danach folgen die Ferientermine für 2022:
-      <%= for entry <- other_entries do %>
-        <%= entry.colloquial %> (<%= entry.ferientermin %>)
-        <%= if entry != Enum.at(other_entries, -1) do %>
-          <%= if entry == Enum.at(other_entries, -2) do %>
-            und
-          <% else %>
-            ,
-          <% end %>
-        <% else %>
-          .
-        <% end %>
-      <% end %>
+      Das Jahr <%= @year %> startet mit den Weihnachtsferien des Vorjahres (<%= first_entry.ferientermin %>). Danach folgen die Ferientermine für <%= @year %>: <%= aufzaehlung_der_ferientermine(
+        other_entries
+      ) %>.
     <% else %>
-      <%= for entry <- @entries do %>
-        <%= entry.colloquial %> (<%= entry.ferientermin %>)
-        <%= if entry != Enum.at(other_entries, -1) do %>
-          <%= if entry == Enum.at(other_entries, -2) do %>
-            und
-          <% else %>
-            ,
-          <% end %>
-        <% else %>
-          .
-        <% end %>
-      <% end %>
+      <%= aufzaehlung_der_ferientermine(@entries) %>.
     <% end %>
     """
   end
@@ -199,6 +178,20 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
 
       _ ->
         nil
+    end
+  end
+
+  defp aufzaehlung_der_ferientermine(entries) do
+    [last_entry | other_entries] =
+      Enum.map(entries, fn entry -> entry.colloquial <> " (" <> entry.ferientermin <> ")" end)
+      |> Enum.reverse()
+
+    case other_entries do
+      [] ->
+        last_entry
+
+      entries ->
+        Enum.join(Enum.reverse(entries), ", ") <> " und " <> last_entry
     end
   end
 end

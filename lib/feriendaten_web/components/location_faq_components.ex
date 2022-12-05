@@ -79,15 +79,21 @@ defmodule FeriendatenWeb.LocationFaqComponents do
     <% else %>
       In <%= Date.diff(first_entry.starts_on, @requested_date) %> Tagen beginnen die <%= first_entry.colloquial %> (<%= first_entry.ferientermin %>).
     <% end %>
-    Später folgen die
-    <%= for entry <- other_entries do %>
-      <%= "#{entry.colloquial} (#{entry.ferientermin})" %>
-      <%= if entry != Enum.at(other_entries, -1) do %>
-        <%= if entry == Enum.at(other_entries, -2), do: "und", else: "," %>
-      <% else %>
-        .
-      <% end %>
-    <% end %>
+    Danach folgen <%= aufzaehlung_der_ferientermine(other_entries) %>.
     """
+  end
+
+  defp aufzaehlung_der_ferientermine(entries) do
+    [last_entry | other_entries] =
+      Enum.map(entries, fn entry -> entry.colloquial <> " (" <> entry.ferientermin <> ")" end)
+      |> Enum.reverse()
+
+    case other_entries do
+      [] ->
+        last_entry
+
+      entries ->
+        Enum.join(Enum.reverse(entries), ", ") <> " und " <> last_entry
+    end
   end
 end
