@@ -112,14 +112,21 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
     |> Enum.sum()
   end
 
-  defp days_in_year(%{starts_on: starts_on, ends_on: ends_on} = _entry, year) do
-    for day <- Date.range(starts_on, ends_on) do
-      if day.year == String.to_integer(year) do
-        1
-      else
+  defp days_in_year(%{starts_on: starts_on, ends_on: ends_on} = entry, year) do
+    year_as_integer = String.to_integer(year)
+
+    case [starts_on.year, ends_on.year] do
+      [^year_as_integer, ^year_as_integer] ->
+        entry.days
+
+      [^year_as_integer, _] ->
+        Date.diff(Date.from_iso8601!(year <> "-12-31"), starts_on) + 1
+
+      [_, ^year_as_integer] ->
+        Date.diff(ends_on, Date.from_iso8601!(year <> "-01-01")) + 1
+
+      [_, _] ->
         0
-      end
     end
-    |> Enum.sum()
   end
 end
