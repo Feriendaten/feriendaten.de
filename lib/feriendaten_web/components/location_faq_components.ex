@@ -18,7 +18,7 @@ defmodule FeriendatenWeb.LocationFaqComponents do
               FAQ
             </h2>
             <p class="mt-4 text-lg text-gray-500">
-              Antworten auf die am häufigsten gestellten Suchanfragen zum Thema Schulferien in <%= @location.name %>.
+              Antworten auf die in Suchmaschinen am häufigsten gestellten Fragen zum Thema Schulferien in <%= @location.name %>.
             </p>
           </div>
           <div class="mt-12 lg:col-span-2 lg:mt-0">
