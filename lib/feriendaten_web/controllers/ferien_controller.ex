@@ -19,6 +19,7 @@ defmodule FeriendatenWeb.FerienController do
     |> assign(:entries, entries)
     |> assign(:end_date, end_date)
     |> assign(:year, nil)
+    |> assign(:requested_date, requested_date)
     |> put_root_layout(:ferien)
     |> render(:location, page_title: "Ferien #{location.name}")
   end
