@@ -51,6 +51,14 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
                   />
                 </dd>
               </div>
+              <div>
+                <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                  Wie viele Ferientage hat <%= @location.name %> <%= @year %>?
+                </dt>
+                <dd class="mt-2 text-base text-gray-500">
+                  Insgesamt gibt es in <%= @location.name %> <%= sum_of_days(@entries, @year) %> Ferientage im Jahr <%= @year %>.
+                </dd>
+              </div>
             </dl>
           </div>
         </div>
@@ -96,5 +104,22 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
       <% end %>
     <% end %>
     """
+  end
+
+  defp sum_of_days(entries, year) do
+    entries
+    |> Enum.map(fn entry -> days_in_year(entry, year) end)
+    |> Enum.sum()
+  end
+
+  defp days_in_year(%{starts_on: starts_on, ends_on: ends_on} = _entry, year) do
+    for day <- Date.range(starts_on, ends_on) do
+      if day.year == String.to_integer(year) do
+        1
+      else
+        0
+      end
+    end
+    |> Enum.sum()
   end
 end
