@@ -40,6 +40,19 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
               </div>
               <div>
                 <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                  Hat <%= @location.name %> Ferien <%= @year %>?
+                </dt>
+                <dd class="mt-2 text-base text-gray-500">
+                  <.answer_wann_sind_ferien_in
+                    location={@location}
+                    entries={@entries}
+                    requested_date={@requested_date}
+                    year={@year}
+                  />
+                </dd>
+              </div>
+              <div>
+                <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
                   Wann Ferien in <%= @location.code %> <%= @year %>?
                 </dt>
                 <dd class="mt-2 text-base text-gray-500">
@@ -53,10 +66,26 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
               </div>
               <div>
                 <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
-                  Wie viele Ferientage hat <%= @location.name %> <%= @year %>?
+                  Wie viele Ferientage hat <%= @location.code %> <%= @year %>?
                 </dt>
                 <dd class="mt-2 text-base text-gray-500">
                   Insgesamt gibt es in <%= @location.name %> <%= sum_of_days(@entries, @year) %> Ferientage im Jahr <%= @year %>.
+                </dd>
+              </div>
+              <div>
+                <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                  Wie viele Tage Ferien hat <%= @location.name %> <%= @year %>?
+                </dt>
+                <dd class="mt-2 text-base text-gray-500">
+                  Insgesamt gibt es in <%= @location.name %> <%= sum_of_days(@entries, @year) %> Ferientage im Jahr <%= @year %>.
+                </dd>
+              </div>
+              <div>
+                <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                  Wann gibt es Zeugnisse in <%= @location.name %> <%= @year %>?
+                </dt>
+                <dd class="mt-2 text-base text-gray-500">
+                  <.zeugnisausgabetermin location={@location} entries={@entries} />
                 </dd>
               </div>
             </dl>
@@ -102,6 +131,26 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
           .
         <% end %>
       <% end %>
+    <% end %>
+    """
+  end
+
+  attr :location, :string, required: true
+  attr :entries, :list, required: true
+
+  defp zeugnisausgabetermin(assigns) do
+    ~H"""
+    <% sommerferien = Enum.filter(@entries, fn x -> x.colloquial == "Sommerferien" end) %>
+    <%= unless sommerferien == [] do %>
+      <% entry = hd(sommerferien) %> Die Zeugnisse in <%= @location.name %> werden am <%= Calendar.strftime(
+        Date.add(
+          entry.starts_on,
+          -1
+        ),
+        "%d.%m.%Y"
+      ) %> ausgeteilt. Abschlussklassen bekommen die Zeugnisse früher.
+    <% else %>
+      Dazu gibt es leider gerade keine Information in unserem System.
     <% end %>
     """
   end
