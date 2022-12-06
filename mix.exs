@@ -9,8 +9,7 @@ defmodule Feriendaten.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps(),
-      versioning: versioning()
+      deps: deps()
     ]
   end
 
@@ -70,15 +69,6 @@ defmodule Feriendaten.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
-    ]
-  end
-
-  defp versioning do
-    [
-      # tag_prefix: "release-",
-      # commit_msg: "new version: %s",
-      # annotation: "tag release-%s created with mix_version",
-      # annotate: false
     ]
   end
 end

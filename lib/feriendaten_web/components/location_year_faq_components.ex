@@ -4,15 +4,6 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
   """
   use FeriendatenWeb, :html
 
-  defp faq_entries(location, year) do
-    [
-      ["Wann sind Ferien in #{location.name} #{year}?", ""],
-      ["", ""],
-      ["", ""],
-      ["", ""]
-    ]
-  end
-
   attr :location, :string, required: true
   attr :entries, :list, required: true
   attr :requested_date, :any, required: true
