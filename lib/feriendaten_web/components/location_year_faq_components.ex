@@ -4,6 +4,15 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
   """
   use FeriendatenWeb, :html
 
+  defp faq_entries(location, year) do
+    [
+      ["Wann sind Ferien in #{location.name} #{year}?", ""],
+      ["", ""],
+      ["", ""],
+      ["", ""]
+    ]
+  end
+
   attr :location, :string, required: true
   attr :entries, :list, required: true
   attr :requested_date, :any, required: true
@@ -124,9 +133,9 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
       Die Zeugnisse in <%= @location.name %> werden am <%= Calendar.strftime(
         ausgabetag,
         "%d.%m.%Y"
-      ) %> (<%= wochentag(ausgabetag) %>) ausgeteilt. Abschlussklassen bekommen die Zeugnisse früher.
+      ) %> (<%= wochentag(ausgabetag) %>) ausgeteilt. Abschlussklassen bekommen die Zeugnisse früher, damit Schülerinnen und Schüler genügend Zeit haben, sich auf einen Ausbildungsplatz oder einen Studienplatz zu bewerben.
     <% else %>
-      Dazu gibt es leider gerade keine Information in unserem System.
+      In <%= @location.name %> werden Zeugnisse normalerweise am Ende eines Schuljahres ausgestellt. Genauere Informationen dazu können Sie bei Ihrer Schule erfragen. Wichtig ist, dass die Zeugnisse rechtzeitig vor den Sommerferien ausgestellt werden, damit Schülerinnen und Schüler und ihre Eltern genügend Zeit haben, sich auf die nächste Klassenstufe oder eine mögliche Schulwechsel vorzubereiten.
     <% end %>
     """
   end
