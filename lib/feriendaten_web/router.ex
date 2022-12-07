@@ -22,7 +22,8 @@ defmodule FeriendatenWeb.Router do
     get "/datenschutzerklaerung", PageController, :datenschutzerklaerung
     get "/ferien/:slug", FerienController, :location
     get "/ferien/:slug/:year", FerienController, :year
-    # get "/:vacation/:slug", FerienController, :vacation
+    # get "/:vacation_slug/:location_slug", FerienController, :location
+    # get "/:vacation_slug/:location_slug/:year", FerienController, :year
   end
 
   # Other scopes may use custom stacks.
