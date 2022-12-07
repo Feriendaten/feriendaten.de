@@ -1,103 +1,105 @@
 <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
   Schulferien Deutschland
 </h1>
-<p class="pt-6 mt-2 text-base text-gray-700 dark:text-gray-100">Wann sind Schulferien in Deutschland? Unsere Tabelle mit den nächsten Ferienterminen:</p>
+<p class="pt-6 mt-2 text-base text-gray-700 dark:text-gray-100">
+  Wann sind Schulferien in Deutschland? Unsere Tabelle mit den nächsten Ferienterminen:
+</p>
 
 <div class="pt-6">
-<table class="min-w-full divide-y divide-gray-300 table-auto dark:divide-gray-100">
-  <thead class="bg-gray-100 dark:bg-gray-800">
-    <tr>
-      <th
-        scope="col"
-        class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100 tracking-tight md:tracking-normal"
-      >
-        <div class="hidden md:block">Bundesland</div>
-        <div class="md:hidden">
-          Bundesl.
-        </div>
-      </th>
-      <%= for {vacation, index} <- Enum.with_index(@vacations) do %>
+  <table class="min-w-full divide-y divide-gray-300 table-auto dark:divide-gray-100">
+    <thead class="bg-gray-100 dark:bg-gray-800">
+      <tr>
         <th
           scope="col"
-          class={"py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100 " <> if index > 2, do: "hidden md:table-cell", else: ""}
+          class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100 tracking-tight md:tracking-normal"
         >
-          <div class="tracking-tight md:hidden md:tracking-normal">
-            <%= String.slice(vacation, 0..4) %>.
-          </div>
-          <div class="hidden tracking-tight md:block md:tracking-normal">
-            <%= vacation %>
+          <div class="hidden md:block">Bundesland</div>
+          <div class="md:hidden">
+            Bundesl.
           </div>
         </th>
-      <% end %>
-      <th />
-    </tr>
-  </thead>
-  <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-600">
-    <%= for {federal_state, index} <- Enum.with_index(@federal_states) do %>
-      <tr class={
-        if rem(index, 2) == 0 do
-          "bg-white dark:bg-black"
-        else
-          "bg-gray-50 dark:bg-black"
-        end
-      }>
-        <td class="py-4 pl-4 pr-3 text-sm font-medium tracking-tight text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100 md:tracking-normal">
-          <.link
-            class="text-blue-600 hover:underline dark:text-blue-400"
-            href={~p"/ferien/#{federal_state.slug}"}
+        <%= for {vacation, index} <- Enum.with_index(@vacations) do %>
+          <th
+            scope="col"
+            class={"py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100 " <> if index > 2, do: "hidden md:table-cell", else: ""}
           >
-            <% name =
-              String.split(federal_state.name, "-")
-              |> Enum.map(fn x ->
-                if String.length(x) > 8, do: String.slice(x, 0..6) <> ".", else: x
-              end)
-              |> Enum.join("-") %>
-            <%= if Enum.count(String.split(name, "-")) == 2 do %>
-              <% [first_element, last_element] = String.split(name, "-") %>
-              <%= first_element %>-<br />
-              <%= last_element %>
-            <% else %>
-              <%= name %>
-            <% end %>
-          </.link>
-        </td>
-
-        <%= for {vacation, index2} <- Enum.with_index(@vacations) do %>
-          <td class={"px-3 py-4 text-sm tracking-tight text-center text-gray-900 align-top dark:text-gray-300 md:tracking-normal " <> if index2 > 2, do: "hidden md:table-cell", else: ""}>
-            <%= for entry <- @entries |> Enum.filter(fn x -> x.location_slug == federal_state.slug && x.colloquial == vacation end) |> Feriendaten.Calendars.compress_ferientermine() do %>
-              <ul>
-                <%= for e <- String.split(entry.ferientermin, ", ") do %>
-                  <li class="hidden md:block"><%= e %></li>
-                  <li class="md:hidden">
-                    <%= if Enum.count(String.split(e, " - ")) == 2 do %>
-                      <% [first_day, last_day] = String.split(e, " - ") %>
-                      <%= first_day %><br />-<br />
-                      <%= last_day %>
-                    <% else %>
-                      <%= e %>
-                    <% end %>
-                  </li>
-                <% end %>
-              </ul>
-            <% end %>
-          </td>
+            <div class="tracking-tight md:hidden md:tracking-normal">
+              <%= String.slice(vacation, 0..4) %>.
+            </div>
+            <div class="hidden tracking-tight md:block md:tracking-normal">
+              <%= vacation %>
+            </div>
+          </th>
         <% end %>
-        <td>
-          <.link
-            class="text-blue-600 hover:underline dark:text-blue-400"
-            href={~p"/ferien/#{federal_state.slug}"}
-          >
-            >
-          </.link>
-        </td>
+        <th />
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-600">
+      <%= for {federal_state, index} <- Enum.with_index(@federal_states) do %>
+        <tr class={
+          if rem(index, 2) == 0 do
+            "bg-white dark:bg-black"
+          else
+            "bg-gray-50 dark:bg-black"
+          end
+        }>
+          <td class="py-4 pl-4 pr-3 text-sm font-medium tracking-tight text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100 md:tracking-normal">
+            <.link
+              class="text-blue-600 hover:underline dark:text-blue-400"
+              href={~p"/ferien/#{federal_state.slug}"}
+            >
+              <% name =
+                String.split(federal_state.name, "-")
+                |> Enum.map(fn x ->
+                  if String.length(x) > 8, do: String.slice(x, 0..6) <> ".", else: x
+                end)
+                |> Enum.join("-") %>
+              <%= if Enum.count(String.split(name, "-")) == 2 do %>
+                <% [first_element, last_element] = String.split(name, "-") %>
+                <%= first_element %>-<br />
+                <%= last_element %>
+              <% else %>
+                <%= name %>
+              <% end %>
+            </.link>
+          </td>
+
+          <%= for {vacation, index2} <- Enum.with_index(@vacations) do %>
+            <td class={"px-3 py-4 text-sm tracking-tight text-center text-gray-900 align-top dark:text-gray-300 md:tracking-normal " <> if index2 > 2, do: "hidden md:table-cell", else: ""}>
+              <%= for entry <- @entries |> Enum.filter(fn x -> x.location_slug == federal_state.slug && x.colloquial == vacation end) |> Feriendaten.Calendars.compress_ferientermine() do %>
+                <ul>
+                  <%= for e <- String.split(entry.ferientermin, ", ") do %>
+                    <li class="hidden md:block"><%= e %></li>
+                    <li class="md:hidden">
+                      <%= if Enum.count(String.split(e, " - ")) == 2 do %>
+                        <% [first_day, last_day] = String.split(e, " - ") %>
+                        <%= first_day %><br />-<br />
+                        <%= last_day %>
+                      <% else %>
+                        <%= e %>
+                      <% end %>
+                    </li>
+                  <% end %>
+                </ul>
+              <% end %>
+            </td>
+          <% end %>
+          <td>
+            <.link
+              class="text-blue-600 hover:underline dark:text-blue-400"
+              href={~p"/ferien/#{federal_state.slug}"}
+            >
+              >
+            </.link>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>
 
 <p class="pt-6 mt-2 text-base text-gray-700 dark:text-gray-100">
-Auf unserer Webseite finden Sie alle wichtigen Informationen zu den Schulferien in Deutschland. Wir bieten eine Übersicht über die Schulferien aller Bundesländer und informieren Sie über die genauen Termine. Dank unserer übersichtlichen Darstellung können Sie schnell und einfach sehen, wann die Schulferien in Ihrem Bundesland stattfinden und können Ihre Urlaubsplanung entsprechend anpassen. Unsere Webseite wird regelmäßig aktualisiert, sodass Sie immer die aktuellen Informationen erhalten.
+  Auf unserer Webseite finden Sie alle wichtigen Informationen zu den Schulferien in Deutschland. Wir bieten eine Übersicht über die Schulferien aller Bundesländer und informieren Sie über die genauen Termine. Dank unserer übersichtlichen Darstellung können Sie schnell und einfach sehen, wann die Schulferien in Ihrem Bundesland stattfinden und können Ihre Urlaubsplanung entsprechend anpassen. Unsere Webseite wird regelmäßig aktualisiert, sodass Sie immer die aktuellen Informationen erhalten.
 </p>
 
 <h1 class="pt-6 text-xl font-semibold text-gray-900 dark:text-gray-100">
@@ -105,82 +107,129 @@ Auf unserer Webseite finden Sie alle wichtigen Informationen zu den Schulferien 
 </h1>
 
 <div class="pt-6">
-<table class="min-w-full divide-y divide-gray-300 table-auto dark:divide-gray-100">
-  <thead class="bg-gray-100 dark:bg-gray-800">
-    <tr>
-      <th
-        scope="col"
-        class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100"
-      >
-        Bundesland
-      </th>
-      <th
-        scope="col"
-        class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100"
-      >
-        Jahr
-      </th>
-      <th
-        scope="col"
-        class=" px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100"
-      >
-        Schuljahr
-      </th>
-    </tr>
-  </thead>
-  <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-600">
-    <%= for {location, index} <- Enum.with_index(@locations) do %>
-      <tr class={
-        if rem(index, 2) == 0 do
-          "bg-white dark:bg-black"
-        else
-          "bg-gray-50 dark:bg-black"
-        end
-      }>
-        <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
-          <.link
-            class="text-blue-600 hover:underline dark:text-blue-400"
-            href={~p"/ferien/#{location.slug}"}
-          >
-            <%= location.name %>
-          </.link>
-        </td>
-        <td class="px-3 py-4 text-sm text-gray-900 align-top dark:text-gray-300 tabular-nums">
-          <ul>
-            <%= for year <- [@today.year, @today.year + 1] do %>
-              <li>
-                <.link
-                  class="text-blue-600 hover:underline dark:text-blue-400"
-                  href={~p"/ferien/#{location.slug}/#{year}"}
-                >
-                  <%= year %>
-                </.link>
-              </li>
-            <% end %>
-          </ul>
-        </td>
-        <td class="px-3 py-4 text-sm text-right text-gray-500 align-top whitespace-nowrap dark:text-gray-300 tabular-nums">
-          <ul>
-            <%= for year <- [@today.year, @today.year + 1] do %>
-              <li>
-                <.link
-                  class="text-blue-600 hover:underline dark:text-blue-400"
-                  href={
-                    ~p"/ferien/#{location.slug}/#{Integer.to_string(year) <> "-" <> Integer.to_string(year + 1)}"
-                  }
-                >
-                  <%= "#{String.slice(Integer.to_string(year), 2..3) <> "/" <> String.slice(Integer.to_string(year + 1), 2..3)}" %>
-                </.link>
-              </li>
-            <% end %>
-          </ul>
-        </td>
+  <table class="min-w-full divide-y divide-gray-300 table-auto dark:divide-gray-100">
+    <thead class="bg-gray-100 dark:bg-gray-800">
+      <tr>
+        <th
+          scope="col"
+          class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100"
+        >
+          Bundesland
+        </th>
+        <th
+          scope="col"
+          class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100"
+        >
+          Jahr
+        </th>
+        <th
+          scope="col"
+          class=" px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100"
+        >
+          Schuljahr
+        </th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-600">
+      <%= for {location, index} <- Enum.with_index(@locations) do %>
+        <tr class={
+          if rem(index, 2) == 0 do
+            "bg-white dark:bg-black"
+          else
+            "bg-gray-50 dark:bg-black"
+          end
+        }>
+          <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
+            <.link
+              class="text-blue-600 hover:underline dark:text-blue-400"
+              href={~p"/ferien/#{location.slug}"}
+            >
+              <%= location.name %>
+            </.link>
+          </td>
+          <td class="px-3 py-4 text-sm text-gray-900 align-top dark:text-gray-300 tabular-nums">
+            <ul>
+              <%= for year <- [@today.year, @today.year + 1] do %>
+                <li>
+                  <.link
+                    class="text-blue-600 hover:underline dark:text-blue-400"
+                    href={~p"/ferien/#{location.slug}/#{year}"}
+                  >
+                    <%= year %>
+                  </.link>
+                </li>
+              <% end %>
+            </ul>
+          </td>
+          <td class="px-3 py-4 text-sm text-right text-gray-500 align-top whitespace-nowrap dark:text-gray-300 tabular-nums">
+            <ul>
+              <%= for year <- [@today.year, @today.year + 1] do %>
+                <li>
+                  <.link
+                    class="text-blue-600 hover:underline dark:text-blue-400"
+                    href={
+                      ~p"/ferien/#{location.slug}/#{Integer.to_string(year) <> "-" <> Integer.to_string(year + 1)}"
+                    }
+                  >
+                    <%= "#{String.slice(Integer.to_string(year), 2..3) <> "/" <> String.slice(Integer.to_string(year + 1), 2..3)}" %>
+                  </.link>
+                </li>
+              <% end %>
+            </ul>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>
 
 <p class="pt-6 mt-2 text-base text-gray-700 dark:text-gray-100">
-In Deutschland werden die Schulferientermine von den Bildungsministerien der einzelnen Bundesländer festgelegt. Die Bildungsministerien legen in Absprache mit anderen Ministerien, der <a href="https://www.kmk.org">Kultusministerkonferenz (KMK)</a> und dem <a href="https://www.lehrerverband.de">Deutschen Lehrerverband (DL)</a> die Schulferientermine für ihr Bundesland fest. Dabei werden verschiedene Faktoren berücksichtigt, wie beispielsweise die Ferien in anderen Bundesländern, religiöse Feiertage und regionale Besonderheiten. Die Schulferientermine werden in der Regel für einen Zeitraum von mehreren Jahren festgelegt, damit Schüler, Eltern und Lehrer sich frühzeitig planen können.
+  In Deutschland werden die Schulferientermine von den Bildungsministerien der einzelnen Bundesländer festgelegt. Die Bildungsministerien legen in Absprache mit anderen Ministerien, der
+  <a href="https://www.kmk.org">Kultusministerkonferenz (KMK)</a>
+  und dem <a href="https://www.lehrerverband.de">Deutschen Lehrerverband (DL)</a>
+  die Schulferientermine für ihr Bundesland fest. Dabei werden verschiedene Faktoren berücksichtigt, wie beispielsweise die Ferien in anderen Bundesländern, religiöse Feiertage und regionale Besonderheiten. Die Schulferientermine werden in der Regel für einen Zeitraum von mehreren Jahren festgelegt, damit Schüler, Eltern und Lehrer sich frühzeitig planen können.
 </p>
+
+<div class="pt-16 lg:py-24">
+  <div class="pb-16 bg-indigo-600 lg:relative lg:z-10 lg:pb-0">
+    <div class="lg:mx-auto lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-8 lg:px-8">
+      <div class="relative lg:-my-8">
+        <div aria-hidden="true" class="absolute inset-x-0 top-0 h-1/2 lg:hidden"></div>
+        <div class="max-w-md px-4 mx-auto sm:max-w-3xl sm:px-6 lg:h-full lg:p-0">
+          <div class="overflow-hidden shadow-xl aspect-w-10 aspect-h-6 rounded-xl sm:aspect-w-16 sm:aspect-h-7 lg:aspect-none lg:h-full">
+            <img
+              class="object-cover lg:h-full lg:w-full"
+              src="/bruce-mars-FWVMhUa_wbY-unsplash.jpg"
+              alt="Ein Foto von Erika Musterfrau. Eine super fleissige Schülerin am Max Mustermann Gymnasium."
+            />
+          </div>
+        </div>
+      </div>
+      <div class="mt-12 lg:col-span-2 lg:m-0 lg:pl-8">
+        <div class="max-w-md px-4 mx-auto sm:max-w-2xl sm:px-6 lg:max-w-none lg:px-0 lg:py-20">
+          <blockquote>
+            <div>
+              <svg
+                class="w-12 h-12 text-white opacity-25"
+                fill="currentColor"
+                viewBox="0 0 32 32"
+                aria-hidden="true"
+              >
+                <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
+              </svg>
+              <p class="mt-6 text-2xl font-medium text-white">
+                Früher musste ich mir die Ferientermine immer mühsam aufschreiben und hatte sie dann doch nie griffbereit. Heute google ich auf dem Handy nach "Schulferien Max Mustermann Gymnasium" und lande auf feriendaten.de 🎉
+              </p>
+            </div>
+            <footer class="mt-6">
+              <p class="text-base font-medium text-white">Erika Musterfrau</p>
+              <p class="text-base font-medium text-indigo-100">
+                Schülerin am Max Mustermann Gymnasium 😂
+              </p>
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
