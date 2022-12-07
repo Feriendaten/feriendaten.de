@@ -1,7 +1,7 @@
 defmodule Feriendaten.Calendars.Vacation do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Feriendaten.EctoSlug.NameSlug
+  alias Feriendaten.EctoSlug.ColloquialSlug
 
   schema "vacations" do
     field :colloquial, :string
@@ -13,7 +13,7 @@ defmodule Feriendaten.Calendars.Vacation do
     field :priority, :integer
     field :public_holiday, :boolean, default: false
     field :school_vacation, :boolean, default: false
-    field :slug, NameSlug.Type
+    field :slug, ColloquialSlug.Type
     field :wikipedia_url, :string
 
     timestamps()
@@ -39,7 +39,7 @@ defmodule Feriendaten.Calendars.Vacation do
     ])
     |> unique_constraint(:colloquial)
     |> unique_constraint(:name)
-    |> NameSlug.maybe_generate_slug()
-    |> NameSlug.unique_constraint()
+    |> ColloquialSlug.maybe_generate_slug()
+    |> ColloquialSlug.unique_constraint()
   end
 end
