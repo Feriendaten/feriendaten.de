@@ -34,13 +34,53 @@
     <link rel="manifest" href="/site.webmanifest" />
   </head>
   <body class="antialiased bg-white dark:bg-gray-900">
-    <%= if @year do %>
-      <.ferien_top_navbar location={@location} year={@year} />
+    <%= if assigns[:nav_bar_entries] do %>
+      <.top_nav_bar nav_bar_entries={@nav_bar_entries} />
     <% else %>
-      <.ferien_top_navbar location={@location} />
+      <%= if assigns[:year] do %>
+        <.ferien_top_navbar location={@location} year={@year} />
+      <% else %>
+        <%= if assigns[:vacation_colloquial] do %>
+          <%= if assigns[:year] do %>
+            <.ferien_top_navbar
+              location={@location}
+              vacation_colloquial={@vacation_colloquial}
+              year={@year}
+            />
+          <% else %>
+            <.ferien_top_navbar location={@location} vacation_colloquial={@vacation_colloquial} />
+          <% end %>
+        <% else %>
+          <.ferien_top_navbar location={@location} />
+        <% end %>
+      <% end %>
     <% end %>
 
     <%= @inner_content %>
+
+    <div class="px-4 py-12 mx-auto overflow-hidden max-w-7xl sm:px-6 lg:px-8">
+      <div class="flex flex-wrap justify-center -mx-5 -my-2">
+        <div class="px-5 py-2 text-xs text-gray-600 dark:text-gray-400">
+          <p class="pt-4 text-center">Alle Angaben ohne Gewähr.</p>
+          <p class="pt-4 text-center">
+            Wir weisen darauf hin, dass diese Seite Google Analytics einsetzt und verweisen hierzu auf die
+            <a class="underline" href="https://policies.google.com/privacy">
+              Datenschutzerklärung
+            </a>
+            sowie auf die <a
+              class="underline"
+              href="http://tools.google.com/dlpage/gaoptout?hl=de"
+            >Opt-Out-Möglichkeiten für Google-Analytics</a>.
+          </p>
+          <p class="pt-4 text-center">
+            Diese Webseite verwendet Cookies, um Inhalte und Anzeigen zu personalisieren, Funktionen für soziale Medien anbieten zu können und die Zugriffe auf unsere Website zu analysieren. Außerdem geben wir Informationen zu Ihrer Verwendung unserer Website an unsere Partner für soziale Medien, Werbung und Analysen weiter. Unsere Partner führen diese Informationen möglicherweise mit weiteren Daten zusammen, die Sie ihnen bereitgestellt haben oder die sie im Rahmen Ihrer Nutzung der Dienste gesammelt haben. Sie geben Einwilligung zu unseren Cookies, wenn Sie unsere Webseite weiterhin nutzen.
+          </p>
+          <p class="pt-4 text-center">
+            Weiterhin behalten wir uns vor, alle Daten an den Nikolaus (a.k.a. Weihnachtsmann 🎅🏻) zu verkaufen. Je nachdem wie gut Sie sich im laufenden Jahr verhalten haben, wird der Nikolaus Ihnen dann pünklich zum 06.12. den vor die Haustür gestellten Stiefel füllen. Es hat sich in der Vergangenheit gezeigt, das es auch gut ist, wenn man zum Besuch des Nikolaus ein - möglichst schönes - Gedicht auswendig vortragen kann.
+          </p>
+        </div>
+      </div>
+    </div>
 
     <footer class="bg-white dark:bg-gray-900">
       <div class="px-4 py-12 mx-auto overflow-hidden max-w-7xl sm:px-6 lg:px-8">

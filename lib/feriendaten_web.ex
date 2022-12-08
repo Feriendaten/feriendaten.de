@@ -19,7 +19,7 @@ defmodule FeriendatenWeb do
 
   def static_paths,
     do:
-      ~w(assets fonts images favicon.ico robots.txt android-chrome-192x192.png android-chrome-512x512.png favicon-32x32.png apple-touch-icon.png site.webmanifest favicon-16x16.png ads.txt)
+      ~w(assets fonts images favicon.ico robots.txt android-chrome-192x192.png android-chrome-512x512.png favicon-32x32.png apple-touch-icon.png site.webmanifest favicon-16x16.png ads.txt bruce-mars-FWVMhUa_wbY-unsplash.jpg)
 
   def router do
     quote do

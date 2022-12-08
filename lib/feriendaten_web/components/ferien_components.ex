@@ -59,13 +59,36 @@ defmodule FeriendatenWeb.FerienComponents do
                     end
                   }>
                     <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
-                      <%= entry.colloquial %>
-
                       <%= if @is_school_year do %>
-                        <%= entry.starts_on.year %>
+                        <.link
+                          class="text-blue-600 hover:underline dark:text-blue-400"
+                          navigate={
+                            ~p"/#{String.downcase(entry.colloquial)}/#{entry.location_slug}/#{entry.starts_on.year}"
+                          }
+                        >
+                          <%= entry.colloquial %>
+                          <%= entry.starts_on.year %>
+                        </.link>
                       <% else %>
                         <%= unless @dont_list_year == entry.starts_on.year do %>
-                          <%= entry.starts_on.year %>
+                          <.link
+                            class="text-blue-600 hover:underline dark:text-blue-400"
+                            navigate={
+                              ~p"/#{String.downcase(entry.colloquial)}/#{entry.location_slug}/#{entry.starts_on.year}"
+                            }
+                          >
+                            <%= entry.colloquial %>
+                            <%= entry.starts_on.year %>
+                          </.link>
+                        <% else %>
+                          <.link
+                            class="text-blue-600 hover:underline dark:text-blue-400"
+                            navigate={
+                              ~p"/#{String.downcase(entry.colloquial)}/#{entry.location_slug}"
+                            }
+                          >
+                            <%= entry.colloquial %>
+                          </.link>
                         <% end %>
                       <% end %>
                     </td>
@@ -138,6 +161,7 @@ defmodule FeriendatenWeb.FerienComponents do
 
   attr :location, :any, required: true
   attr :year, :integer, default: nil
+  attr :vacation_colloquial, :string, default: nil
 
   def ferien_top_navbar(assigns) do
     ~H"""
@@ -168,23 +192,43 @@ defmodule FeriendatenWeb.FerienComponents do
           </div>
         </li>
 
-        <li class="flex">
-          <div class="flex items-center">
-            <svg
-              class="flex-shrink-0 w-6 h-full text-gray-200"
-              viewBox="0 0 24 44"
-              preserveAspectRatio="none"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
-            </svg>
-            <div class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-zinc-100 dark:hover:text-gray-400">
-              Ferien
+        <%= if @vacation_colloquial do %>
+          <li class="flex">
+            <div class="flex items-center">
+              <svg
+                class="flex-shrink-0 w-6 h-full text-gray-200"
+                viewBox="0 0 24 44"
+                preserveAspectRatio="none"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+              </svg>
+              <div class="ml-4 text-sm font-medium text-gray-500 dark:text-zinc-100">
+                <%= @vacation_colloquial %>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
+        <% else %>
+          <li class="flex">
+            <div class="flex items-center">
+              <svg
+                class="flex-shrink-0 w-6 h-full text-gray-200"
+                viewBox="0 0 24 44"
+                preserveAspectRatio="none"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+              </svg>
+              <div class="ml-4 text-sm font-medium text-gray-500 dark:text-zinc-100 ">
+                Ferien
+              </div>
+            </div>
+          </li>
+        <% end %>
 
         <%= if @location do %>
           <li class="flex">
@@ -203,9 +247,7 @@ defmodule FeriendatenWeb.FerienComponents do
                 class="ml-4 text-sm font-medium text-gray-500 dark:text-zinc-400"
                 aria-current="page"
               >
-                <.link href={~p"/ferien/#{@location.slug}"}>
-                  <%= @location.name %>
-                </.link>
+                <%= @location.name %>
               </div>
             </div>
           </li>
@@ -235,6 +277,98 @@ defmodule FeriendatenWeb.FerienComponents do
         <% end %>
       </ol>
     </nav>
+    """
+  end
+
+  attr :nav_bar_entries, :list, required: true
+
+  def top_nav_bar(assigns) do
+    ~H"""
+    <nav class="flex bg-white border-b border-gray-200 dark:bg-gray-800" aria-label="Breadcrumb">
+      <ol role="list" class="flex w-full max-w-screen-xl px-4 mx-auto space-x-4 sm:px-6 lg:px-8">
+        <li class="flex">
+          <div class="flex items-center">
+            <a
+              href="/"
+              class="text-gray-400 hover:text-gray-500 dark:text-zinc-100 dark:hover:text-gray-400"
+            >
+              <!-- Heroicon name: mini/home -->
+              <svg
+                class="flex-shrink-0 w-5 h-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M9.293 2.293a1 1 0 011.414 0l7 7A1 1 0 0117 11h-1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3a1 1 0 00-1-1H9a1 1 0 00-1 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-6H3a1 1 0 01-.707-1.707l7-7z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span class="sr-only">Hauptseite</span>
+            </a>
+          </div>
+        </li>
+
+        <%= for entry <- @nav_bar_entries do %>
+          <.top_nav_bar_item item={entry} />
+        <% end %>
+      </ol>
+    </nav>
+    """
+  end
+
+  attr :item, :any, required: true
+
+  def top_nav_bar_item(%{item: [text, link]} = assigns) do
+    assigns = assign(assigns, :text, text)
+    assigns = assign(assigns, :link, link)
+
+    ~H"""
+    <li class="flex">
+      <div class="flex items-center">
+        <svg
+          class="flex-shrink-0 w-6 h-full text-gray-200"
+          viewBox="0 0 24 44"
+          preserveAspectRatio="none"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+        </svg>
+        <div class="ml-4 text-sm font-medium text-gray-500 dark:text-zinc-400" aria-current="page">
+          <.link class="text-blue-600 hover:underline dark:text-blue-400" navigate={@link} \>
+            <%= @text %>
+          </.link>
+        </div>
+      </div>
+    </li>
+    """
+  end
+
+  def top_nav_bar_item(%{item: text} = assigns) do
+    assigns = assign(assigns, :text, text)
+
+    ~H"""
+    <li class="flex">
+      <div class="flex items-center">
+        <svg
+          class="flex-shrink-0 w-6 h-full text-gray-200"
+          viewBox="0 0 24 44"
+          preserveAspectRatio="none"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+        </svg>
+        <div class="ml-4 text-sm font-medium text-gray-500 dark:text-zinc-400" aria-current="page">
+          <%= @text %>
+        </div>
+      </div>
+    </li>
     """
   end
 end

@@ -15,17 +15,6 @@ defmodule FeriendatenWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", FeriendatenWeb do
-    pipe_through :browser
-
-    get "/", PageController, :index
-    get "/datenschutzerklaerung", PageController, :datenschutzerklaerung
-    get "/ferien/:slug", FerienController, :location
-    get "/ferien/:slug/:year", FerienController, :year
-    # get "/:vacation_slug/:location_slug", FerienController, :location
-    # get "/:vacation_slug/:location_slug/:year", FerienController, :year
-  end
-
   # Other scopes may use custom stacks.
   # scope "/api", FeriendatenWeb do
   #   pipe_through :api
@@ -69,5 +58,16 @@ defmodule FeriendatenWeb.Router do
       resources "/vacations", VacationController
       resources "/entries", EntryController
     end
+  end
+
+  scope "/", FeriendatenWeb do
+    pipe_through :browser
+
+    get "/", PageController, :index
+    get "/datenschutzerklaerung", PageController, :datenschutzerklaerung
+    get "/ferien/:slug", FerienController, :location
+    get "/ferien/:slug/:year", FerienController, :year
+    get "/:vacation_slug/:location_slug", VacationSlugController, :location
+    get "/:vacation_slug/:location_slug/:year", VacationSlugController, :year
   end
 end

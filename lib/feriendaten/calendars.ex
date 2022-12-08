@@ -476,6 +476,37 @@ defmodule Feriendaten.Calendars do
     Enum.filter(periods, fn period -> period.school_vacation end)
   end
 
+  @doc """
+  Returns a list of specific school vacation periods for the given federal state.
+
+  ## Examples
+
+  iex> vacations_of_federal_state("sachsen-anhalt", "weihnachtsferien")
+  [
+  %{
+    colloquial: "Weihnachtsferien",
+    days: 16,
+    ends_on: ~D[2023-01-05],
+    ferientermin: "21.12. - 05.01.",
+    for_everybody: false,
+    for_students: true,
+    id: 990,
+    level_name: "Bundesland",
+    listed: true,
+    location_name: "Sachsen-Anhalt",
+    location_slug: "sachsen-anhalt",
+    memo: nil,
+    name: "Weihnachten",
+    priority: 5,
+    public_holiday: false,
+    school_vacation: true,
+    starts_on: ~D[2022-12-21],
+    vacation_slug: "weihnachten",
+    wikipedia_url: "https://de.m.wikipedia.org/wiki/Schulferien#Weihnachtsferien"
+  },
+  ...
+  ]
+  """
   def vacations_of_federal_state(
         location_slug,
         vacation_slug,

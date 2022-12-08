@@ -58,7 +58,7 @@ defmodule Feriendaten.CalendarsTest do
       assert vacation.priority == 42
       assert vacation.public_holiday == true
       assert vacation.school_vacation == true
-      assert vacation.slug == "some-name"
+      assert vacation.slug == "some-colloquial"
     end
 
     test "create_vacation/1 with invalid data returns error changeset" do
