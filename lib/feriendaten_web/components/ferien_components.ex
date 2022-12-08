@@ -66,8 +66,7 @@ defmodule FeriendatenWeb.FerienComponents do
                             ~p"/#{String.downcase(entry.colloquial)}/#{entry.location_slug}/#{entry.starts_on.year}"
                           }
                         >
-                          <%= entry.colloquial %>
-                          <%= entry.starts_on.year %>
+                          <%= entry.colloquial %> <%= entry.starts_on.year %>
                         </.link>
                       <% else %>
                         <%= unless @dont_list_year == entry.starts_on.year do %>
@@ -77,8 +76,7 @@ defmodule FeriendatenWeb.FerienComponents do
                               ~p"/#{String.downcase(entry.colloquial)}/#{entry.location_slug}/#{entry.starts_on.year}"
                             }
                           >
-                            <%= entry.colloquial %>
-                            <%= entry.starts_on.year %>
+                            <%= entry.colloquial %> <%= entry.starts_on.year %>
                           </.link>
                         <% else %>
                           <.link
@@ -339,7 +337,7 @@ defmodule FeriendatenWeb.FerienComponents do
           <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
         </svg>
         <div class="ml-4 text-sm font-medium text-gray-500 dark:text-zinc-400" aria-current="page">
-          <.link class="text-blue-600 hover:underline dark:text-blue-400" navigate={@link} \>
+          <.link class="text-blue-600 hover:underline dark:text-blue-400" navigate={@link} >
             <%= @text %>
           </.link>
         </div>

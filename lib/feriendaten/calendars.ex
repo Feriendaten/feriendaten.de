@@ -511,7 +511,7 @@ defmodule Feriendaten.Calendars do
         location_slug,
         vacation_slug,
         starts_on \\ Date.utc_today(),
-        ends_on \\ Date.add(Date.utc_today(), 3650)
+        ends_on \\ Date.add(Date.utc_today(), 7300)
       ) do
     query =
       from p in Entry,
