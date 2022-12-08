@@ -63,7 +63,7 @@ defmodule FeriendatenWeb.FerienComponents do
                         <.link
                           class="text-blue-600 hover:underline dark:text-blue-400"
                           navigate={
-                            ~p"/#{String.downcase(entry.colloquial)}/#{entry.location_slug}/#{entry.starts_on.year}"
+                            ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
                           }
                         >
                           <%= entry.colloquial %> <%= entry.starts_on.year %>
@@ -73,7 +73,7 @@ defmodule FeriendatenWeb.FerienComponents do
                           <.link
                             class="text-blue-600 hover:underline dark:text-blue-400"
                             navigate={
-                              ~p"/#{String.downcase(entry.colloquial)}/#{entry.location_slug}/#{entry.starts_on.year}"
+                              ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
                             }
                           >
                             <%= entry.colloquial %> <%= entry.starts_on.year %>
@@ -81,9 +81,7 @@ defmodule FeriendatenWeb.FerienComponents do
                         <% else %>
                           <.link
                             class="text-blue-600 hover:underline dark:text-blue-400"
-                            navigate={
-                              ~p"/#{String.downcase(entry.colloquial)}/#{entry.location_slug}"
-                            }
+                            navigate={~p"/#{entry.vacation_slug}/#{entry.location_slug}"}
                           >
                             <%= entry.colloquial %>
                           </.link>
@@ -95,7 +93,7 @@ defmodule FeriendatenWeb.FerienComponents do
                       <.link
                         class="text-blue-600 hover:underline dark:text-blue-400"
                         navigate={
-                          ~p"/#{String.downcase(entry.colloquial)}/#{entry.location_slug}/#{entry.starts_on.year}"
+                          ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
                         }
                       >
                         <%= for termin <- termine do %>
