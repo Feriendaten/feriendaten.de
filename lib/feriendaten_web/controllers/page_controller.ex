@@ -45,6 +45,7 @@ defmodule FeriendatenWeb.PageController do
     |> assign(:entries, nil)
     |> assign(:end_date, nil)
     |> assign(:year, nil)
+    |> assign(:nav_bar_entries, ["Datenschutzerklärung"])
     |> put_root_layout(:ferien)
     |> render(:datenschutzerklaerung)
   end
