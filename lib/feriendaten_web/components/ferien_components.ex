@@ -167,7 +167,12 @@ defmodule FeriendatenWeb.FerienComponents do
   def top_nav_bar(assigns) do
     ~H"""
     <nav class="flex bg-white border-b border-gray-200 dark:bg-gray-800" aria-label="Breadcrumb">
-      <ol role="list" class="flex w-full max-w-screen-xl px-4 mx-auto space-x-4 sm:px-6 lg:px-8" itemscope itemtype="https://schema.org/BreadcrumbList">
+      <ol
+        role="list"
+        class="flex w-full max-w-screen-xl px-4 mx-auto space-x-4 sm:px-6 lg:px-8"
+        itemscope
+        itemtype="https://schema.org/BreadcrumbList"
+      >
         <li class="flex">
           <div class="flex items-center">
             <a
@@ -193,11 +198,11 @@ defmodule FeriendatenWeb.FerienComponents do
           </div>
         </li>
 
-        <%= for entry <- @nav_bar_entries do %>
-          <.top_nav_bar_item item={entry} />
+        <%= for {entry, index} <- Enum.with_index(@nav_bar_entries) do %>
+          <.top_nav_bar_item item={entry} index={index} />
         <% end %>
         <%= if @nav_bar_entries == [] do %>
-          <.top_nav_bar_item item="" />
+          <.top_nav_bar_item item="" index={1} />
         <% end %>
       </ol>
     </nav>
@@ -205,14 +210,14 @@ defmodule FeriendatenWeb.FerienComponents do
   end
 
   attr :item, :any, required: true
+  attr :index, :integer, required: true
 
   def top_nav_bar_item(%{item: [text, link]} = assigns) do
     assigns = assign(assigns, :text, text)
     assigns = assign(assigns, :link, link)
 
     ~H"""
-    <li class="flex" itemprop="itemListElement" itemscope
-          itemtype="https://schema.org/ListItem">
+    <li class="flex" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
       <div class="flex items-center">
         <svg
           class="flex-shrink-0 w-6 h-full text-gray-200"
@@ -227,12 +232,12 @@ defmodule FeriendatenWeb.FerienComponents do
         <div class="ml-4 text-sm font-medium text-gray-500 dark:text-zinc-400" aria-current="page">
           <%= if @link do %>
             <a itemprop="item" class="text-blue-600 hover:underline dark:text-blue-400" href={@link}>
-            <span itemprop="name"><%= @text %></span>
+              <span itemprop="name"><%= @text %></span>
             </a>
-            <meta itemprop="position" content="1" />
           <% else %>
-            <%= @text %>
+            <span itemprop="name"><%= @text %></span>
           <% end %>
+          <meta itemprop="position" content={@index + 1} />
         </div>
       </div>
     </li>

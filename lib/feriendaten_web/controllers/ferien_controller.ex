@@ -22,7 +22,7 @@ defmodule FeriendatenWeb.FerienController do
     |> assign(:requested_date, requested_date)
     |> assign(:nav_bar_entries, [
       ["Ferien", ~p"/ferien/"],
-      [location.name, ~p"/ferien/#{location.slug}"]
+      location.name
     ])
     |> put_root_layout(:ferien)
     |> render(:location, page_title: "Ferien #{location.name}")
@@ -66,7 +66,7 @@ defmodule FeriendatenWeb.FerienController do
     |> assign(:nav_bar_entries, [
       ["Ferien", ~p"/ferien/"],
       [location.name, ~p"/ferien/#{location.slug}"],
-      [year, ~p"/ferien/#{location.slug}/#{year}"]
+      year
     ])
     |> put_root_layout(:ferien)
     |> render(:year, page_title: "Ferien #{location.name} #{year}")
@@ -120,12 +120,11 @@ defmodule FeriendatenWeb.FerienController do
       |> assign(:nav_bar_entries, [
         ["Ferien", ~p"/ferien/"],
         [location.name, ~p"/ferien/#{location.slug}"],
-        ["#{start_year}-#{String.to_integer(start_year) + 1}", ~p"/ferien/#{location.slug}/#{school_year_slug}"]
+        school_year_slug
       ])
       |> put_root_layout(:ferien)
       |> render(:year,
-        page_title:
-          "Ferien #{location.name} Schuljahr #{school_year_slug}"
+        page_title: "Ferien #{location.name} Schuljahr #{school_year_slug}"
       )
     end
   end

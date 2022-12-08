@@ -27,7 +27,7 @@ defmodule FeriendatenWeb.VacationSlugController do
     |> assign(:year, nil)
     |> assign(:nav_bar_entries, [
       [vacation_colloquial, ~p"/#{vacation_slug}/"],
-      [location.name, ~p"/#{vacation_slug}/#{location_slug}"]
+      location.name
     ])
     |> put_root_layout(:ferien)
     |> render(:location, page_title: "#{vacation_colloquial} #{location.name}")
@@ -60,17 +60,16 @@ defmodule FeriendatenWeb.VacationSlugController do
     |> assign(:nav_bar_entries, [
       [vacation_colloquial, ~p"/#{vacation_slug}/"],
       [location.name, ~p"/#{vacation_slug}/#{location_slug}"],
-      [year, ~p"/#{vacation_slug}/#{location_slug}/#{year}"]
+      year
     ])
     |> assign(:h1_title, "#{vacation_colloquial} #{location.name} #{year}")
     |> put_root_layout(:ferien)
     |> render(:location, page_title: "#{vacation_colloquial} #{location.name} #{year}")
   end
 
-  def index(conn, %{"vacation_slug" => vacation_slug} =
-    _params) do
-      # Query vacation by slug
-      vacation = Feriendaten.Calendars.get_vacation_by_slug!(vacation_slug)
+  def index(conn, %{"vacation_slug" => vacation_slug} = _params) do
+    # Query vacation by slug
+    vacation = Feriendaten.Calendars.get_vacation_by_slug!(vacation_slug)
 
     conn
     |> assign(:nav_bar_entries, [
@@ -84,7 +83,7 @@ defmodule FeriendatenWeb.VacationSlugController do
   def index(conn, _params) do
     conn
     |> assign(:nav_bar_entries, [
-      ["Ferien", ~p"/ferien/"]
+      "Ferien"
     ])
     |> assign(:h1_title, "Ferien")
     |> put_root_layout(:ferien)
