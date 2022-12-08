@@ -191,6 +191,9 @@ defmodule FeriendatenWeb.FerienComponents do
         <%= for entry <- @nav_bar_entries do %>
           <.top_nav_bar_item item={entry} />
         <% end %>
+        <%= if @nav_bar_entries == [] do %>
+          <.top_nav_bar_item item="" />
+        <% end %>
       </ol>
     </nav>
     """

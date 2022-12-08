@@ -35,6 +35,7 @@ defmodule FeriendatenWeb.PageController do
     |> assign(:entries, entries)
     |> assign(:federal_states, federal_states)
     |> assign(:vacations, vacations)
+    |> assign(:nav_bar_entries, [])
     |> render(:index, page_title: "Schulferien Deutschland")
   end
 
