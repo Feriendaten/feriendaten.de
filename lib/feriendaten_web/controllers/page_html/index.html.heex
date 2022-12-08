@@ -67,20 +67,27 @@
           <%= for {vacation, index2} <- Enum.with_index(@vacations) do %>
             <td class={"px-3 py-4 text-sm tracking-tight text-center text-gray-900 align-top dark:text-gray-300 md:tracking-normal " <> if index2 > 2, do: "hidden md:table-cell", else: ""}>
               <%= for entry <- @entries |> Enum.filter(fn x -> x.location_slug == federal_state.slug && x.colloquial == vacation end) |> Feriendaten.Calendars.compress_ferientermine() do %>
-                <ul>
-                  <%= for e <- String.split(entry.ferientermin, ", ") do %>
-                    <li class="hidden md:block"><%= e %></li>
-                    <li class="md:hidden">
-                      <%= if Enum.count(String.split(e, " - ")) == 2 do %>
-                        <% [first_day, last_day] = String.split(e, " - ") %>
-                        <%= first_day %><br />-<br />
-                        <%= last_day %>
-                      <% else %>
-                        <%= e %>
-                      <% end %>
-                    </li>
-                  <% end %>
-                </ul>
+                <.link
+                  class="text-blue-600 hover:underline dark:text-blue-400"
+                  navigate={
+                    ~p"/#{String.downcase(entry.colloquial)}/#{entry.location_slug}/#{entry.starts_on.year}"
+                  }
+                >
+                  <ul>
+                    <%= for e <- String.split(entry.ferientermin, ", ") do %>
+                      <li class="hidden md:block"><%= e %></li>
+                      <li class="md:hidden">
+                        <%= if Enum.count(String.split(e, " - ")) == 2 do %>
+                          <% [first_day, last_day] = String.split(e, " - ") %>
+                          <%= first_day %><br />-<br />
+                          <%= last_day %>
+                        <% else %>
+                          <%= e %>
+                        <% end %>
+                      </li>
+                    <% end %>
+                  </ul>
+                </.link>
               <% end %>
             </td>
           <% end %>
