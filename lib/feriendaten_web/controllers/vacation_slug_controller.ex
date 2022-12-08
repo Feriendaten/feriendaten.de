@@ -68,16 +68,13 @@ defmodule FeriendatenWeb.VacationSlugController do
   end
 
   def index(conn, %{"vacation_slug" => vacation_slug} = _params) do
-    # Query vacation by slug
     vacation = Feriendaten.Calendars.get_vacation_by_slug!(vacation_slug)
 
     conn
-    |> assign(:nav_bar_entries, [
-      [vacation.colloquial, ~p"/#{vacation.slug}"]
-    ])
+    |> assign(:nav_bar_entries, [vacation.colloquial])
     |> assign(:h1_title, "#{vacation.colloquial}")
     |> put_root_layout(:ferien)
-    |> render(:index, page_title: vacation.slug)
+    |> render(:index, page_title: vacation.colloquial)
   end
 
   def index(conn, _params) do
