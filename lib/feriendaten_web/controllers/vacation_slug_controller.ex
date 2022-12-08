@@ -25,6 +25,10 @@ defmodule FeriendatenWeb.VacationSlugController do
     |> assign(:entries, entries)
     |> assign(:requested_date, requested_date)
     |> assign(:year, nil)
+    |> assign(:nav_bar_entries, [
+      vacation_colloquial,
+      location.name
+    ])
     |> put_root_layout(:ferien)
     |> render(:location, page_title: "#{vacation_colloquial} #{location.name}")
   end
