@@ -1,12 +1,6 @@
 defmodule FeriendatenWeb.PageController do
   use FeriendatenWeb, :controller
 
-  def home(conn, _params) do
-    # The home page is often custom made,
-    # so skip the default app layout.
-    render(conn, :home, layout: false)
-  end
-
   def index(conn, _params) do
     locations = Feriendaten.Maps.list_locations_by_level_name("Bundesland")
 
@@ -45,7 +39,9 @@ defmodule FeriendatenWeb.PageController do
     |> assign(:entries, nil)
     |> assign(:end_date, nil)
     |> assign(:year, nil)
-    |> assign(:nav_bar_entries, ["Datenschutzerklärung"])
+    |> assign(:nav_bar_entries, [
+      ["Datenschutzerklärung", ~p"/datenschutzerklaerung"]
+    ])
     |> put_root_layout(:ferien)
     |> render(:datenschutzerklaerung)
   end

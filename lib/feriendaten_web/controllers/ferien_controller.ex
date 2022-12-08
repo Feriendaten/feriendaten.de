@@ -21,8 +21,8 @@ defmodule FeriendatenWeb.FerienController do
     |> assign(:year, nil)
     |> assign(:requested_date, requested_date)
     |> assign(:nav_bar_entries, [
-      "Ferien",
-      location.name
+      ["Ferien", ~p"/ferien/"],
+      [location.name, ~p"/ferien/#{location.slug}"]
     ])
     |> put_root_layout(:ferien)
     |> render(:location, page_title: "Ferien #{location.name}")
@@ -64,9 +64,9 @@ defmodule FeriendatenWeb.FerienController do
     |> assign(:year, year)
     |> assign(:is_school_year, false)
     |> assign(:nav_bar_entries, [
-      "Ferien",
+      ["Ferien", ~p"/ferien/"],
       [location.name, ~p"/ferien/#{location.slug}"],
-      year
+      [year, ~p"/ferien/#{location.slug}/#{year}"]
     ])
     |> put_root_layout(:ferien)
     |> render(:year, page_title: "Ferien #{location.name} #{year}")
@@ -109,6 +109,8 @@ defmodule FeriendatenWeb.FerienController do
             []
         end
 
+      school_year_slug = "#{start_year}-#{String.to_integer(start_year) + 1}"
+
       conn
       |> assign(:location, location)
       |> assign(:entries, entries)
@@ -116,14 +118,14 @@ defmodule FeriendatenWeb.FerienController do
       |> assign(:year, start_year)
       |> assign(:is_school_year, true)
       |> assign(:nav_bar_entries, [
-        "Ferien",
+        ["Ferien", ~p"/ferien/"],
         [location.name, ~p"/ferien/#{location.slug}"],
-        "#{start_year}-#{String.to_integer(start_year) + 1}"
+        ["#{start_year}-#{String.to_integer(start_year) + 1}", ~p"/ferien/#{location.slug}/#{school_year_slug}"]
       ])
       |> put_root_layout(:ferien)
       |> render(:year,
         page_title:
-          "Ferien #{location.name} Schuljahr #{start_year}-#{String.to_integer(start_year) + 1}"
+          "Ferien #{location.name} Schuljahr #{school_year_slug}"
       )
     end
   end

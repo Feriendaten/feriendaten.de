@@ -167,7 +167,7 @@ defmodule FeriendatenWeb.FerienComponents do
   def top_nav_bar(assigns) do
     ~H"""
     <nav class="flex bg-white border-b border-gray-200 dark:bg-gray-800" aria-label="Breadcrumb">
-      <ol role="list" class="flex w-full max-w-screen-xl px-4 mx-auto space-x-4 sm:px-6 lg:px-8">
+      <ol role="list" class="flex w-full max-w-screen-xl px-4 mx-auto space-x-4 sm:px-6 lg:px-8" itemscope itemtype="https://schema.org/BreadcrumbList">
         <li class="flex">
           <div class="flex items-center">
             <a
@@ -211,7 +211,8 @@ defmodule FeriendatenWeb.FerienComponents do
     assigns = assign(assigns, :link, link)
 
     ~H"""
-    <li class="flex">
+    <li class="flex" itemprop="itemListElement" itemscope
+          itemtype="https://schema.org/ListItem">
       <div class="flex items-center">
         <svg
           class="flex-shrink-0 w-6 h-full text-gray-200"
@@ -225,9 +226,10 @@ defmodule FeriendatenWeb.FerienComponents do
         </svg>
         <div class="ml-4 text-sm font-medium text-gray-500 dark:text-zinc-400" aria-current="page">
           <%= if @link do %>
-            <.link class="text-blue-600 hover:underline dark:text-blue-400" navigate={@link}>
-              <%= @text %>
-            </.link>
+            <a itemprop="item" class="text-blue-600 hover:underline dark:text-blue-400" href={@link}>
+            <span itemprop="name"><%= @text %></span>
+            </a>
+            <meta itemprop="position" content="1" />
           <% else %>
             <%= @text %>
           <% end %>

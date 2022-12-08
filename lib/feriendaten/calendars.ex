@@ -41,6 +41,24 @@ defmodule Feriendaten.Calendars do
   def get_vacation!(id), do: Repo.get!(Vacation, id)
 
   @doc """
+  Gets a single vacation by slug.
+
+  Raises `Ecto.NoResultsError` if the Vacation does not exist.
+
+  ## Examples
+
+      iex> get_vacation!("osterferien")
+      %Vacation{}
+
+      iex> get_vacation!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_vacation_by_slug!(slug) do
+    Repo.one!(from(v in Vacation, where: v.slug == ^slug))
+  end
+
+  @doc """
   Creates a vacation.
 
   ## Examples
