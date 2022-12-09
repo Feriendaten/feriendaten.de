@@ -297,6 +297,7 @@ defmodule Feriendaten.Calendars do
         where: type.school_vacation,
         where: p.location_id in subquery(cte_location),
         order_by: p.starts_on,
+        order_by: l.name,
         select: %{
           id: p.id,
           starts_on: p.starts_on,
@@ -538,6 +539,48 @@ defmodule Feriendaten.Calendars do
         join: l in "locations",
         on: p.location_id == l.id,
         where: l.slug == ^location_slug,
+        where: type.slug == ^vacation_slug,
+        where: p.ends_on >= ^starts_on,
+        where: p.starts_on <= ^ends_on,
+        order_by: p.starts_on,
+        select: %{
+          starts_on: p.starts_on,
+          ends_on: p.ends_on,
+          name: type.name,
+          colloquial: type.colloquial,
+          days: p.ends_on - p.starts_on + 1,
+          vacation_slug: type.slug,
+          location_name: l.name,
+          location_slug: l.slug
+        }
+
+    Repo.all(query)
+    |> Enum.map(fn period ->
+      ferientermin =
+        if period.starts_on == period.ends_on do
+          Calendar.strftime(period.ends_on, "%d.%m.")
+        else
+          "#{Calendar.strftime(period.starts_on, "%d.%m.")} - #{Calendar.strftime(period.ends_on, "%d.%m.")}"
+        end
+
+      Map.put(period, :ferientermin, ferientermin)
+    end)
+  end
+
+  def vacations_of_all_federal_states(
+        vacation_slug,
+        starts_on \\ Date.utc_today(),
+        ends_on \\ Date.add(Date.utc_today(), 7300)
+      ) do
+    level = Feriendaten.Maps.get_level_by_name!("Bundesland")
+
+    query =
+      from p in Entry,
+        join: type in "vacations",
+        on: p.vacation_id == type.id,
+        join: l in "locations",
+        on: p.location_id == l.id,
+        where: l.level_id == ^level.id,
         where: type.slug == ^vacation_slug,
         where: p.ends_on >= ^starts_on,
         where: p.starts_on <= ^ends_on,

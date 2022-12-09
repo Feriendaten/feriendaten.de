@@ -21,6 +21,16 @@ defmodule FeriendatenWeb.FerienComponents do
   end
 
   def vacations_table(assigns) do
+    number_of_federal_states =
+      assigns.entries |> Enum.map(fn x -> x.location_name end) |> Enum.uniq() |> length
+
+    assigns =
+      if number_of_federal_states > 1 do
+        assign(assigns, :multi_locations, true)
+      else
+        assign(assigns, :multi_locations, false)
+      end
+
     ~H"""
     <div class="flex flex-col mt-8">
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -35,6 +45,7 @@ defmodule FeriendatenWeb.FerienComponents do
                   >
                     Ferien
                   </th>
+
                   <th
                     scope="col"
                     class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100"
@@ -59,17 +70,17 @@ defmodule FeriendatenWeb.FerienComponents do
                     end
                   }>
                     <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
-                      <%= if @is_school_year do %>
+                      <%= if @multi_locations do %>
                         <.link
                           class="text-blue-600 hover:underline dark:text-blue-400"
                           navigate={
                             ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
                           }
                         >
-                          <%= entry.colloquial %> <%= entry.starts_on.year %>
+                          <%= entry.colloquial %> <%= entry.location_name %> <%= entry.starts_on.year %>
                         </.link>
                       <% else %>
-                        <%= unless @dont_list_year == entry.starts_on.year do %>
+                        <%= if @is_school_year do %>
                           <.link
                             class="text-blue-600 hover:underline dark:text-blue-400"
                             navigate={
@@ -79,15 +90,27 @@ defmodule FeriendatenWeb.FerienComponents do
                             <%= entry.colloquial %> <%= entry.starts_on.year %>
                           </.link>
                         <% else %>
-                          <.link
-                            class="text-blue-600 hover:underline dark:text-blue-400"
-                            navigate={~p"/#{entry.vacation_slug}/#{entry.location_slug}"}
-                          >
-                            <%= entry.colloquial %>
-                          </.link>
+                          <%= unless @dont_list_year == entry.starts_on.year do %>
+                            <.link
+                              class="text-blue-600 hover:underline dark:text-blue-400"
+                              navigate={
+                                ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
+                              }
+                            >
+                              <%= entry.colloquial %> <%= entry.starts_on.year %>
+                            </.link>
+                          <% else %>
+                            <.link
+                              class="text-blue-600 hover:underline dark:text-blue-400"
+                              navigate={~p"/#{entry.vacation_slug}/#{entry.location_slug}"}
+                            >
+                              <%= entry.colloquial %>
+                            </.link>
+                          <% end %>
                         <% end %>
                       <% end %>
                     </td>
+
                     <% termine = String.split(entry.ferientermin, ",") %>
                     <td class="px-3 py-4 text-sm text-gray-900 align-top dark:text-gray-300 tabular-nums">
                       <.link

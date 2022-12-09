@@ -69,21 +69,19 @@ defmodule FeriendatenWeb.VacationSlugController do
 
   def index(conn, %{"vacation_slug" => vacation_slug} = _params) do
     vacation = Feriendaten.Calendars.get_vacation_by_slug!(vacation_slug)
+    starts_on = conn.assigns.requested_date
+
+    entries =
+      Calendars.vacations_of_all_federal_states(
+        vacation_slug,
+        starts_on
+      )
 
     conn
+    |> assign(:entries, entries)
     |> assign(:nav_bar_entries, [vacation.colloquial])
     |> assign(:h1_title, "#{vacation.colloquial}")
     |> put_root_layout(:ferien)
     |> render(:index, page_title: vacation.colloquial)
-  end
-
-  def index(conn, _params) do
-    conn
-    |> assign(:nav_bar_entries, [
-      "Ferien"
-    ])
-    |> assign(:h1_title, "Ferien")
-    |> put_root_layout(:ferien)
-    |> render(:index, page_title: "Ferien")
   end
 end
