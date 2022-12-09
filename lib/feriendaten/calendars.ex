@@ -567,6 +567,37 @@ defmodule Feriendaten.Calendars do
     end)
   end
 
+  @doc """
+  Returns a list of all vacation periods for the given vacation slug.
+
+  ## Examples
+
+  iex> vacations_of_all_federal_states("weihnachtsferien")
+  [
+  %{
+    colloquial: "Weihnachtsferien",
+    days: 16,
+    ends_on: ~D[2023-01-05],
+    ferientermin: "21.12. - 05.01.",
+    for_everybody: false,
+    for_students: true,
+    id: 990,
+    level_name: "Bundesland",
+    listed: true,
+    location_name: "Sachsen-Anhalt",
+    location_slug: "sachsen-anhalt",
+    memo: nil,
+    name: "Weihnachten",
+    priority: 5,
+    public_holiday: false,
+    school_vacation: true,
+    starts_on: ~D[2022-12-21],
+    vacation_slug: "weihnachten",
+    wikipedia_url: "https://de.m.wikipedia.org/wiki/Schulferien#Weihnachtsferien"
+  },
+  ...
+  ]
+  """
   def vacations_of_all_federal_states(
         vacation_slug,
         starts_on \\ Date.utc_today(),
@@ -607,5 +638,23 @@ defmodule Feriendaten.Calendars do
 
       Map.put(period, :ferientermin, ferientermin)
     end)
+  end
+
+  def join_all_colloquials_and_ferientermine(entries) do
+    entries
+    |> Enum.take(5)
+    |> Enum.map(fn x -> "#{x.colloquial} #{x.starts_on.year}: #{x.ferientermin}" end)
+    |> Enum.join(", ")
+    |> String.replace(" - ", "-")
+  end
+
+  def join_all_colloquials_and_federal_states_and_ferientermine(entries) do
+    entries
+    |> Enum.take(5)
+    |> Enum.map(fn x ->
+      "#{x.colloquial} #{x.location_name} #{x.starts_on.year}: #{x.ferientermin}"
+    end)
+    |> Enum.join(", ")
+    |> String.replace(" - ", "-")
   end
 end

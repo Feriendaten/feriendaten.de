@@ -30,6 +30,10 @@ defmodule FeriendatenWeb.PageController do
     |> assign(:federal_states, federal_states)
     |> assign(:vacations, vacations)
     |> assign(:nav_bar_entries, ["Homepage"])
+    |> assign(
+      :description,
+      "Übersicht der Schulferien in Deutschland. Schnell und einfach planen und immer auf dem Laufenden bleiben."
+    )
     |> render(:index, page_title: "Schulferien Deutschland")
   end
 
@@ -42,6 +46,10 @@ defmodule FeriendatenWeb.PageController do
     |> assign(:nav_bar_entries, [
       ["Datenschutzerklärung", ~p"/datenschutzerklaerung"]
     ])
+    |> assign(
+      :description,
+      "Datenschutzerklärung der feriendaten.de Webseite."
+    )
     |> put_root_layout(:ferien)
     |> render(:datenschutzerklaerung)
   end

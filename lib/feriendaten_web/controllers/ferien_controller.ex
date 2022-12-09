@@ -30,7 +30,11 @@ defmodule FeriendatenWeb.FerienController do
     |> assign(:federal_states, federal_states)
     |> assign(:vacations, vacations)
     |> assign(:nav_bar_entries, ["Ferien"])
-    |> render(:index, page_title: "Schulferien Deutschland")
+    |> assign(
+      :description,
+      "Jahres- und Schuljahresübersicht der Schulferien in Deutschland für alle Bundesländer."
+    )
+    |> render(:index, page_title: "Schulferien Jahres- und Schuljahresübersicht")
   end
 
   def location(conn, %{"slug" => slug} = _params) do
@@ -46,6 +50,10 @@ defmodule FeriendatenWeb.FerienController do
       )
       |> Feriendaten.Calendars.compress_ferientermine()
 
+    description =
+      "Übersicht alle Schulferien in #{location.name}. " <>
+        Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
+
     conn
     |> assign(:location, location)
     |> assign(:entries, entries)
@@ -56,6 +64,7 @@ defmodule FeriendatenWeb.FerienController do
       ["Ferien", ~p"/ferien/"],
       location.name
     ])
+    |> assign(:description, description)
     |> put_root_layout(:ferien)
     |> render(:location, page_title: "Ferien #{location.name}")
   end
@@ -89,6 +98,10 @@ defmodule FeriendatenWeb.FerienController do
       )
       |> Feriendaten.Calendars.compress_ferientermine()
 
+    description =
+      "Termine und weiter Informationen der Schulferien #{location.name} #{year}. " <>
+        Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
+
     conn
     |> assign(:location, location)
     |> assign(:entries, entries)
@@ -100,6 +113,7 @@ defmodule FeriendatenWeb.FerienController do
       [location.name, ~p"/ferien/#{location.slug}"],
       year
     ])
+    |> assign(:description, description)
     |> put_root_layout(:ferien)
     |> render(:year, page_title: "Ferien #{location.name} #{year}")
   end
@@ -143,6 +157,10 @@ defmodule FeriendatenWeb.FerienController do
 
       school_year_slug = "#{start_year}-#{String.to_integer(start_year) + 1}"
 
+      description =
+        "Termine und weiter Informationen der Schulferien #{location.name} im Schuljahr #{school_year_slug}. " <>
+          Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
+
       conn
       |> assign(:location, location)
       |> assign(:entries, entries)
@@ -154,6 +172,7 @@ defmodule FeriendatenWeb.FerienController do
         [location.name, ~p"/ferien/#{location.slug}"],
         school_year_slug
       ])
+      |> assign(:description, description)
       |> put_root_layout(:ferien)
       |> render(:year,
         page_title: "Ferien #{location.name} Schuljahr #{school_year_slug}"

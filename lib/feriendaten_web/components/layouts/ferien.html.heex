@@ -7,6 +7,10 @@
     <.live_title>
       <%= assigns[:page_title] || "Startseite" %>
     </.live_title>
+    <%= if assigns[:description] do %>
+      <meta name="description" content={@description} />
+    <% end %>
+
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <%= if @noindex do %>
       <meta name="robots" content="noindex" />

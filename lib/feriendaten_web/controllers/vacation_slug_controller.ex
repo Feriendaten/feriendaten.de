@@ -19,6 +19,10 @@ defmodule FeriendatenWeb.VacationSlugController do
 
     vacation_colloquial = hd(entries) |> Map.get(:colloquial)
 
+    description =
+      "Alle Termine und weitere Informationen zu den #{vacation_colloquial} #{location.name}. " <>
+        Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
+
     conn
     |> assign(:vacation_colloquial, vacation_colloquial)
     |> assign(:location, location)
@@ -29,6 +33,7 @@ defmodule FeriendatenWeb.VacationSlugController do
       [vacation_colloquial, ~p"/#{vacation_slug}/"],
       location.name
     ])
+    |> assign(:description, description)
     |> put_root_layout(:ferien)
     |> render(:location, page_title: "#{vacation_colloquial} #{location.name}")
   end
@@ -52,6 +57,10 @@ defmodule FeriendatenWeb.VacationSlugController do
 
     vacation_colloquial = hd(entries) |> Map.get(:colloquial)
 
+    description =
+      "Termine und weitere Informationen zu den #{vacation_colloquial} #{location.name} #{year}. " <>
+        Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
+
     conn
     |> assign(:vacation_colloquial, vacation_colloquial)
     |> assign(:location, location)
@@ -63,6 +72,7 @@ defmodule FeriendatenWeb.VacationSlugController do
       year
     ])
     |> assign(:h1_title, "#{vacation_colloquial} #{location.name} #{year}")
+    |> assign(:description, description)
     |> put_root_layout(:ferien)
     |> render(:location, page_title: "#{vacation_colloquial} #{location.name} #{year}")
   end
@@ -77,10 +87,15 @@ defmodule FeriendatenWeb.VacationSlugController do
         starts_on
       )
 
+    description =
+      "Termine und weitere Informationen zu den #{vacation.colloquial} in Deutschland. " <>
+        Feriendaten.Calendars.join_all_colloquials_and_federal_states_and_ferientermine(entries)
+
     conn
     |> assign(:entries, entries)
     |> assign(:nav_bar_entries, [vacation.colloquial])
     |> assign(:h1_title, "#{vacation.colloquial}")
+    |> assign(:description, description)
     |> put_root_layout(:ferien)
     |> render(:index, page_title: vacation.colloquial)
   end
