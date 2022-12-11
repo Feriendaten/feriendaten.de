@@ -21,6 +21,10 @@
 
         <.vacations_table entries={@entries} />
 
+        <%= if assigns[:year] && length(@entries) > 0 do %>
+          <.vacation_location_year_faq entries={@entries} location={@location} year={@year} requested_date={@requested_date} />
+        <% end %>
+
       </div>
     </div>
   </div>

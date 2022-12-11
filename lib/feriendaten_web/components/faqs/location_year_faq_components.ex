@@ -155,7 +155,7 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
     end
   end
 
-  defp wochentag(date) do
+  def wochentag(date) do
     case Date.day_of_week(date) do
       1 -> "Montag"
       2 -> "Dienstag"
