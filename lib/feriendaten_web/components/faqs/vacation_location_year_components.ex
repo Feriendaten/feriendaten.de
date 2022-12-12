@@ -61,115 +61,78 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
     end
   end
 
-  def warum_drei_wochen_osterferien(
-        faq_entries,
-        assigns
-      ) do
-    vacation_colloquial = hd(assigns.entries) |> Map.get(:colloquial)
+  defp enrich_with_faq_entries(assigns) do
+    assigns =
+      assigns
+      |> Map.put_new(:faq_entries, [])
+      |> add_warum_drei_wochen_osterferien()
+      |> add_warum_nur_eine_woche_herbstferien()
+      |> FederalStateFaq.add_wann_sind_in_location_year_vaction?()
+      |> add_wann_beginnen_vacation_in_location_year()
 
-    first_hit =
-      Enum.find(assigns.entries, fn entry -> entry.colloquial == vacation_colloquial end)
+    addon = rem(length(assigns.faq_entries), 2)
+    half = length(assigns.faq_entries) |> div(2)
 
-    if first_hit.days > 15 do
-      [
-        %{
-          question: "Warum hat #{assigns.location.name} 3 Wochen Osterferien?",
-          answer:
-            "#{assigns.location.name} hat im Jahr #{assigns.year} nur eine Woche Herbstferien, weil die Sommerferien spät zu Ende gehen. Als Ausgleich dafür wurden die Osterferien verlängert."
-        }
-        | faq_entries
-      ]
-    else
-      faq_entries
-    end
+    {first_half, second_half} = Enum.split(assigns.faq_entries, half + addon)
+
+    assigns
+    |> Map.put(:first_half, first_half)
+    |> Map.put(:second_half, second_half)
   end
 
-  def warum_drei_wochen_osterferien(faq_entries, _, _) do
-    faq_entries
+  def add_warum_drei_wochen_osterferien(assigns) do
+    days =
+      Enum.filter(assigns.entries, fn entry -> entry.colloquial == "Osterferien" end)
+      |> Enum.map(fn entry -> entry.days end)
+      |> Enum.sum()
+
+    new_entry =
+      if days > 15 do
+        [
+          %{
+            question: "Warum hat #{assigns.location.name} 3 Wochen Osterferien?",
+            answer:
+              "#{assigns.location.name} hat im Jahr #{assigns.year} nur eine Woche Herbstferien, weil die Sommerferien spät zu Ende gehen. Als Ausgleich dafür wurden die Osterferien verlängert."
+          }
+        ]
+      else
+        []
+      end
+
+    Map.put(assigns, :faq_entries, assigns.faq_entries ++ new_entry)
   end
 
-  def warum_nur_eine_woche_herbstferien(
-        faq_entries,
-        _vacation_colloquial = "Herbstferien",
-        assigns
-      ) do
+  def add_warum_nur_eine_woche_herbstferien(assigns) do
     days =
       Enum.filter(assigns.entries, fn entry -> entry.colloquial == "Herbstferien" end)
       |> Enum.map(fn entry -> entry.days end)
       |> Enum.sum()
 
-    if days < 9 do
-      [
-        %{
-          question: "Warum nur 1 Woche Herbstferien #{assigns.location.name}?",
-          answer:
-            "#{assigns.location.name} hat im Jahr #{assigns.year} nur eine Woche Herbstferien, weil die Sommerferien spät zu Ende gehen. Als Ausgleich dafür wurden die Osterferien verlängert."
-        },
-        %{
-          question: "Warum Herbstferien kürzer?",
-          answer:
-            "#{assigns.location.name} hat im Jahr #{assigns.year} nur eine Woche Herbstferien, weil die Sommerferien spät zu Ende gehen. Als Ausgleich für dafür wurden die Osteferien verlängert."
-        }
-        | faq_entries
-      ]
-    else
-      faq_entries
-    end
+    new_entries =
+      if days < 9 do
+        [
+          %{
+            question: "Warum nur 1 Woche Herbstferien #{assigns.location.name}?",
+            answer:
+              "#{assigns.location.name} hat im Jahr #{assigns.year} nur eine Woche Herbstferien, weil die Sommerferien spät zu Ende gehen. Als Ausgleich dafür wurden die Osterferien verlängert."
+          },
+          %{
+            question: "Warum Herbstferien kürzer?",
+            answer:
+              "#{assigns.location.name} hat im Jahr #{assigns.year} nur eine Woche Herbstferien, weil die Sommerferien spät zu Ende gehen. Als Ausgleich für dafür wurden die Osteferien verlängert."
+          }
+        ]
+      else
+        []
+      end
+
+    Map.put(assigns, :faq_entries, assigns.faq_entries ++ new_entries)
   end
 
-  def warum_nur_eine_woche_herbstferien(faq_entries, _, _) do
-    faq_entries
-  end
-
-  defp first_half(faq_entries) do
-    addon = rem(length(faq_entries), 2)
-
-    half = length(faq_entries) |> div(2)
-    {first_half, _second_half} = Enum.split(faq_entries, half + addon)
-    first_half
-  end
-
-  defp second_half(faq_entries) do
-    addon = rem(length(faq_entries), 2)
-
-    half = length(faq_entries) |> div(2)
-    {_first_half, second_half} = Enum.split(faq_entries, half + addon)
-    second_half
-  end
-
-  defp enrich_with_faq_entries(assigns) do
-    assigns = Map.put(assigns, :faq_entries, list_of_faq_entries(assigns))
-    assigns = Map.put(assigns, :first_half, first_half(assigns.faq_entries))
-    assigns = Map.put(assigns, :second_half, second_half(assigns.faq_entries))
-    assigns
-  end
-
-  defp list_of_faq_entries(assigns) do
+  def add_wann_beginnen_vacation_in_location_year(assigns) do
     vacation_colloquial = hd(assigns.entries) |> Map.get(:colloquial)
 
-    faq_entries = []
-
-    faq_entries = [
-      FederalStateFaq.wann_sind_in_location_year_vaction?(
-        assigns.location,
-        assigns.year,
-        assigns.entries
-      )
-      | faq_entries
-    ]
-
-    faq_entries =
-      warum_drei_wochen_osterferien(
-        faq_entries,
-        assigns
-      )
-
-    faq_entries =
-      warum_nur_eine_woche_herbstferien(
-        faq_entries,
-        vacation_colloquial,
-        assigns
-      )
+    faq_entries = assigns.faq_entries
 
     preposition =
       case assigns.location.name do
@@ -209,6 +172,6 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
       | faq_entries
     ]
 
-    faq_entries
+    Map.put(assigns, :faq_entries, faq_entries)
   end
 end

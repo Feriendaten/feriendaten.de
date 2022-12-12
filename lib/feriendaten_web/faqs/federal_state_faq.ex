@@ -18,6 +18,12 @@ defmodule FeriendatenWeb.FederalStateFaq do
     %{question: question, answer: answer}
   end
 
+  def add_wann_sind_in_location_year_vaction?(%{entries: _entries} = assigns) do
+    entry = wann_sind_in_location_year_vaction?(assigns.location, assigns.year, assigns.entries)
+
+    Map.put(assigns, :faq_entries, assigns.faq_entries ++ [entry])
+  end
+
   defp join_ferientermine(entries) do
     entries
     |> Enum.map(fn x ->
