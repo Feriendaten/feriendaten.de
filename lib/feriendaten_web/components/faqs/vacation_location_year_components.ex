@@ -119,7 +119,7 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
           %{
             question: "Warum Herbstferien kürzer?",
             answer:
-              "#{assigns.location.name} hat im Jahr #{assigns.year} nur eine Woche Herbstferien, weil die Sommerferien spät zu Ende gehen. Als Ausgleich für dafür wurden die Osteferien verlängert."
+              "#{assigns.location.name} hat im Jahr #{assigns.year} nur eine Woche Herbstferien, weil die Sommerferien spät zu Ende gehen. Als Ausgleich für dafür wurden die Osterferien verlängert."
           }
         ]
       else
