@@ -21,7 +21,7 @@
 
   <div class={
     if File.exists?(
-         "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/osterferien/#{file_name}"
+         "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{String.downcase(@vacation_colloquial)}/#{file_name}"
        ),
        do: "col-span-3 md:col-span-2",
        else: "col-span-3"
@@ -29,10 +29,10 @@
     <.vacations_table_table_only entries={@entries} />
   </div>
 
-  <%= if File.exists?("#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/osterferien/#{file_name}") do %>
+  <%= if File.exists?("#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{String.downcase(@vacation_colloquial)}/#{file_name}") do %>
     <div class="col-span-3 md:col-span-1">
       <img
-        src={"/images/notepad/osterferien/" <> file_name}
+        src={"/images/notepad/#{String.downcase(@vacation_colloquial)}/" <> file_name}
         alt={"#{@vacation_colloquial} #{@location.name} #{@year}: #{Feriendaten.Calendars.all_ferientermine_to_string(@entries)}"}
         class="h-auto max-w-full rounded-lg"
       />
