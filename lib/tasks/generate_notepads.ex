@@ -71,57 +71,57 @@ defmodule Mix.Tasks.GenerateNotepads do
             write_latex_file(dir, vacation, federal_state.name, year, compressed_entry)
 
             file_name = Path.join([dir, "#{vacation}-#{federal_state.name}-#{year}"])
-            _output_pdflatex = System.cmd("pdflatex", ["#{file_name}.tex"], cd: dir)
+            # _output_pdflatex = System.cmd("pdflatex", ["#{file_name}.tex"], cd: dir)
 
-            _output_convert =
-              System.cmd(
-                "convert",
-                [
-                  "-interlace",
-                  "plane",
-                  "-sampling-factor",
-                  "2x2",
-                  "-resize",
-                  "1200x",
-                  "-strip",
-                  "-crop",
-                  "650x650+400+70",
-                  "-quality",
-                  "85%",
-                  "#{file_name}.pdf",
-                  "#{file_name}.jpeg"
-                ],
-                cd: dir
-              )
+            # _output_convert =
+            #   System.cmd(
+            #     "convert",
+            #     [
+            #       "-interlace",
+            #       "plane",
+            #       "-sampling-factor",
+            #       "2x2",
+            #       "-resize",
+            #       "1200x",
+            #       "-strip",
+            #       "-crop",
+            #       "650x650+400+70",
+            #       "-quality",
+            #       "85%",
+            #       "#{file_name}.pdf",
+            #       "#{file_name}.jpeg"
+            #     ],
+            #     cd: dir
+            #   )
 
-            target_dir =
-              "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{String.downcase(vacation)}"
+            # target_dir =
+            #   "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{String.downcase(vacation)}"
 
-            target_file_name =
-              "#{target_dir}/#{"#{String.downcase(vacation)}-#{String.downcase(federal_state.name)}-#{year}"}.jpeg"
+            # target_file_name =
+            #   "#{target_dir}/#{"#{String.downcase(vacation)}-#{String.downcase(federal_state.name)}-#{year}"}.jpeg"
 
-            case File.mkdir(target_dir) do
-              :ok ->
-                File.cp(
-                  "#{file_name}.jpeg",
-                  target_file_name
-                )
+            # case File.mkdir(target_dir) do
+            #   :ok ->
+            #     File.cp(
+            #       "#{file_name}.jpeg",
+            #       target_file_name
+            #     )
 
-              {:error, :eexist} ->
-                File.cp(
-                  "#{file_name}.jpeg",
-                  target_file_name
-                )
+            #   {:error, :eexist} ->
+            #     File.cp(
+            #       "#{file_name}.jpeg",
+            #       target_file_name
+            #     )
 
-              _ ->
-                IO.puts("Could not create target directory #{target_dir}")
-            end
+            #   _ ->
+            #     IO.puts("Could not create target directory #{target_dir}")
+            # end
 
-            File.rm_rf("#{file_name}.jpeg")
-            File.rm_rf("#{file_name}.pdf")
-            File.rm_rf("#{file_name}.log")
-            File.rm_rf("#{file_name}.tex")
-            File.rm_rf("#{file_name}.aux")
+            # File.rm_rf("#{file_name}.jpeg")
+            # File.rm_rf("#{file_name}.pdf")
+            # File.rm_rf("#{file_name}.log")
+            # File.rm_rf("#{file_name}.tex")
+            # File.rm_rf("#{file_name}.aux")
           end
         end
       end
