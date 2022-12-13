@@ -1,8 +1,5 @@
 defmodule Mix.Tasks.GenerateNotepads do
   use Mix.Task
-  # import Ecto.Query
-
-  # alias Feriendaten.Repo
 
   @requirements ["app.start"]
 
@@ -18,8 +15,7 @@ defmodule Mix.Tasks.GenerateNotepads do
 
   def run(_args) do
     start_date = Date.utc_today()
-    end_date = Date.add(start_date, 14)
-    # end_date = Date.add(start_date, 365 * 2)
+    end_date = Date.add(start_date, 365 * 2)
 
     entries =
       Feriendaten.Calendars.school_vacation_periods_for_germany(
@@ -57,7 +53,8 @@ defmodule Mix.Tasks.GenerateNotepads do
     write_notepadnotes_file(dir)
     copy_notepad_background_image(dir)
 
-    for year <- start_date.year..end_date.year do
+    # for year <- start_date.year..end_date.year do
+    for year <- [2023, 2024] do
       for federal_state <- federal_states do
         for vacation <- vacations do
           IO.puts("Generating image for #{vacation} #{federal_state.name} #{year}")
@@ -70,14 +67,52 @@ defmodule Mix.Tasks.GenerateNotepads do
 
           write_latex_file(dir, vacation, federal_state.name, year, all_ferientermine)
 
-          file_name = Path.join([dir, "#{vacation}-#{federal_state.name}-#{year}.tex"])
-          _output = System.cmd("pdflatex", [file_name], cd: dir)
+          file_name = Path.join([dir, "#{vacation}-#{federal_state.name}-#{year}"])
+          _output_pdflatex = System.cmd("pdflatex", ["#{file_name}.tex"], cd: dir)
+
+          _output_convert =
+            System.cmd(
+              "convert",
+              [
+                "-interlace",
+                "plane",
+                "-sampling-factor",
+                "2x2",
+                "-resize",
+                "1200x",
+                "-strip",
+                "-crop",
+                "650x650+400+70",
+                "-quality",
+                "85%",
+                "#{file_name}.pdf",
+                "#{file_name}.jpeg"
+              ],
+              cd: dir
+            )
+
+          target_dir =
+            "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{String.downcase(vacation)}"
+
+          case File.mkdir(target_dir) do
+            :ok ->
+              File.cp(
+                "#{file_name}.jpeg",
+                "#{target_dir}/#{"#{String.downcase(vacation)}-#{String.downcase(federal_state.name)}-#{year}"}.jpeg"
+              )
+
+            {:error, :eexist} ->
+              File.cp(
+                "#{file_name}.jpeg",
+                "#{target_dir}/#{"#{String.downcase(vacation)}-#{String.downcase(federal_state.name)}-#{year}"}.jpeg"
+              )
+
+            _ ->
+              IO.puts("Could not create target directory #{target_dir}")
+          end
         end
       end
     end
-
-    # compile_latex_file(dir, vacation, federal_state, year)
-    # convert_pdf_to_png(dir, vacation, federal_state, year)
   end
 
   def write_notepadnotes_file(dir) do
