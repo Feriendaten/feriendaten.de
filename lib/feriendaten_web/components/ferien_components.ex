@@ -21,6 +21,24 @@ defmodule FeriendatenWeb.FerienComponents do
   end
 
   def vacations_table(assigns) do
+    ~H"""
+    <div class="flex flex-col mt-8">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full align-middle">
+          <div class="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5">
+            <.vacations_table_table_only entries={@entries} />
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  attr :entries, :list, required: true
+  attr :dont_list_year, :integer, default: nil
+  attr :is_school_year, :boolean, default: false
+
+  def vacations_table_table_only(assigns) do
     number_of_federal_states =
       assigns.entries |> Enum.map(fn x -> x.location_name end) |> Enum.uniq() |> length
 
@@ -32,115 +50,105 @@ defmodule FeriendatenWeb.FerienComponents do
       end
 
     ~H"""
-    <div class="flex flex-col mt-8">
-      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full align-middle">
-          <div class="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5">
-            <table class="min-w-full divide-y divide-gray-300 table-auto dark:divide-gray-100">
-              <thead class="bg-gray-100 dark:bg-gray-800">
-                <tr>
-                  <th
-                    scope="col"
-                    class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100"
-                  >
-                    Ferien
-                  </th>
+    <table class="min-w-full divide-y divide-gray-300 table-auto dark:divide-gray-100">
+      <thead class="bg-gray-100 dark:bg-gray-800">
+        <tr>
+          <th
+            scope="col"
+            class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100"
+          >
+            Ferien
+          </th>
 
-                  <th
-                    scope="col"
-                    class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100"
+          <th
+            scope="col"
+            class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100"
+          >
+            Zeitraum
+          </th>
+          <th
+            scope="col"
+            class="hidden px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100 xs:table-cell"
+          >
+            Dauer
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-600">
+        <%= for {entry, index} <- Enum.with_index(@entries) do %>
+          <tr class={
+            if rem(index, 2) == 0 do
+              "bg-white dark:bg-black"
+            else
+              "bg-gray-50 dark:bg-black"
+            end
+          }>
+            <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
+              <%= if @multi_locations do %>
+                <.link
+                  class="text-blue-600 hover:underline dark:text-blue-400"
+                  navigate={
+                    ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
+                  }
+                >
+                  <%= entry.colloquial %> <%= entry.location_name %> <%= entry.starts_on.year %>
+                </.link>
+              <% else %>
+                <%= if @is_school_year do %>
+                  <.link
+                    class="text-blue-600 hover:underline dark:text-blue-400"
+                    navigate={
+                      ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
+                    }
                   >
-                    Zeitraum
-                  </th>
-                  <th
-                    scope="col"
-                    class="hidden px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100 xs:table-cell"
-                  >
-                    Dauer
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-600">
-                <%= for {entry, index} <- Enum.with_index(@entries) do %>
-                  <tr class={
-                    if rem(index, 2) == 0 do
-                      "bg-white dark:bg-black"
-                    else
-                      "bg-gray-50 dark:bg-black"
-                    end
-                  }>
-                    <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
-                      <%= if @multi_locations do %>
-                        <.link
-                          class="text-blue-600 hover:underline dark:text-blue-400"
-                          navigate={
-                            ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
-                          }
-                        >
-                          <%= entry.colloquial %> <%= entry.location_name %> <%= entry.starts_on.year %>
-                        </.link>
-                      <% else %>
-                        <%= if @is_school_year do %>
-                          <.link
-                            class="text-blue-600 hover:underline dark:text-blue-400"
-                            navigate={
-                              ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
-                            }
-                          >
-                            <%= entry.colloquial %> <%= entry.starts_on.year %>
-                          </.link>
-                        <% else %>
-                          <%= unless @dont_list_year == entry.starts_on.year do %>
-                            <.link
-                              class="text-blue-600 hover:underline dark:text-blue-400"
-                              navigate={
-                                ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
-                              }
-                            >
-                              <%= entry.colloquial %> <%= entry.starts_on.year %>
-                            </.link>
-                          <% else %>
-                            <.link
-                              class="text-blue-600 hover:underline dark:text-blue-400"
-                              navigate={~p"/#{entry.vacation_slug}/#{entry.location_slug}"}
-                            >
-                              <%= entry.colloquial %>
-                            </.link>
-                          <% end %>
-                        <% end %>
-                      <% end %>
-                    </td>
-
-                    <% termine = String.split(entry.ferientermin, ",") %>
-                    <td class="px-3 py-4 text-sm text-gray-900 align-top dark:text-gray-300 tabular-nums">
-                      <.link
-                        class="text-blue-600 hover:underline dark:text-blue-400"
-                        navigate={
-                          ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
-                        }
-                      >
-                        <%= for termin <- termine do %>
-                          <div class="whitespace-nowrap">
-                            <%= termin %><%= if hd(Enum.take(termine, -2)) != termin &&
-                                                  List.last(termine) != termin,
-                                                do: "," %>
-                          </div>
-                          <%= if length(termine) != 1 && hd(Enum.take(termine, -2)) == termin,
-                            do: " und" %>
-                        <% end %>
-                      </.link>
-                    </td>
-                    <td class="hidden px-3 py-4 text-sm text-right text-gray-500 align-top whitespace-nowrap dark:text-gray-300 xs:table-cell tabular-nums">
-                      <%= entry.days %> Tag<%= unless entry.days == 1, do: "e" %>
-                    </td>
-                  </tr>
+                    <%= entry.colloquial %> <%= entry.starts_on.year %>
+                  </.link>
+                <% else %>
+                  <%= unless @dont_list_year == entry.starts_on.year do %>
+                    <.link
+                      class="text-blue-600 hover:underline dark:text-blue-400"
+                      navigate={
+                        ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
+                      }
+                    >
+                      <%= entry.colloquial %> <%= entry.starts_on.year %>
+                    </.link>
+                  <% else %>
+                    <.link
+                      class="text-blue-600 hover:underline dark:text-blue-400"
+                      navigate={~p"/#{entry.vacation_slug}/#{entry.location_slug}"}
+                    >
+                      <%= entry.colloquial %>
+                    </.link>
+                  <% end %>
                 <% end %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
+              <% end %>
+            </td>
+
+            <% termine = String.split(entry.ferientermin, ",") %>
+            <td class="px-3 py-4 text-sm text-gray-900 align-top dark:text-gray-300 tabular-nums">
+              <.link
+                class="text-blue-600 hover:underline dark:text-blue-400"
+                navigate={~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"}
+              >
+                <%= for termin <- termine do %>
+                  <div class="whitespace-nowrap">
+                    <%= termin %><%= if hd(Enum.take(termine, -2)) != termin &&
+                                          List.last(termine) != termin,
+                                        do: "," %>
+                  </div>
+                  <%= if length(termine) != 1 && hd(Enum.take(termine, -2)) == termin,
+                    do: " und" %>
+                <% end %>
+              </.link>
+            </td>
+            <td class="hidden px-3 py-4 text-sm text-right text-gray-500 align-top whitespace-nowrap dark:text-gray-300 xs:table-cell tabular-nums">
+              <%= entry.days %> Tag<%= unless entry.days == 1, do: "e" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
     """
   end
 
