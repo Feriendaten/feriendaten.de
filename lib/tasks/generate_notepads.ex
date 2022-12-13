@@ -14,8 +14,8 @@ defmodule Mix.Tasks.GenerateNotepads do
   """
 
   def run(_args) do
-    start_date = Date.utc_today()
-    end_date = Date.add(start_date, 365 * 2)
+    start_date = ~D[2020-01-01]
+    end_date = ~D[2029-12-31]
 
     entries =
       Feriendaten.Calendars.school_vacation_periods_for_germany(
@@ -53,62 +53,67 @@ defmodule Mix.Tasks.GenerateNotepads do
     write_notepadnotes_file(dir)
     copy_notepad_background_image(dir)
 
-    # for year <- start_date.year..end_date.year do
-    for year <- [2023, 2024] do
+    for year <- start_date.year..end_date.year do
       for federal_state <- federal_states do
         for vacation <- vacations do
-          IO.puts("Generating image for #{vacation} #{federal_state.name} #{year}")
-
           all_ferientermine =
             Enum.filter(entries, fn x ->
-              x.location_name == federal_state.name && x.starts_on.year == year
+              x.location_name == federal_state.name && x.starts_on.year == year &&
+                x.colloquial == vacation
             end)
             |> Feriendaten.Calendars.all_ferientermine_to_string()
 
-          write_latex_file(dir, vacation, federal_state.name, year, all_ferientermine)
+          unless all_ferientermine == "" do
+            IO.puts("Generating notepad for #{vacation} #{federal_state.name} #{year}.")
 
-          file_name = Path.join([dir, "#{vacation}-#{federal_state.name}-#{year}"])
-          _output_pdflatex = System.cmd("pdflatex", ["#{file_name}.tex"], cd: dir)
+            write_latex_file(dir, vacation, federal_state.name, year, all_ferientermine)
 
-          _output_convert =
-            System.cmd(
-              "convert",
-              [
-                "-interlace",
-                "plane",
-                "-sampling-factor",
-                "2x2",
-                "-resize",
-                "1200x",
-                "-strip",
-                "-crop",
-                "650x650+400+70",
-                "-quality",
-                "85%",
-                "#{file_name}.pdf",
-                "#{file_name}.jpeg"
-              ],
-              cd: dir
-            )
+            file_name = Path.join([dir, "#{vacation}-#{federal_state.name}-#{year}"])
+            _output_pdflatex = System.cmd("pdflatex", ["#{file_name}.tex"], cd: dir)
 
-          target_dir =
-            "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{String.downcase(vacation)}"
-
-          case File.mkdir(target_dir) do
-            :ok ->
-              File.cp(
-                "#{file_name}.jpeg",
-                "#{target_dir}/#{"#{String.downcase(vacation)}-#{String.downcase(federal_state.name)}-#{year}"}.jpeg"
+            _output_convert =
+              System.cmd(
+                "convert",
+                [
+                  "-interlace",
+                  "plane",
+                  "-sampling-factor",
+                  "2x2",
+                  "-resize",
+                  "1200x",
+                  "-strip",
+                  "-crop",
+                  "650x650+400+70",
+                  "-quality",
+                  "85%",
+                  "#{file_name}.pdf",
+                  "#{file_name}.jpeg"
+                ],
+                cd: dir
               )
 
-            {:error, :eexist} ->
-              File.cp(
-                "#{file_name}.jpeg",
-                "#{target_dir}/#{"#{String.downcase(vacation)}-#{String.downcase(federal_state.name)}-#{year}"}.jpeg"
-              )
+            target_dir =
+              "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{String.downcase(vacation)}"
 
-            _ ->
-              IO.puts("Could not create target directory #{target_dir}")
+            target_file_name =
+              "#{target_dir}/#{"#{String.downcase(vacation)}-#{String.downcase(federal_state.name)}-#{year}"}.jpeg"
+
+            case File.mkdir(target_dir) do
+              :ok ->
+                File.cp(
+                  "#{file_name}.jpeg",
+                  target_file_name
+                )
+
+              {:error, :eexist} ->
+                File.cp(
+                  "#{file_name}.jpeg",
+                  target_file_name
+                )
+
+              _ ->
+                IO.puts("Could not create target directory #{target_dir}")
+            end
           end
         end
       end
