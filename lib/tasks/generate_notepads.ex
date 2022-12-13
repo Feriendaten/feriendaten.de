@@ -14,8 +14,8 @@ defmodule Mix.Tasks.GenerateNotepads do
   """
 
   def run(_args) do
-    start_date = ~D[2020-01-01]
-    end_date = ~D[2029-12-31]
+    start_date = ~D[2022-01-01]
+    end_date = ~D[2024-12-31]
 
     entries =
       Feriendaten.Calendars.school_vacation_periods_for_germany(
@@ -56,17 +56,19 @@ defmodule Mix.Tasks.GenerateNotepads do
     for year <- start_date.year..end_date.year do
       for federal_state <- federal_states do
         for vacation <- vacations do
-          all_ferientermine =
+          compressed_entries =
             Enum.filter(entries, fn x ->
               x.location_name == federal_state.name && x.starts_on.year == year &&
                 x.colloquial == vacation
             end)
-            |> Feriendaten.Calendars.all_ferientermine_to_string()
+            |> Feriendaten.Calendars.compress_ferientermine()
 
-          unless all_ferientermine == "" do
+          unless length(compressed_entries) == 0 do
+            [compressed_entry | _] = compressed_entries
             IO.puts("Generating notepad for #{vacation} #{federal_state.name} #{year}.")
+            IO.puts(inspect(compressed_entry))
 
-            write_latex_file(dir, vacation, federal_state.name, year, all_ferientermine)
+            write_latex_file(dir, vacation, federal_state.name, year, compressed_entry)
 
             file_name = Path.join([dir, "#{vacation}-#{federal_state.name}-#{year}"])
             _output_pdflatex = System.cmd("pdflatex", ["#{file_name}.tex"], cd: dir)
@@ -114,6 +116,12 @@ defmodule Mix.Tasks.GenerateNotepads do
               _ ->
                 IO.puts("Could not create target directory #{target_dir}")
             end
+
+            File.rm_rf("#{file_name}.jpeg")
+            File.rm_rf("#{file_name}.pdf")
+            File.rm_rf("#{file_name}.log")
+            File.rm_rf("#{file_name}.tex")
+            File.rm_rf("#{file_name}.aux")
           end
         end
       end
@@ -127,18 +135,38 @@ defmodule Mix.Tasks.GenerateNotepads do
     :file.write(file, notepadnotes_content())
   end
 
-  def write_latex_file(dir, vacation, federal_state, year, all_ferientermine) do
+  def write_latex_file(dir, vacation, federal_state, year, compressed_entry) do
     file_name = Path.join([dir, "#{vacation}-#{federal_state}-#{year}.tex"])
 
     {:ok, file} = :file.open(file_name, [:write])
-    :file.write(file, tex_file_content(vacation, federal_state, year, all_ferientermine))
+
+    :file.write(
+      file,
+      tex_file_content(vacation, federal_state, year, compressed_entry)
+    )
   end
 
-  def tex_file_content(vacation, federal_state, year, all_ferientermine) do
+  def tex_file_content(vacation, federal_state, year, compressed_entry) do
+    all_ferientermine =
+      if compressed_entry[:days] < 14 do
+        compressed_entry[:ferientermin]
+      else
+        compressed_entry[:ferientermin] <> "\\\\\n\n#{compressed_entry[:days]} Tage!"
+      end
+      |> String.replace("01.", "1.")
+      |> String.replace("02.", "2.")
+      |> String.replace("03.", "3.")
+      |> String.replace("04.", "4.")
+      |> String.replace("05.", "5.")
+      |> String.replace("06.", "6.")
+      |> String.replace("07.", "7.")
+      |> String.replace("08.", "8.")
+      |> String.replace("09.", "9.")
+
     ~S"""
     % -- Preamble:
     \documentclass{notepadnotes} % custom document class
-    \textsize{34}                % text size (notepad block)
+    \textsize{36}                % text size (notepad block)
     \angle{3.55}                 % text rotation (angle in °)
 
 
