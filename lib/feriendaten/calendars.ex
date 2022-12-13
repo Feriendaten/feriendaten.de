@@ -657,4 +657,10 @@ defmodule Feriendaten.Calendars do
     |> Enum.join(", ")
     |> String.replace(" - ", "-")
   end
+
+  def all_ferientermine_to_string(entries) do
+    entries
+    |> Enum.map(fn x -> "#{x.ferientermin}" end)
+    |> Enum.join(", ")
+  end
 end

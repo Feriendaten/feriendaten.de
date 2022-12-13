@@ -1,5 +1,5 @@
-<div class="flex text-gray-900 dark:text-gray-100">
-  <div>
+<div class="grid gap-4 md:grid-cols-3">
+  <div class="col-span-3">
     <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
       <%= if assigns[:h1_title] do %>
         <%= @h1_title %>
@@ -16,14 +16,30 @@
         Eine Übersicht der Ferientermine:
       <% end %>
     </p>
-    <div class="pt-4">
-      <.vacations_table_table_only entries={@entries} />
-    </div>
   </div>
-</div>
+  <% file_name = "#{String.downcase(@vacation_colloquial)}-#{@location.slug}-#{@year}.jpeg" %>
 
-<div class="flex text-gray-900 dark:text-gray-100">
-  <div>
+  <div class={
+    if File.exists?(
+         "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/osterferien/#{file_name}"
+       ),
+       do: "col-span-3 md:col-span-2",
+       else: "col-span-3"
+  }>
+    <.vacations_table_table_only entries={@entries} />
+  </div>
+
+  <%= if File.exists?("#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/osterferien/#{file_name}") do %>
+    <div class="col-span-3 md:col-span-1">
+      <img
+        src={"/images/notepad/osterferien/" <> file_name}
+        alt={"#{@vacation_colloquial} #{@location.name} #{@year}: #{Feriendaten.Calendars.all_ferientermine_to_string(@entries)}"}
+        class="h-auto max-w-full rounded-lg"
+      />
+    </div>
+  <% end %>
+
+  <div class="col-span-3">
     <%= if assigns[:year] && length(@entries) > 0 do %>
       <.vacation_location_year_faq
         entries={@entries}
