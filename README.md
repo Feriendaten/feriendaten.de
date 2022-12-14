@@ -9,6 +9,7 @@ Anzeige von Schulferien, Feiertagen und anderen Terminen für Deutschland.
 ```
 $ mix legacy_import
 $ mix activate_most_popular_locations
+$ mix generate_notepads
 ```
 
 ## Start the server
