@@ -3,10 +3,10 @@ defmodule Mix.Tasks.GenerateNotepads do
 
   @requirements ["app.start"]
 
-  @shortdoc "Generate images of nodepads with vacation dates written on them."
+  @shortdoc "Generate images of notepads with vacation dates written on them."
 
   @doc """
-  Generate images of nodepads with vacation dates written on them.
+  Generate images of notepads with vacation dates written on them.
 
   To generate the images, run:
 
