@@ -15,7 +15,7 @@ defmodule Mix.Tasks.GenerateNotepads do
 
   def run(_args) do
     start_date = ~D[2022-01-01]
-    end_date = ~D[2023-12-31]
+    end_date = ~D[2025-12-31]
 
     entries =
       Feriendaten.Calendars.school_vacation_periods_for_germany(
@@ -106,10 +106,11 @@ defmodule Mix.Tasks.GenerateNotepads do
               )
 
             target_dir =
-              "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{compressed_entry.vacation_slug}"
-
-            # target_dir =
-            #   "/home/feriendaten/app/feriendaten.de/priv/static/images/notepad/#{compressed_entry.vacation_slug}"
+              if Mix.env() == :prod do
+                "/home/feriendaten/app/feriendaten.de/priv/static/images/notepad/#{compressed_entry.vacation_slug}"
+              else
+                "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{compressed_entry.vacation_slug}"
+              end
 
             target_file_name = "#{target_dir}/#{head_file_name}.jpeg"
 
