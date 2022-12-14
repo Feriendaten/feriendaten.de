@@ -4,7 +4,7 @@ defmodule Feriendaten.MixProject do
   def project do
     [
       app: :feriendaten,
-      version: "0.2.47",
+      version: "0.2.48",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -52,7 +52,8 @@ defmodule Feriendaten.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:ecto_autoslug_field, "~> 3.0"},
-      {:csv, "~> 2.5"}
+      {:csv, "~> 2.5"},
+      {:phoenix_seo, "~> 0.1.7"}
     ]
   end
 
