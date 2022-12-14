@@ -66,7 +66,7 @@ defmodule Mix.Tasks.GenerateNotepads do
           unless length(compressed_entries) == 0 do
             [compressed_entry | _] = compressed_entries
             IO.puts("Generating notepad for #{vacation} #{federal_state.name} #{year}.")
-            IO.puts(inspect(compressed_entry))
+            # IO.puts(inspect(compressed_entry))
 
             head_file_name = "#{compressed_entry.vacation_slug}-#{federal_state.slug}-#{year}"
             file_name = Path.join([dir, head_file_name])
@@ -136,7 +136,7 @@ defmodule Mix.Tasks.GenerateNotepads do
             File.rm_rf("#{file_name}.log")
             File.rm_rf("#{file_name}.tex")
             File.rm_rf("#{file_name}.aux")
-            :timer.sleep(50)
+            :timer.sleep(100)
           end
         end
       end
@@ -161,10 +161,10 @@ defmodule Mix.Tasks.GenerateNotepads do
 
   def tex_file_content(vacation, federal_state, year, compressed_entry) do
     all_ferientermine =
-      if compressed_entry[:days] < 10 do
+      if compressed_entry[:days] < 2 do
         compressed_entry[:ferientermin]
       else
-        compressed_entry[:ferientermin] <> "\\\\\n\n#{compressed_entry[:days]} Tage!"
+        compressed_entry[:ferientermin] <> "\\\\\n\n#{compressed_entry[:days]} Tage"
       end
       |> String.replace("01.", "1.")
       |> String.replace("02.", "2.")
@@ -179,11 +179,14 @@ defmodule Mix.Tasks.GenerateNotepads do
 
     headline =
       "#{vacation}\\\\#{federal_state} #{year}"
-      |> String.replace("Weihnachtsferien", "Weihnachts\-ferien")
-      |> String.replace("Winterferien", "Winter\-ferien")
-      |> String.replace("Sommerferien", "Sommer\-ferien")
-      |> String.replace("Herbstferien", "Herbst\-ferien")
-      |> String.replace("Pfingstferien", "Pfingst\-ferien")
+      |> String.replace("Weihnachtsferien", "Weihnachts\\-ferien")
+      |> String.replace("Winterferien", "Winter\\-ferien")
+      |> String.replace("Sommerferien", "Sommer\\-ferien")
+      |> String.replace("Herbstferien", "Herbst\\-ferien")
+      |> String.replace("Pfingstferien", "Pfingst\\-ferien")
+      |> String.replace("Himmelfahrtsferien", "Himmel\\-fahrts\\-ferien")
+      |> String.replace("Frühjahrsferien", "Früh\\-jahrs\\-ferien")
+      |> String.replace("Osterferien", "Oster\\-ferien")
 
     ~S"""
     % -- Preamble:
