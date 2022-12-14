@@ -108,6 +108,9 @@ defmodule Mix.Tasks.GenerateNotepads do
             target_dir =
               "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{compressed_entry.vacation_slug}"
 
+            # target_dir =
+            #   "/home/feriendaten/app/feriendaten.de/priv/static/images/notepad/#{compressed_entry.vacation_slug}"
+
             target_file_name = "#{target_dir}/#{head_file_name}.jpeg"
 
             case File.mkdir(target_dir) do
@@ -146,7 +149,7 @@ defmodule Mix.Tasks.GenerateNotepads do
     :file.write(file, notepadnotes_content())
   end
 
-  def write_latex_file(dir, vacation, federal_state, year, compressed_entry, file_name) do
+  def write_latex_file(_dir, vacation, federal_state, year, compressed_entry, file_name) do
     {:ok, file} = :file.open(file_name, [:write])
 
     :file.write(
