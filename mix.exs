@@ -52,8 +52,7 @@ defmodule Feriendaten.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:ecto_autoslug_field, "~> 3.0"},
-      {:csv, "~> 2.5"},
-      {:phoenix_seo, "~> 0.1.7"}
+      {:csv, "~> 2.5"}
     ]
   end
 
