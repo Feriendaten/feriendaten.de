@@ -15,7 +15,7 @@ defmodule Mix.Tasks.GenerateNotepads do
 
   def run(_args) do
     start_date = ~D[2022-01-01]
-    end_date = ~D[2024-12-31]
+    end_date = ~D[2023-12-31]
 
     entries =
       Feriendaten.Calendars.school_vacation_periods_for_germany(
@@ -68,9 +68,20 @@ defmodule Mix.Tasks.GenerateNotepads do
             IO.puts("Generating notepad for #{vacation} #{federal_state.name} #{year}.")
             IO.puts(inspect(compressed_entry))
 
-            write_latex_file(dir, vacation, federal_state.name, year, compressed_entry)
+            head_file_name = "#{compressed_entry.vacation_slug}-#{federal_state.slug}-#{year}"
+            file_name = Path.join([dir, head_file_name])
 
-            file_name = Path.join([dir, "#{vacation}-#{federal_state.name}-#{year}"])
+            write_latex_file(
+              dir,
+              vacation,
+              federal_state.name,
+              year,
+              compressed_entry,
+              file_name <> ".tex"
+            )
+
+            IO.puts("#{file_name}.tex")
+            IO.puts("\n")
             _output_pdflatex = System.cmd("pdflatex", ["#{file_name}.tex"], cd: dir)
 
             _output_convert =
@@ -95,10 +106,9 @@ defmodule Mix.Tasks.GenerateNotepads do
               )
 
             target_dir =
-              "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{String.downcase(vacation)}"
+              "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{compressed_entry.vacation_slug}"
 
-            target_file_name =
-              "#{target_dir}/#{"#{String.downcase(vacation)}-#{String.downcase(federal_state.name)}-#{year}"}.jpeg"
+            target_file_name = "#{target_dir}/#{head_file_name}.jpeg"
 
             case File.mkdir(target_dir) do
               :ok ->
@@ -122,6 +132,7 @@ defmodule Mix.Tasks.GenerateNotepads do
             File.rm_rf("#{file_name}.log")
             File.rm_rf("#{file_name}.tex")
             File.rm_rf("#{file_name}.aux")
+            :timer.sleep(50)
           end
         end
       end
@@ -135,9 +146,7 @@ defmodule Mix.Tasks.GenerateNotepads do
     :file.write(file, notepadnotes_content())
   end
 
-  def write_latex_file(dir, vacation, federal_state, year, compressed_entry) do
-    file_name = Path.join([dir, "#{vacation}-#{federal_state}-#{year}.tex"])
-
+  def write_latex_file(dir, vacation, federal_state, year, compressed_entry, file_name) do
     {:ok, file} = :file.open(file_name, [:write])
 
     :file.write(
@@ -148,7 +157,7 @@ defmodule Mix.Tasks.GenerateNotepads do
 
   def tex_file_content(vacation, federal_state, year, compressed_entry) do
     all_ferientermine =
-      if compressed_entry[:days] < 14 do
+      if compressed_entry[:days] < 10 do
         compressed_entry[:ferientermin]
       else
         compressed_entry[:ferientermin] <> "\\\\\n\n#{compressed_entry[:days]} Tage!"
@@ -162,12 +171,22 @@ defmodule Mix.Tasks.GenerateNotepads do
       |> String.replace("07.", "7.")
       |> String.replace("08.", "8.")
       |> String.replace("09.", "9.")
+      |> Feriendaten.Calendars.replace_last_comma_with_und()
+
+    headline =
+      "#{vacation}\\\\#{federal_state} #{year}"
+      |> String.replace("Weihnachtsferien", "Weihnachts\-ferien")
+      |> String.replace("Winterferien", "Winter\-ferien")
+      |> String.replace("Sommerferien", "Sommer\-ferien")
+      |> String.replace("Herbstferien", "Herbst\-ferien")
+      |> String.replace("Pfingstferien", "Pfingst\-ferien")
 
     ~S"""
     % -- Preamble:
     \documentclass{notepadnotes} % custom document class
-    \textsize{36}                % text size (notepad block)
+    \textsize{40}                % text size (notepad block)
     \angle{3.55}                 % text rotation (angle in °)
+    \hyphenation{Weihnachts-ferien Sommer-ferien Winter-ferien Oster-ferien Sommer-ferien Herbst-ferien Saarland Hamburg Hessen Bayern Rheinland Berlin Sachsen Anhalt Württemberg} % hyphenation
 
 
     % -- Begining of the document:
@@ -183,7 +202,7 @@ defmodule Mix.Tasks.GenerateNotepads do
 
     \end{document}
     """
-    |> String.replace("headline", "#{vacation}\\\\#{federal_state}\\\\#{year}")
+    |> String.replace("headline", headline)
     |> String.replace("all_ferientermine", all_ferientermine)
   end
 
@@ -224,7 +243,7 @@ defmodule Mix.Tasks.GenerateNotepads do
      {
        \vspace*{2.25cm} \hspace*{15cm}
        \begin{turn}{\@angle}
-       \begin{minipage}[l]{9.75cm}
+       \begin{minipage}[l]{10.8cm}
          \fontfamily{augie}\selectfont
      }
      {

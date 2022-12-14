@@ -615,6 +615,7 @@ defmodule Feriendaten.Calendars do
         where: type.slug == ^vacation_slug,
         where: p.ends_on >= ^starts_on,
         where: p.starts_on <= ^ends_on,
+        order_by: l.name,
         order_by: p.starts_on,
         select: %{
           starts_on: p.starts_on,

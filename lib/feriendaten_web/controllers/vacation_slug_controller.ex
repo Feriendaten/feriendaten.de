@@ -56,6 +56,7 @@ defmodule FeriendatenWeb.VacationSlugController do
       )
 
     vacation_colloquial = hd(entries) |> Map.get(:colloquial)
+    vacation_slug = hd(entries) |> Map.get(:vacation_slug)
 
     description =
       "Termine und weitere Informationen zu den #{vacation_colloquial} #{location.name} #{year}. " <>
@@ -63,6 +64,7 @@ defmodule FeriendatenWeb.VacationSlugController do
 
     conn
     |> assign(:vacation_colloquial, vacation_colloquial)
+    |> assign(:vacation_slug, vacation_slug)
     |> assign(:location, location)
     |> assign(:entries, entries)
     |> assign(:year, year)
