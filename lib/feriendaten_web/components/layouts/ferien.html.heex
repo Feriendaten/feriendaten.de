@@ -36,6 +36,12 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
+
+    <FeriendatenWeb.SEO.juice
+    conn={@conn}
+    config={FeriendatenWeb.SEO.config()}
+    page_title={assigns[:page_title]}
+  />
   </head>
   <body class="antialiased bg-white dark:bg-gray-900">
     <%= if assigns[:nav_bar_entries] do %>
