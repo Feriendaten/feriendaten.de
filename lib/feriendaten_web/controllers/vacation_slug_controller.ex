@@ -85,7 +85,8 @@ defmodule FeriendatenWeb.VacationSlugController do
           title: "#{vacation_colloquial} #{location.name} #{year}",
           description:
             "#{termin}: #{Feriendaten.Calendars.replace_last_comma_with_und(Feriendaten.Calendars.all_ferientermine_to_string(entries_of_this_year))}",
-          image: "https://feriendaten.de/images/notepad/#{image_file_name}"
+          image: "https://feriendaten.de/images/notepad/#{image_file_name}",
+          url: "https://feriendaten.de/#{vacation_slug}/#{location_slug}/#{year}"
         }
       else
         %{}
