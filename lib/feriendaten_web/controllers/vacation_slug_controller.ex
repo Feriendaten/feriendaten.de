@@ -76,12 +76,15 @@ defmodule FeriendatenWeb.VacationSlugController do
         "Termine"
       end
 
+    entries_of_this_year =
+      Enum.filter(entries, fn entry -> entry.starts_on.year == String.to_integer(year) end)
+
     twitter_card =
       if(File.exists?(system_path_image_file_name)) do
         %{
           title: "#{vacation_colloquial} #{location.name} #{year}",
           description:
-            "#{termin}: #{Feriendaten.Calendars.replace_last_comma_with_und(Feriendaten.Calendars.all_ferientermine_to_string(entries))}",
+            "#{termin}: #{Feriendaten.Calendars.replace_last_comma_with_und(Feriendaten.Calendars.all_ferientermine_to_string(entries_of_this_year))}",
           image: "https://feriendaten.de/images/notepad/#{image_file_name}"
         }
       else
