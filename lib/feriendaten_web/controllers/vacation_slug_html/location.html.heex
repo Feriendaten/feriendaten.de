@@ -41,9 +41,11 @@
 
   <%= if File.exists?(system_path_file_name) do %>
     <div class="col-span-3 md:col-span-1">
+      <% entries_of_this_year =
+        Enum.filter(@entries, fn entry -> entry.starts_on.year == String.to_integer(@year) end) %>
       <img
         src={img_path_file_name}
-        alt={"#{@vacation_colloquial} #{@location.name} #{@year}: #{Feriendaten.Calendars.all_ferientermine_to_string(@entries)}"}
+        alt={"#{@vacation_colloquial} #{@location.name} #{@year}: #{Feriendaten.Calendars.replace_last_comma_with_und(Feriendaten.Calendars.all_ferientermine_to_string(entries_of_this_year))}"}
         class="h-auto max-w-full rounded-lg"
       />
     </div>
