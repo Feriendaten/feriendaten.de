@@ -64,12 +64,37 @@ defmodule FeriendatenWeb.VacationSlugController do
       "Termine und weitere Informationen zu den #{vacation_colloquial} #{location.name} #{year}. " <>
         Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
 
+    image_file_name = "#{vacation_slug}/#{vacation_slug}-#{location_slug}-#{year}.jpeg"
+
+    system_path_image_file_name =
+      "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{image_file_name}"
+
+    termin =
+      if length(entries) == 1 do
+        "Termin"
+      else
+        "Termine"
+      end
+
+    twitter_card =
+      if(File.exists?(system_path_image_file_name)) do
+        %{
+          title: "#{vacation_colloquial} #{location.name} #{year}",
+          description:
+            "#{termin}: #{Feriendaten.Calendars.replace_last_comma_with_und(Feriendaten.Calendars.all_ferientermine_to_string(entries))}",
+          image: "https://feriendaten.de/images/notepad/#{image_file_name}"
+        }
+      else
+        %{}
+      end
+
     conn
     |> assign(:vacation_colloquial, vacation_colloquial)
     |> assign(:vacation_slug, vacation_slug)
     |> assign(:location, location)
     |> assign(:entries, entries)
     |> assign(:year, year)
+    |> assign(:twitter_card, twitter_card)
     |> assign(:nav_bar_entries, [
       [vacation_colloquial, ~p"/#{vacation_slug}/"],
       [location.name, ~p"/#{vacation_slug}/#{location_slug}"],

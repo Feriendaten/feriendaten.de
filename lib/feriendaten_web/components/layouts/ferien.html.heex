@@ -46,6 +46,14 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
+
+    <%= if assigns[:twitter_card] && @twitter_card != %{} do %>
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:site" content="@wintermeyer" />
+      <meta name="twitter:title" content={@twitter_card[:title]} />
+      <meta name="twitter:description" content={@twitter_card[:description]} />
+      <meta name="twitter:image" content={@twitter_card[:image]} />
+    <% end %>
   </head>
   <body class="antialiased bg-white dark:bg-gray-900">
     <%= if assigns[:nav_bar_entries] do %>
