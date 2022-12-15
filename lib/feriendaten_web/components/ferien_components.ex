@@ -12,7 +12,7 @@ defmodule FeriendatenWeb.FerienComponents do
     ~H"""
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
-        <p class="mt-2 text-sm text-gray-700 dark:text-gray-100">
+        <p class="mt-2 text-gray-700 dark:text-gray-100">
           Für dieses Datum sind noch keine Termine in unserer Datenbank gespeichert.
         </p>
       </div>
@@ -60,25 +60,22 @@ defmodule FeriendatenWeb.FerienComponents do
       end
 
     ~H"""
-    <table class="min-w-full divide-y divide-gray-300 table-auto dark:divide-gray-100">
+    <table class="min-w-full text-sm divide-y divide-gray-300 table-auto dark:divide-gray-100 md:text-base">
       <thead class="bg-gray-100 dark:bg-gray-800">
         <tr>
           <th
             scope="col"
-            class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100"
+            class="py-2.5 pl-4 pr-3 text-left font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100"
           >
             Ferien
           </th>
 
-          <th
-            scope="col"
-            class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100"
-          >
+          <th scope="col" class="px-3 py-2.5 text-left font-semibold text-gray-900 dark:text-zinc-100">
             Zeitraum
           </th>
           <th
             scope="col"
-            class="hidden px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100 xs:table-cell"
+            class="hidden px-3 py-2.5 text-left font-semibold text-gray-900 dark:text-zinc-100 xs:table-cell"
           >
             Dauer
           </th>
@@ -93,7 +90,7 @@ defmodule FeriendatenWeb.FerienComponents do
               "bg-gray-50 dark:bg-black"
             end
           }>
-            <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
+            <td class="py-4 pl-4 pr-3 font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
               <%= if @multi_locations do %>
                 <.link
                   class="text-blue-600 hover:underline dark:text-blue-400"
@@ -136,7 +133,7 @@ defmodule FeriendatenWeb.FerienComponents do
             </td>
 
             <% termine = String.split(entry.ferientermin, ",") %>
-            <td class="px-3 py-4 text-sm text-gray-900 align-top dark:text-gray-300 tabular-nums">
+            <td class="px-3 py-4 text-gray-900 align-top dark:text-gray-300 tabular-nums">
               <.link
                 class="text-blue-600 hover:underline dark:text-blue-400"
                 navigate={~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"}
@@ -152,7 +149,7 @@ defmodule FeriendatenWeb.FerienComponents do
                 <% end %>
               </.link>
             </td>
-            <td class="hidden px-3 py-4 text-sm text-right text-gray-500 align-top whitespace-nowrap dark:text-gray-300 xs:table-cell tabular-nums">
+            <td class="hidden px-3 py-4 text-right text-gray-500 align-top whitespace-nowrap dark:text-gray-300 xs:table-cell tabular-nums">
               <%= entry.days %> Tag<%= unless entry.days == 1, do: "e" %>
             </td>
           </tr>
@@ -175,7 +172,7 @@ defmodule FeriendatenWeb.FerienComponents do
 
   def pre_text_to_vacation_table(assigns) do
     ~H"""
-    <p class="mt-2 text-sm text-gray-700 dark:text-gray-100">
+    <p class="mt-2 text-gray-700 dark:text-gray-100">
       Alle <%= Enum.count(@entries) %> Ferientermine <%= from(@today, @requested_date) %> bis <%= till(
         @end_date
       ) %>.
@@ -270,7 +267,7 @@ defmodule FeriendatenWeb.FerienComponents do
         >
           <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
         </svg>
-        <div class="ml-4 text-sm font-medium text-gray-500 dark:text-zinc-400" aria-current="page">
+        <div class="ml-4 font-medium text-gray-500 dark:text-zinc-400" aria-current="page">
           <%= if @link do %>
             <a itemprop="item" class="text-blue-600 hover:underline dark:text-blue-400" href={@link}>
               <span itemprop="name"><%= @text %></span>

@@ -1,15 +1,17 @@
 <div class="grid gap-4 md:grid-cols-3">
   <div class="col-span-3">
-    <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+    <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
       <%= if assigns[:h1_title] do %>
         <%= @h1_title %>
       <% else %>
         <%= @vacation_colloquial %> <%= @location.name %>
       <% end %>
     </h1>
-    <p class="mt-2 text-sm text-gray-700 dark:text-gray-100">
+    <p class="mt-2 text-sm text-gray-700 md:text-base dark:text-gray-100">
       <%= if assigns[:year] do %>
-        Wann sind <%= @vacation_colloquial %> in <%= @location.name %> im Jahr <%= @year %>?
+        Wann sind <%= @vacation_colloquial %> <%= if @location.name == "Saarland",
+          do: "im",
+          else: "in" %> <%= @location.name %> im Jahr <%= @year %>?
         Hier finden Sie den Ferientermin:
       <% else %>
         Wann sind die nächsten <%= @vacation_colloquial %> in <%= @location.name %>?
@@ -28,7 +30,7 @@
       else: "col-span-3"
   }>
     <.vacations_table_table_only entries={@entries} />
-    <p class="mt-2 text-sm text-gray-700 dark:text-gray-100">
+    <p class="mt-2 text-sm text-gray-700 md:text-base dark:text-gray-100">
       In Kürze finden Sie an dieser Stelle zusätzlich einen iCal Export und einen Schuljahreskalender als PDF im DIN A4 und DIN A3 Format.
     </p>
   </div>

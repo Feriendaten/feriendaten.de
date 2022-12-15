@@ -19,7 +19,7 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
       ~H"""
       <section class="bg-white dark:bg-gray-900">
         <div class="pt-8">
-          <h2 class="mb-8 text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+          <h2 class="mb-8 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
             FAQ
           </h2>
           <div
