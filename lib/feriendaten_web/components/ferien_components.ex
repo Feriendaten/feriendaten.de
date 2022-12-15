@@ -164,13 +164,13 @@ defmodule FeriendatenWeb.FerienComponents do
   attr :requested_date, :any, required: true
   attr :end_date, :any, required: true
 
-  def pre_text_to_vacation_table(%{entries: []} = assigns) do
+  defp pre_text_to_vacation_table(%{entries: []} = assigns) do
     ~H"""
 
     """
   end
 
-  def pre_text_to_vacation_table(assigns) do
+  defp pre_text_to_vacation_table(assigns) do
     ~H"""
     <p class="mt-2 text-gray-700 dark:text-gray-100">
       Alle <%= Enum.count(@entries) %> Ferientermine <%= from(@today, @requested_date) %> bis <%= till(
@@ -180,7 +180,7 @@ defmodule FeriendatenWeb.FerienComponents do
     """
   end
 
-  defp from(today, requested_date) do
+  def from(today, requested_date) do
     if requested_date == today do
       "von heute"
     else
@@ -188,7 +188,7 @@ defmodule FeriendatenWeb.FerienComponents do
     end
   end
 
-  defp till(end_date) do
+  def till(end_date) do
     if end_date.month >= 10 do
       "zum Jahresende #{end_date.year}"
     else
@@ -204,7 +204,10 @@ defmodule FeriendatenWeb.FerienComponents do
 
   def top_nav_bar(assigns) do
     ~H"""
-    <nav class="flex bg-white border-b border-gray-200 dark:bg-gray-800" aria-label="Breadcrumb">
+    <nav
+      class="flex text-sm bg-white border-b border-gray-200 dark:bg-gray-800 md:text-base"
+      aria-label="Breadcrumb"
+    >
       <ol
         role="list"
         class="flex w-full max-w-screen-xl px-4 mx-auto space-x-4 sm:px-6 lg:px-8"
@@ -250,7 +253,7 @@ defmodule FeriendatenWeb.FerienComponents do
   attr :item, :any, required: true
   attr :index, :integer, required: true
 
-  def top_nav_bar_item(%{item: [text, link]} = assigns) do
+  defp top_nav_bar_item(%{item: [text, link]} = assigns) do
     assigns = assign(assigns, :text, text)
     assigns = assign(assigns, :link, link)
 
@@ -267,13 +270,13 @@ defmodule FeriendatenWeb.FerienComponents do
         >
           <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
         </svg>
-        <div class="ml-4 font-medium text-gray-500 dark:text-zinc-400" aria-current="page">
+        <div class="ml-4 font-medium text-gray-500 dark:text-zinc-400">
           <%= if @link do %>
             <a itemprop="item" class="text-blue-600 hover:underline dark:text-blue-400" href={@link}>
-              <span itemprop="name"><%= @text %></span>
+              <span itemprop="name"><%= raw(hyphonate_string(@text)) %></span>
             </a>
           <% else %>
-            <span itemprop="name"><%= @text %></span>
+            <span itemprop="name"><%= raw(hyphonate_string(@text)) %></span>
           <% end %>
           <meta itemprop="position" content={@index + 1} />
         </div>
@@ -282,9 +285,22 @@ defmodule FeriendatenWeb.FerienComponents do
     """
   end
 
-  def top_nav_bar_item(%{item: text} = assigns) do
+  defp top_nav_bar_item(%{item: text} = assigns) do
     assigns = assign(assigns, :item, [text, nil])
 
     top_nav_bar_item(assigns)
+  end
+
+  defp hyphonate_string(string) do
+    string
+    |> String.replace("ferien", "&shy;ferien")
+    |> String.replace("Weihnacht", "Weih&shy;nacht")
+    |> String.replace("Himmelfahrt", "Himmel&shy;fahrt")
+    |> String.replace("Mecklenburg", "Mecklen&shy;burg")
+    |> String.replace("Vorpommern", "Vor&shy;pommern")
+    |> String.replace("Nordrhein", "Nord&shy;rhein")
+    |> String.replace("Westfalen", "West&shy;falen")
+    |> String.replace("Rheinland", "Rhein&shy;land")
+    |> String.replace("Schleswig", "Schles&shy;wig")
   end
 end
