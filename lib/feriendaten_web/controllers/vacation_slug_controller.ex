@@ -69,15 +69,15 @@ defmodule FeriendatenWeb.VacationSlugController do
     system_path_image_file_name =
       "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{image_file_name}"
 
+    entries_of_this_year =
+      Enum.filter(entries, fn entry -> entry.starts_on.year == String.to_integer(year) end)
+
     termin =
-      if length(entries) == 1 do
+      if length(entries_of_this_year) == 1 do
         "Termin"
       else
         "Termine"
       end
-
-    entries_of_this_year =
-      Enum.filter(entries, fn entry -> entry.starts_on.year == String.to_integer(year) end)
 
     twitter_card =
       if(File.exists?(system_path_image_file_name)) do
