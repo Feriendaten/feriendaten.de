@@ -12,10 +12,14 @@
         Wann sind <%= @vacation_colloquial %> <%= if @location.name == "Saarland",
           do: "im",
           else: "in" %> <%= @location.name %> im Jahr <%= @year %>?
-        Hier finden Sie den Ferientermin:
+        <%= if length(@entries) > 1 do %>
+          Hier finden Sie die Ferien&shy;termine:
+        <% else %>
+          Hier finden Sie den Ferien&shy;termin:
+        <% end %>
       <% else %>
         Wann sind die nächsten <%= @vacation_colloquial %> in <%= @location.name %>?
-        Eine Übersicht der Ferientermine:
+        Eine Übersicht der Ferien&shy;termine:
       <% end %>
     </p>
   </div>
