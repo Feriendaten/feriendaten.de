@@ -11,7 +11,17 @@
       <meta name="description" content={@description} />
     <% end %>
 
-    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <% css_file_name = "#{Application.app_dir(:feriendaten)}/priv/static/assets/app.css" %>
+
+    <%= if File.exists?(css_file_name) do %>
+      <style>
+        <% {:ok, css} = File.read(css_file_name) %>
+        <%= raw css %>
+      </style>
+    <% else %>
+      <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <% end %>
+
     <%= if @noindex do %>
       <meta name="robots" content="noindex" />
     <% end %>
