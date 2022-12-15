@@ -60,7 +60,7 @@ defmodule FeriendatenWeb.FerienComponents do
       end
 
     ~H"""
-    <table class="min-w-full text-sm divide-y divide-gray-300 table-auto dark:divide-gray-100 md:text-base">
+    <table class="min-w-full text-base divide-y divide-gray-300 table-auto dark:divide-gray-100">
       <thead class="bg-gray-100 dark:bg-gray-800">
         <tr>
           <th

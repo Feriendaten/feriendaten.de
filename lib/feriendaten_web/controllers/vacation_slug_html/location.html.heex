@@ -7,7 +7,7 @@
         <%= @vacation_colloquial %> <%= @location.name %>
       <% end %>
     </h1>
-    <p class="mt-2 text-sm text-gray-700 md:text-base dark:text-gray-100">
+    <p class="mt-2 text-base text-gray-700 dark:text-gray-100">
       <%= if assigns[:year] do %>
         Wann sind <%= @vacation_colloquial %> <%= if @location.name == "Saarland",
           do: "im",
