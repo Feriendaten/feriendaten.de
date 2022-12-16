@@ -257,8 +257,8 @@ defmodule FeriendatenWeb.FerienComponents do
     assigns = assign(assigns, :text, text)
     assigns = assign(assigns, :link, link)
 
-    ~H"""
-    <li class="flex" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+    if text == "" && link == nil do
+      ~H"""
       <div class="flex items-center">
         <svg
           class="flex-shrink-0 w-6 h-full text-gray-200"
@@ -270,19 +270,36 @@ defmodule FeriendatenWeb.FerienComponents do
         >
           <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
         </svg>
-        <div class="ml-4 font-medium text-gray-500 dark:text-zinc-400">
-          <%= if @link do %>
-            <a itemprop="item" class="text-blue-600 hover:underline dark:text-blue-400" href={@link}>
-              <span itemprop="name"><%= raw(hyphonate_string(@text)) %></span>
-            </a>
-          <% else %>
-            <span itemprop="name"><%= raw(hyphonate_string(@text)) %></span>
-          <% end %>
-          <meta itemprop="position" content={@index + 1} />
-        </div>
       </div>
-    </li>
-    """
+      """
+    else
+      ~H"""
+      <li class="flex" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <div class="flex items-center">
+          <svg
+            class="flex-shrink-0 w-6 h-full text-gray-200"
+            viewBox="0 0 24 44"
+            preserveAspectRatio="none"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+          </svg>
+          <div class="ml-4 font-medium text-gray-500 dark:text-zinc-400">
+            <%= if @link do %>
+              <a itemprop="item" class="text-blue-600 hover:underline dark:text-blue-400" href={@link}>
+                <span itemprop="name"><%= raw(hyphonate_string(@text)) %></span>
+              </a>
+            <% else %>
+              <span itemprop="name"><%= raw(hyphonate_string(@text)) %></span>
+            <% end %>
+            <meta itemprop="position" content={@index + 1} />
+          </div>
+        </div>
+      </li>
+      """
+    end
   end
 
   defp top_nav_bar_item(%{item: text} = assigns) do
