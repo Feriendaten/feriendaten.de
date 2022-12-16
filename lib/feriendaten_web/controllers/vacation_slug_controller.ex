@@ -64,10 +64,15 @@ defmodule FeriendatenWeb.VacationSlugController do
       "Termine und weitere Informationen zu den #{vacation_colloquial} #{location.name} #{year}. " <>
         Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
 
-    image_file_name = "#{vacation_slug}/#{vacation_slug}-#{location_slug}-#{year}.jpeg"
+    image_file_head = "#{vacation_slug}/#{vacation_slug}-#{location_slug}-#{year}"
+    image_file_name = "#{image_file_head}.jpeg"
+    image_file_name_16_9 = "#{image_file_head}-16-9.jpeg"
 
     system_path_image_file_name =
       "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{image_file_name}"
+
+    system_path_image_file_name_16_9 =
+      "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{image_file_name_16_9}"
 
     entries_of_this_year =
       Enum.filter(entries, fn entry -> entry.starts_on.year == String.to_integer(year) end)
@@ -81,13 +86,25 @@ defmodule FeriendatenWeb.VacationSlugController do
 
     twitter_card =
       if(File.exists?(system_path_image_file_name)) do
-        %{
-          title: "#{vacation_colloquial} #{location.name} #{year}",
-          description:
-            "#{termin}: #{Feriendaten.Calendars.replace_last_comma_with_und(Feriendaten.Calendars.all_ferientermine_to_string(entries_of_this_year))}",
-          image: "https://feriendaten.de/images/notepad/#{image_file_name}",
-          url: "https://feriendaten.de/#{vacation_slug}/#{location_slug}/#{year}"
-        }
+        if(File.exists?(system_path_image_file_name_16_9)) do
+          %{
+            title: "#{vacation_colloquial} #{location.name} #{year}",
+            description:
+              "#{termin}: #{Feriendaten.Calendars.replace_last_comma_with_und(Feriendaten.Calendars.all_ferientermine_to_string(entries_of_this_year))}",
+            image: "https://feriendaten.de/images/notepad/#{image_file_name}",
+            image_16_9: "https://feriendaten.de/images/notepad/#{image_file_name_16_9}",
+            url: "https://feriendaten.de/#{vacation_slug}/#{location_slug}/#{year}"
+          }
+        else
+          %{
+            title: "#{vacation_colloquial} #{location.name} #{year}",
+            description:
+              "#{termin}: #{Feriendaten.Calendars.replace_last_comma_with_und(Feriendaten.Calendars.all_ferientermine_to_string(entries_of_this_year))}",
+            image: "https://feriendaten.de/images/notepad/#{image_file_name}",
+            image_16_9: nil,
+            url: "https://feriendaten.de/#{vacation_slug}/#{location_slug}/#{year}"
+          }
+        end
       else
         %{}
       end

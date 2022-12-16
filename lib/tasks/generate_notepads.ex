@@ -105,6 +105,27 @@ defmodule Mix.Tasks.GenerateNotepads do
                 cd: dir
               )
 
+            _output_16_9_convert =
+              System.cmd(
+                "convert",
+                [
+                  "-interlace",
+                  "plane",
+                  "-sampling-factor",
+                  "2x2",
+                  "-resize",
+                  "1200x",
+                  "-strip",
+                  "-crop",
+                  "1200x675+0+55",
+                  "-quality",
+                  "85%",
+                  "#{file_name}.pdf",
+                  "#{file_name}-16-9.jpeg"
+                ],
+                cd: dir
+              )
+
             target_dir =
               if Mix.env() == :prod do
                 "/home/feriendaten/app/feriendaten.de/priv/static/images/notepad/#{compressed_entry.vacation_slug}"
@@ -113,6 +134,7 @@ defmodule Mix.Tasks.GenerateNotepads do
               end
 
             target_file_name = "#{target_dir}/#{head_file_name}.jpeg"
+            target_file_name_19_9 = "#{target_dir}/#{head_file_name}-16-9.jpeg"
 
             case File.mkdir(target_dir) do
               :ok ->
@@ -121,10 +143,20 @@ defmodule Mix.Tasks.GenerateNotepads do
                   target_file_name
                 )
 
+                File.cp(
+                  "#{file_name}-16-9.jpeg",
+                  target_file_name_19_9
+                )
+
               {:error, :eexist} ->
                 File.cp(
                   "#{file_name}.jpeg",
                   target_file_name
+                )
+
+                File.cp(
+                  "#{file_name}-16-9.jpeg",
+                  target_file_name_19_9
                 )
 
               _ ->
@@ -132,11 +164,12 @@ defmodule Mix.Tasks.GenerateNotepads do
             end
 
             File.rm_rf("#{file_name}.jpeg")
+            File.rm_rf("#{file_name}-16-9.jpeg")
             File.rm_rf("#{file_name}.pdf")
             File.rm_rf("#{file_name}.log")
             File.rm_rf("#{file_name}.tex")
             File.rm_rf("#{file_name}.aux")
-            :timer.sleep(100)
+            :timer.sleep(150)
           end
         end
       end
