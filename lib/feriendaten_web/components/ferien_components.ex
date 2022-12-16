@@ -202,8 +202,54 @@ defmodule FeriendatenWeb.FerienComponents do
 
   attr :nav_bar_entries, :list, required: true
 
+  # Let's start with the edge case for the index page.
+  def top_nav_bar(%{nav_bar_entries: [""]} = assigns) do
+    ~H"""
+    <span class="sr-only">Seitenavigation mit Breadcumbs (Brotkrümmeln):</span>
+    <nav
+      class="flex text-sm bg-white border-b border-gray-200 dark:bg-gray-800 md:text-base"
+      aria-label="Breadcrumb"
+    >
+      <ol
+        role="list"
+        class="flex w-full max-w-screen-xl px-4 mx-auto space-x-4 sm:px-6 lg:px-8"
+        itemscope
+        itemtype="https://schema.org/BreadcrumbList"
+      >
+        <li class="flex">
+          <div class="flex items-center text-gray-400">
+            <!-- Heroicon name: mini/home -->
+            <svg
+              class="flex-shrink-0 w-5 h-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M9.293 2.293a1 1 0 011.414 0l7 7A1 1 0 0117 11h-1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3a1 1 0 00-1-1H9a1 1 0 00-1 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-6H3a1 1 0 01-.707-1.707l7-7z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="sr-only">Hauptseite</span>
+          </div>
+        </li>
+
+        <%= for {entry, index} <- Enum.with_index(@nav_bar_entries) do %>
+          <.top_nav_bar_item item={entry} index={index} />
+        <% end %>
+        <%= if @nav_bar_entries == [] do %>
+          <.top_nav_bar_item item="" index={1} />
+        <% end %>
+      </ol>
+    </nav>
+    """
+  end
+
   def top_nav_bar(assigns) do
     ~H"""
+    <span class="sr-only">Seitenavigation mit Breadcumbs (Brotkrümmeln):</span>
     <nav
       class="flex text-sm bg-white border-b border-gray-200 dark:bg-gray-800 md:text-base"
       aria-label="Breadcrumb"
