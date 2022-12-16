@@ -291,16 +291,37 @@ defmodule FeriendatenWeb.FerienComponents do
     top_nav_bar_item(assigns)
   end
 
-  defp hyphonate_string(string) do
+  def hyphonate_string(string) do
     string
-    |> String.replace("ferien", "&shy;ferien")
     |> String.replace("Weihnacht", "Weih&shy;nacht")
-    |> String.replace("Himmelfahrt", "Himmel&shy;fahrt")
     |> String.replace("Mecklenburg", "Mecklen&shy;burg")
     |> String.replace("Vorpommern", "Vor&shy;pommern")
     |> String.replace("Nordrhein", "Nord&shy;rhein")
     |> String.replace("Westfalen", "West&shy;falen")
     |> String.replace("Rheinland", "Rhein&shy;land")
     |> String.replace("Schleswig", "Schles&shy;wig")
+    |> String.replace("Weihnachtsferien", "Weih&shy;nachts&shy;ferien")
+    |> String.replace("Winterferien", "Winter&shy;ferien")
+    |> String.replace("Frühjahrsferien", "Früh&shy;jahrs&shy;ferien")
+    |> String.replace("Osterferien", "Oster&shy;ferien")
+    |> String.replace(
+      "Himmelfahrt- und Pfingst­ferien",
+      "Him&shy;mel&shy;­fahrt- und Pfingst&shy;­ferien"
+    )
+    |> String.replace(
+      "Himmelfahrtsferien",
+      "Him&shy;mel&shy;­fahrts&shy;­ferien"
+    )
+    |> String.replace("Pfingstferien", "Pfingst&shy;ferien")
+    |> String.replace("Sommerferien", "Sommer&shy;ferien")
+    |> String.replace("Herbstferien", "Herbst&shy;ferien")
+    |> String.replace("Baden-Württemberg", "Ba&shy;den-Würt&shy;tem&shy;berg")
+    |> String.replace("Brandenburg", "Bran&shy;den&shy;burg")
+    |> String.replace("Mecklenburg-Vorpommern", "Meck&shy;len&shy;burg-Vor&shy;pom&shy;mern")
+    |> String.replace("Niedersachsen", "Nie&shy;der&shy;sach&shy;sen")
+    |> String.replace("Schles­wig-Holstein", "Schles&shy;wig-Hol&shy;stein")
+    |> String.replace("Sachsen-Anhalt", "Sach&shy;sen-An&shy;halt")
+    |> String.replace("Nord­rhein-West­falen", "Nord&shy;rhein-West&shy;fa&shy;len")
+    |> String.replace("Rhein­land-Pfalz", "Rhein&shy;land-Pfalz")
   end
 end

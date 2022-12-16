@@ -1,19 +1,19 @@
-<h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+<h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
   Schulferien Deutschland
 </h1>
 <p class="pt-6 mt-2 text-base text-gray-700 dark:text-gray-100">
-  Wann sind Schulferien in Deutschland? Unsere Tabelle mit den nächsten Ferienterminen:
+  Wann sind Schulferien in Deutschland? Die nächsten Ferienterminen:
 </p>
 
 <div class="pt-6">
-  <table class="min-w-full divide-y divide-gray-300 table-auto dark:divide-gray-100">
+  <table class="divide-y divide-gray-300 table-auto dark:divide-gray-100">
     <thead class="bg-gray-100 dark:bg-gray-800">
       <tr>
         <th
           scope="col"
-          class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100 tracking-tight md:tracking-normal"
+          class="py-2.5 pl-4 pr-3 text-left text-base font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100 tracking-tight md:tracking-normal"
         >
-          <div class="hidden md:block">Bundesland</div>
+          <div class="hidden md:block">Bundes&shy;land</div>
           <div class="md:hidden">
             Bundesl.
           </div>
@@ -21,13 +21,13 @@
         <%= for {vacation, index} <- Enum.with_index(@vacations) do %>
           <th
             scope="col"
-            class={"py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100 " <> if index > 2, do: "hidden md:table-cell", else: ""}
+            class={"py-2.5 pl-4 pr-3 text-left text-base font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100 " <> if index > 2, do: "hidden md:table-cell", else: ""}
           >
             <div class="tracking-tight md:hidden md:tracking-normal">
               <%= String.slice(vacation, 0..4) %>.
             </div>
             <div class="hidden tracking-tight md:block md:tracking-normal">
-              <%= vacation %>
+              <%= raw(FeriendatenWeb.FerienComponents.hyphonate_string(vacation)) %>
             </div>
           </th>
         <% end %>
@@ -43,29 +43,17 @@
             "bg-gray-50 dark:bg-black"
           end
         }>
-          <td class="py-4 pl-4 pr-3 text-sm font-medium tracking-tight text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100 md:tracking-normal">
+          <td class="py-4 pl-4 pr-3 text-base font-medium tracking-tight text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100 md:tracking-normal">
             <.link
               class="text-blue-600 hover:underline dark:text-blue-400"
               href={~p"/ferien/#{federal_state.slug}"}
             >
-              <% name =
-                String.split(federal_state.name, "-")
-                |> Enum.map(fn x ->
-                  if String.length(x) > 8, do: String.slice(x, 0..6) <> ".", else: x
-                end)
-                |> Enum.join("-") %>
-              <%= if Enum.count(String.split(name, "-")) == 2 do %>
-                <% [first_element, last_element] = String.split(name, "-") %>
-                <%= first_element %>-<br />
-                <%= last_element %>
-              <% else %>
-                <%= name %>
-              <% end %>
+              <%= raw(FeriendatenWeb.FerienComponents.hyphonate_string(federal_state.name)) %>
             </.link>
           </td>
 
           <%= for {vacation, index2} <- Enum.with_index(@vacations) do %>
-            <td class={"px-3 py-4 text-sm tracking-tight text-center text-gray-900 align-top dark:text-gray-300 md:tracking-normal " <> if index2 > 2, do: "hidden md:table-cell", else: ""}>
+            <td class={"px-3 py-4 text-base tracking-tight text-center text-gray-900 align-top dark:text-gray-300 md:tracking-normal " <> if index2 > 2, do: "hidden md:table-cell", else: ""}>
               <%= for entry <- @entries |> Enum.filter(fn x -> x.location_slug == federal_state.slug && x.colloquial == vacation end) |> Feriendaten.Calendars.compress_ferientermine() do %>
                 <.link
                   class="text-blue-600 hover:underline dark:text-blue-400"
@@ -73,20 +61,7 @@
                     ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
                   }
                 >
-                  <ul>
-                    <%= for e <- String.split(entry.ferientermin, ", ") do %>
-                      <li class="hidden md:block"><%= e %></li>
-                      <li class="md:hidden">
-                        <%= if Enum.count(String.split(e, " - ")) == 2 do %>
-                          <% [first_day, last_day] = String.split(e, " - ") %>
-                          <%= first_day %><br />-<br />
-                          <%= last_day %>
-                        <% else %>
-                          <%= e %>
-                        <% end %>
-                      </li>
-                    <% end %>
-                  </ul>
+                  <%= Feriendaten.Calendars.replace_last_comma_with_und(entry.ferientermin) %>
                 </.link>
               <% end %>
             </td>
@@ -119,19 +94,19 @@
       <tr>
         <th
           scope="col"
-          class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100"
+          class="py-2.5 pl-4 pr-3 text-left text-base font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100"
         >
           Bundesland
         </th>
         <th
           scope="col"
-          class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100"
+          class="px-3 py-2.5 text-left text-base font-semibold text-gray-900 dark:text-zinc-100"
         >
           Jahr
         </th>
         <th
           scope="col"
-          class=" px-3 py-2.5 text-left text-sm font-semibold text-gray-900 dark:text-zinc-100"
+          class=" px-3 py-2.5 text-left text-base font-semibold text-gray-900 dark:text-zinc-100"
         >
           Schuljahr
         </th>
@@ -146,15 +121,15 @@
             "bg-gray-50 dark:bg-black"
           end
         }>
-          <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
+          <td class="py-4 pl-4 pr-3 text-base font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
             <.link
               class="text-blue-600 hover:underline dark:text-blue-400"
               href={~p"/ferien/#{location.slug}"}
             >
-              <%= location.name %>
+              <%= raw(FeriendatenWeb.FerienComponents.hyphonate_string(location.name)) %>
             </.link>
           </td>
-          <td class="px-3 py-4 text-sm text-gray-900 align-top dark:text-gray-300 tabular-nums">
+          <td class="px-3 py-4 text-base text-gray-900 align-top dark:text-gray-300 tabular-nums">
             <ul>
               <%= for year <- [@today.year, @today.year + 1] do %>
                 <li>
@@ -168,7 +143,7 @@
               <% end %>
             </ul>
           </td>
-          <td class="px-3 py-4 text-sm text-right text-gray-500 align-top whitespace-nowrap dark:text-gray-300 tabular-nums">
+          <td class="px-3 py-4 text-base text-right text-gray-500 align-top whitespace-nowrap dark:text-gray-300 tabular-nums">
             <ul>
               <%= for year <- [@today.year, @today.year + 1] do %>
                 <li>

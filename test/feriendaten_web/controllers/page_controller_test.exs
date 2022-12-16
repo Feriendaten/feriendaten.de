@@ -24,7 +24,16 @@ defmodule FeriendatenWeb.PageControllerTest do
         is_active: true
       })
 
-    {:ok, _bayern} =
+    {:ok, hessen} =
+      Maps.create_location(%{
+        name: "Hessen",
+        code: "HE",
+        level_id: bundesland.id,
+        parent_id: deutschland.id,
+        is_active: true
+      })
+
+    {:ok, bayern} =
       Maps.create_location(%{
         name: "Bayern",
         code: "BY",
@@ -33,13 +42,138 @@ defmodule FeriendatenWeb.PageControllerTest do
         is_active: true
       })
 
-    {:ok, _hessen} =
-      Maps.create_location(%{
-        name: "Hessen",
-        code: "HE",
-        level_id: bundesland.id,
-        parent_id: deutschland.id,
-        is_active: true
+    {:ok, sommerferien} =
+      Feriendaten.Calendars.create_vacation(%{
+        name: "Sommer",
+        colloquial: "Sommerferien",
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, herbstferien} =
+      Feriendaten.Calendars.create_vacation(%{
+        name: "Herbst",
+        colloquial: "Herbstferien",
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, weihnachtsferien} =
+      Feriendaten.Calendars.create_vacation(%{
+        name: "Weihnachten",
+        colloquial: "Weihnachtsferien",
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, _entry} =
+      Feriendaten.Calendars.create_entry(%{
+        starts_on: ~D[2030-07-10],
+        ends_on: ~D[2030-08-10],
+        vacation_id: sommerferien.id,
+        location_id: hessen.id,
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, _entry} =
+      Feriendaten.Calendars.create_entry(%{
+        starts_on: ~D[2030-07-01],
+        ends_on: ~D[2030-08-08],
+        vacation_id: sommerferien.id,
+        location_id: bayern.id,
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, _entry} =
+      Feriendaten.Calendars.create_entry(%{
+        starts_on: ~D[2031-07-10],
+        ends_on: ~D[2031-08-10],
+        vacation_id: sommerferien.id,
+        location_id: hessen.id,
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, _entry} =
+      Feriendaten.Calendars.create_entry(%{
+        starts_on: ~D[2031-07-01],
+        ends_on: ~D[2031-08-08],
+        vacation_id: sommerferien.id,
+        location_id: bayern.id,
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, _entry} =
+      Feriendaten.Calendars.create_entry(%{
+        starts_on: ~D[2030-10-01],
+        ends_on: ~D[2030-10-08],
+        vacation_id: herbstferien.id,
+        location_id: bayern.id,
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, _entry} =
+      Feriendaten.Calendars.create_entry(%{
+        starts_on: ~D[2030-12-22],
+        ends_on: ~D[2031-01-05],
+        vacation_id: weihnachtsferien.id,
+        location_id: bayern.id,
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, _entry} =
+      Feriendaten.Calendars.create_entry(%{
+        starts_on: ~D[2030-12-22],
+        ends_on: ~D[2031-01-01],
+        vacation_id: weihnachtsferien.id,
+        location_id: hessen.id,
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
       })
 
     {:ok, _false_federal_state} =
@@ -50,21 +184,18 @@ defmodule FeriendatenWeb.PageControllerTest do
         is_active: false
       })
 
-    today = Date.utc_today()
+    today = ~D[2030-07-01]
     year = today.year
-    next_year = year + 1
 
-    school_year =
-      "#{String.slice(Integer.to_string(year), 2..3) <> "/" <> String.slice(Integer.to_string(year + 1), 2..3)}"
-
-    conn = get(conn, ~p"/")
+    conn = get(conn, ~p"/?datum=2030-07-01")
     assert html_response(conn, 200) =~ "Schulferien Deutschland"
-    assert html_response(conn, 200) =~ "Bayern"
+    assert html_response(conn, 200) =~ "Sommer"
+    assert html_response(conn, 200) =~ "01.07. - 08.08."
     assert html_response(conn, 200) =~ "Hessen"
+    assert html_response(conn, 200) =~ "Herbst"
     refute html_response(conn, 200) =~ "Not active Example Federal State"
+
     assert html_response(conn, 200) =~ "#{year}"
-    assert html_response(conn, 200) =~ "#{next_year}"
-    assert html_response(conn, 200) =~ "#{school_year}"
   end
 
   test "GET /datenschutzerklaerung", %{conn: conn} do

@@ -367,9 +367,11 @@ defmodule Feriendaten.Calendars do
         starts_on \\ Date.utc_today(),
         ends_on \\ Date.add(Date.utc_today(), 365)
       ) do
+    deutschland = Feriendaten.Maps.get_location_by_slug!("deutschland")
+
     location_tree_initial_query =
       from l in Location,
-        where: l.parent_id == 1 and l.is_active == true,
+        where: l.parent_id == ^deutschland.id and l.is_active == true,
         select: %{id: l.id, parent_id: l.parent_id}
 
     location_tree_recursion_query =
