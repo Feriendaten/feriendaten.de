@@ -60,10 +60,6 @@ defmodule FeriendatenWeb.VacationSlugController do
     vacation_colloquial = hd(entries) |> Map.get(:colloquial)
     vacation_slug = hd(entries) |> Map.get(:vacation_slug)
 
-    description =
-      "Termine und weitere Informationen zu den #{vacation_colloquial} #{location.name} #{year}. " <>
-        Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
-
     image_file_head = "#{vacation_slug}/#{vacation_slug}-#{location_slug}-#{year}"
     image_file_name = "#{image_file_head}.jpeg"
     image_file_name_16_9 = "#{image_file_head}-16-9.jpeg"
@@ -76,6 +72,10 @@ defmodule FeriendatenWeb.VacationSlugController do
 
     entries_of_this_year =
       Enum.filter(entries, fn entry -> entry.starts_on.year == String.to_integer(year) end)
+
+    description =
+      "Termine und weitere Informationen zu den #{vacation_colloquial} #{location.name} #{year}: " <>
+        Feriendaten.Calendars.all_ferientermine_to_string(entries_of_this_year)
 
     termin =
       if length(entries_of_this_year) == 1 do
