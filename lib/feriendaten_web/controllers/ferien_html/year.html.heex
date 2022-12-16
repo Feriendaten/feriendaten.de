@@ -1,97 +1,110 @@
-<div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-  <div class="px-4 sm:px-6 lg:px-8">
-    <div class="sm:flex sm:items-center">
-      <div class="sm:flex-auto">
-        <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          <%= if @is_school_year do %>
-            Schulferien <%= @location.name %> Schuljahr <%= @year %>-<%= String.to_integer(@year) +
-              1 %>
-          <% else %>
-            Schulferien <%= @location.name %> <%= @end_date.year %>
-          <% end %>
-        </h1>
-
-        <.vacations_table
-          entries={@entries}
-          dont_list_year={@end_date.year}
-          is_school_year={@is_school_year}
-        />
-        <!-- Paginagtion -->
-        <%= if Enum.member?([@today.year, @today.year + 1], @end_date.year)  do %>
-          <div class="flex items-center justify-center px-4 py-6 bg-white border-t border-gray-200 sm:px-6 dark:bg-gray-900">
-            <div class=" sm:flex sm:flex-1 sm:items-center sm:justify-center dark:bg-gray-900">
-              <nav
-                class="inline-flex -space-x-px rounded-md shadow-sm isolate dark:bg-gray-800"
-                aria-label="Pagination"
-              >
-                <.link
-                  href={~p"/ferien/#{@location.slug}/#{@end_date.year - 1}"}
-                  class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 focus:z-20 dark:bg-gray-800"
-                >
-                  <span class="sr-only">Vorheriges Jahr</span>
-                  <svg
-                    class="w-5 h-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </.link>
-
-                <.link
-                  href={~p"/ferien/#{@location.slug}/#{@end_date.year - 1}"}
-                  class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 focus:z-20 dark:bg-gray-800 dark:text-gray-100 dark:hover:text-gray-900"
-                >
-                  <%= @end_date.year - 1 %>
-                </.link>
-
-                <div class="relative z-10 inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-600 border border-indigo-500 bg-indigo-50 focus:z-20 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-300 ">
-                  <%= @end_date.year %>
-                </div>
-
-                <.link
-                  href={~p"/ferien/#{@location.slug}/#{@end_date.year + 1}"}
-                  class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 focus:z-20 dark:bg-gray-800 dark:text-gray-100 dark:hover:text-gray-900"
-                >
-                  <%= @end_date.year + 1 %>
-                </.link>
-
-                <.link
-                  href={~p"/ferien/#{@location.slug}/#{@end_date.year + 1}"}
-                  class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 focus:z-20 dark:bg-gray-800"
-                >
-                  <span class="sr-only">Nächstes Jahr</span>
-                  <svg
-                    class="w-5 h-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </.link>
-              </nav>
-            </div>
-          </div>
-        <% end %>
-        <.location_year_faq
-          year={@year}
-          location={@location}
-          entries={@entries}
-          requested_date={@requested_date}
-        />
-      </div>
+<div class="grid gap-4 md:grid-cols-3">
+  <div class="col-span-3">
+    <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+      <%= if @is_school_year do %>
+        Ferien <%= @location.name %> Schuljahr <%= @year %>-<%= String.to_integer(@year) +
+          1 %>
+      <% else %>
+        Ferien <%= @location.name %> <%= @end_date.year %>
+      <% end %>
+    </h1>
+    <p class="mt-2 text-base text-gray-700 dark:text-gray-100">
+      Wann sind Schulferien <%= if @location.name == "Saarland",
+        do: "im",
+        else: "in" %> <%= @location.name %> im
+      <%= if @is_school_year do %>
+        Schuljahr <%= @year %>-<%= String.to_integer(@year) +
+          1 %>?
+      <% else %>
+        Jahr <%= @year %>?
+      <% end %>
+      <%= if length(@entries) > 1 do %>
+        Hier finden Sie die Ferien&shy;termine:
+      <% else %>
+        Hier finden Sie den Ferien&shy;termin:
+      <% end %>
+    </p>
+    <div class="pt-4">
+      <.vacations_table_table_only
+        entries={@entries}
+        dont_list_year={@end_date.year}
+        is_school_year={@is_school_year}
+      />
     </div>
+    <!-- Paginagtion -->
+    <%= if Enum.member?([@today.year, @today.year + 1], @end_date.year)  do %>
+      <div class="flex items-center justify-center px-4 py-6 bg-white border-t border-gray-200 sm:px-6 dark:bg-gray-900">
+        <div class=" sm:flex sm:flex-1 sm:items-center sm:justify-center dark:bg-gray-900">
+          <nav
+            class="inline-flex -space-x-px rounded-md shadow-sm isolate dark:bg-gray-800"
+            aria-label="Pagination"
+          >
+            <.link
+              href={~p"/ferien/#{@location.slug}/#{@end_date.year - 1}"}
+              class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 focus:z-20 dark:bg-gray-800"
+            >
+              <span class="sr-only">Vorheriges Jahr</span>
+              <svg
+                class="w-5 h-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </.link>
+
+            <.link
+              href={~p"/ferien/#{@location.slug}/#{@end_date.year - 1}"}
+              class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 focus:z-20 dark:bg-gray-800 dark:text-gray-100 dark:hover:text-gray-900"
+            >
+              <%= @end_date.year - 1 %>
+            </.link>
+
+            <div class="relative z-10 inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-600 border border-indigo-500 bg-indigo-50 focus:z-20 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-300 ">
+              <%= @end_date.year %>
+            </div>
+
+            <.link
+              href={~p"/ferien/#{@location.slug}/#{@end_date.year + 1}"}
+              class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 focus:z-20 dark:bg-gray-800 dark:text-gray-100 dark:hover:text-gray-900"
+            >
+              <%= @end_date.year + 1 %>
+            </.link>
+
+            <.link
+              href={~p"/ferien/#{@location.slug}/#{@end_date.year + 1}"}
+              class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 focus:z-20 dark:bg-gray-800"
+            >
+              <span class="sr-only">Nächstes Jahr</span>
+              <svg
+                class="w-5 h-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </.link>
+          </nav>
+        </div>
+      </div>
+    <% end %>
+    <.location_year_faq
+      year={@year}
+      location={@location}
+      entries={@entries}
+      requested_date={@requested_date}
+    />
   </div>
 </div>

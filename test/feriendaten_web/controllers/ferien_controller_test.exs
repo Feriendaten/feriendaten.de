@@ -177,7 +177,7 @@ defmodule FeriendatenWeb.FerienControllerTest do
     refute html_response(conn, 200) =~ "22.12. - 10.01."
 
     conn = get(conn, ~p"/ferien/hessen/2040-2041")
-    assert html_response(conn, 200) =~ "Schulferien Hessen Schuljahr 2040-2041"
+    assert html_response(conn, 200) =~ "Ferien Hessen Schuljahr 2040-2041"
     refute html_response(conn, 200) =~ "Weihnachtsferien"
     refute html_response(conn, 200) =~ "22.12. - 05.01."
     refute html_response(conn, 200) =~ "Osterferien"
