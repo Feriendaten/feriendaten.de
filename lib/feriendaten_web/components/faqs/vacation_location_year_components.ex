@@ -15,47 +15,38 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
   def vacation_location_year_faq(assigns) do
     assigns = enrich_with_faq_entries(assigns)
 
-    unless assigns.faq_entries == [] do
-      ~H"""
-      <section class="bg-white dark:bg-gray-900">
-        <div class="pt-8">
-          <h2 class="mb-8 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
-            FAQ
-          </h2>
-          <div
-            class="grid pt-8 text-left border-t border-gray-200 md:gap-16 dark:border-gray-700 md:grid-cols-2"
-            itemscope
-            itemtype="https://schema.org/FAQPage"
-          >
-            <%= for faq_entries <- [@first_half, @second_half] do %>
-              <div>
-                <%= for faq_entry <- faq_entries do %>
-                  <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-                    <div class="mb-10">
-                      <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
-                        <div itemprop="name">
-                          <%= faq_entry[:question] %>
-                        </div>
-                      </h3>
-                      <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                        <p class="text-gray-500 dark:text-gray-400" itemprop="text">
-                          <%= faq_entry[:answer] %>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-            <% end %>
+    render_faq(assigns)
+  end
+
+  defp render_faq(%{faq_entries: []} = assigns) do
+    ~H"""
+    <!-- No FAQ entries -->
+    """
+  end
+
+  defp render_faq(assigns) do
+    ~H"""
+    <h2 class="pt-4 mb-8 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
+      FAQ
+    </h2>
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2" itemscope itemtype="https://schema.org/FAQPage">
+      <%= for faq_entry <- @faq_entries do %>
+        <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
+            <div itemprop="name">
+              <%= faq_entry[:question] %>
+            </div>
+          </h3>
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <p class="text-gray-500 dark:text-gray-400" itemprop="text">
+              <%= faq_entry[:answer] %>
+            </p>
           </div>
         </div>
-      </section>
-      """
-    else
-      ~H"""
-      <div></div>
-      """
-    end
+      <% end %>
+    </div>
+    """
   end
 
   defp enrich_with_faq_entries(assigns) do

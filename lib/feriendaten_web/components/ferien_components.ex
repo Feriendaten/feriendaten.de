@@ -98,7 +98,9 @@ defmodule FeriendatenWeb.FerienComponents do
                     ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
                   }
                 >
-                  <%= entry.colloquial %> <%= entry.location_name %> <%= entry.starts_on.year %>
+                  <%= raw(hyphonate_string(entry.colloquial)) %> <%= raw(
+                    hyphonate_string(entry.location_name)
+                  ) %> <%= entry.starts_on.year %>
                 </.link>
               <% else %>
                 <%= if @is_school_year do %>
@@ -108,7 +110,7 @@ defmodule FeriendatenWeb.FerienComponents do
                       ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
                     }
                   >
-                    <%= entry.colloquial %> <%= entry.starts_on.year %>
+                    <%= raw(hyphonate_string(entry.colloquial)) %> <%= entry.starts_on.year %>
                   </.link>
                 <% else %>
                   <%= unless @dont_list_year == entry.starts_on.year do %>
@@ -118,14 +120,14 @@ defmodule FeriendatenWeb.FerienComponents do
                         ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
                       }
                     >
-                      <%= entry.colloquial %> <%= entry.starts_on.year %>
+                      <%= raw(hyphonate_string(entry.colloquial)) %> <%= entry.starts_on.year %>
                     </.link>
                   <% else %>
                     <.link
                       class="text-blue-600 hover:underline dark:text-blue-400"
                       navigate={~p"/#{entry.vacation_slug}/#{entry.location_slug}"}
                     >
-                      <%= entry.colloquial %>
+                      <%= raw(hyphonate_string(entry.colloquial)) %>
                     </.link>
                   <% end %>
                 <% end %>
@@ -356,13 +358,6 @@ defmodule FeriendatenWeb.FerienComponents do
 
   def hyphonate_string(string) do
     string
-    |> String.replace("Weihnacht", "Weih&shy;nacht")
-    |> String.replace("Mecklenburg", "Mecklen&shy;burg")
-    |> String.replace("Vorpommern", "Vor&shy;pommern")
-    |> String.replace("Nordrhein", "Nord&shy;rhein")
-    |> String.replace("Westfalen", "West&shy;falen")
-    |> String.replace("Rheinland", "Rhein&shy;land")
-    |> String.replace("Schleswig", "Schles&shy;wig")
     |> String.replace("Weihnachtsferien", "Weih&shy;nachts&shy;ferien")
     |> String.replace("Winterferien", "Winter&shy;ferien")
     |> String.replace("Frühjahrsferien", "Früh&shy;jahrs&shy;ferien")
@@ -386,5 +381,12 @@ defmodule FeriendatenWeb.FerienComponents do
     |> String.replace("Sachsen-Anhalt", "Sach&shy;sen-An&shy;halt")
     |> String.replace("Nord­rhein-West­falen", "Nord&shy;rhein-West&shy;fa&shy;len")
     |> String.replace("Rhein­land-Pfalz", "Rhein&shy;land-Pfalz")
+    |> String.replace("Weihnacht", "Weih&shy;nacht")
+    |> String.replace("Mecklenburg", "Mecklen&shy;burg")
+    |> String.replace("Vorpommern", "Vor&shy;pommern")
+    |> String.replace("Nordrhein", "Nord&shy;rhein")
+    |> String.replace("Westfalen", "West&shy;falen")
+    |> String.replace("Rheinland", "Rhein&shy;land")
+    |> String.replace("Schleswig", "Schles&shy;wig")
   end
 end
