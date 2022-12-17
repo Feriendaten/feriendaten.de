@@ -37,6 +37,8 @@ defmodule FeriendatenWeb.FerienComponents do
   attr :entries, :list, required: true
   attr :dont_list_year, :integer, default: nil
   attr :is_school_year, :boolean, default: false
+  attr :year, :string, default: nil
+  attr :location, :any, default: nil
 
   def vacations_table_table_only(assigns) do
     # Check if this is two Weihnachtsferien. In that case just take the last one.
@@ -92,43 +94,15 @@ defmodule FeriendatenWeb.FerienComponents do
           }>
             <td class="py-4 pl-4 pr-3 font-medium text-gray-900 align-top sm:pl-6 lg:pl-8 dark:text-gray-100">
               <%= if @multi_locations do %>
-                <.link
-                  class="text-blue-600 hover:underline dark:text-blue-400"
-                  navigate={
-                    ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
-                  }
-                >
-                  <%= raw(hyphonate_string(entry.colloquial)) %> <%= raw(
-                    hyphonate_string(entry.location_name)
-                  ) %> <%= entry.starts_on.year %>
-                </.link>
+                <.render_ferien_entry multi_locations={@multi_locations} entry={entry} />
               <% else %>
                 <%= if @is_school_year do %>
-                  <.link
-                    class="text-blue-600 hover:underline dark:text-blue-400"
-                    navigate={
-                      ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
-                    }
-                  >
-                    <%= raw(hyphonate_string(entry.colloquial)) %> <%= entry.starts_on.year %>
-                  </.link>
+                  <.render_ferien_entry is_school_year={@is_school_year} entry={entry} />
                 <% else %>
-                  <%= unless @dont_list_year == entry.starts_on.year do %>
-                    <.link
-                      class="text-blue-600 hover:underline dark:text-blue-400"
-                      navigate={
-                        ~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"
-                      }
-                    >
-                      <%= raw(hyphonate_string(entry.colloquial)) %> <%= entry.starts_on.year %>
-                    </.link>
+                  <%= if @dont_list_year == entry.starts_on.year do %>
+                    <.render_ferien_entry entry={entry} dont_list_year={entry.starts_on.year} />
                   <% else %>
-                    <.link
-                      class="text-blue-600 hover:underline dark:text-blue-400"
-                      navigate={~p"/#{entry.vacation_slug}/#{entry.location_slug}"}
-                    >
-                      <%= raw(hyphonate_string(entry.colloquial)) %>
-                    </.link>
+                    <.render_ferien_entry entry={entry} />
                   <% end %>
                 <% end %>
               <% end %>
@@ -158,6 +132,56 @@ defmodule FeriendatenWeb.FerienComponents do
         <% end %>
       </tbody>
     </table>
+    """
+  end
+
+  attr :entry, :any, required: true
+  attr :is_school_year, :boolean, required: false
+  attr :multi_locations, :boolean, required: false
+  attr :dont_list_year, :integer, default: nil
+
+  def render_ferien_entry(%{multi_locations: true, entry: %{colloquial: _}} = assigns) do
+    ~H"""
+    <.link
+      class="text-blue-600 hover:underline dark:text-blue-400"
+      navigate={~p"/#{@entry.vacation_slug}/#{@entry.location_slug}/#{@entry.starts_on.year}"}
+    >
+      <%= raw(hyphonate_string(@entry.colloquial)) %> <%= raw(hyphonate_string(@entry.location_name)) %> <%= @entry.starts_on.year %>
+    </.link>
+    """
+  end
+
+  def render_ferien_entry(%{is_school_year: true, entry: %{colloquial: _}} = assigns) do
+    ~H"""
+    <.link
+      class="text-blue-600 hover:underline dark:text-blue-400"
+      navigate={~p"/#{@entry.vacation_slug}/#{@entry.location_slug}/#{@entry.starts_on.year}"}
+    >
+      <%= raw(hyphonate_string(@entry.colloquial)) %> <%= @entry.starts_on.year %>
+    </.link>
+    """
+  end
+
+  def render_ferien_entry(%{dont_list_year: dont_list_year, entry: %{colloquial: _}} = assigns)
+      when is_integer(dont_list_year) do
+    ~H"""
+    <.link
+      class="text-blue-600 hover:underline dark:text-blue-400"
+      navigate={~p"/#{@entry.vacation_slug}/#{@entry.location_slug}/#{@entry.starts_on.year}"}
+    >
+      <%= raw(hyphonate_string(@entry.colloquial)) %>
+    </.link>
+    """
+  end
+
+  def render_ferien_entry(%{entry: %{colloquial: _}} = assigns) do
+    ~H"""
+    <.link
+      class="text-blue-600 hover:underline dark:text-blue-400"
+      navigate={~p"/#{@entry.vacation_slug}/#{@entry.location_slug}/#{@entry.starts_on.year}"}
+    >
+      <%= raw(hyphonate_string(@entry.colloquial)) %> <%= @entry.starts_on.year %>
+    </.link>
     """
   end
 

@@ -106,8 +106,50 @@ defmodule FeriendatenWeb.FerienControllerTest do
 
     {:ok, _entry} =
       Feriendaten.Calendars.create_entry(%{
+        starts_on: ~D[2040-12-22],
+        ends_on: ~D[2041-01-05],
+        vacation_id: weihnachtsferien.id,
+        location_id: hessen.id,
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, _entry} =
+      Feriendaten.Calendars.create_entry(%{
         starts_on: ~D[2040-03-20],
         ends_on: ~D[2040-04-04],
+        vacation_id: osterferien.id,
+        location_id: hessen.id,
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, _entry} =
+      Feriendaten.Calendars.create_entry(%{
+        starts_on: ~D[2041-03-20],
+        ends_on: ~D[2041-04-04],
+        vacation_id: osterferien.id,
+        location_id: hessen.id,
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, _entry} =
+      Feriendaten.Calendars.create_entry(%{
+        starts_on: ~D[2042-03-20],
+        ends_on: ~D[2042-04-04],
         vacation_id: osterferien.id,
         location_id: hessen.id,
         listed: true,
@@ -166,27 +208,38 @@ defmodule FeriendatenWeb.FerienControllerTest do
     assert html_response(conn, 200) =~ "22.12. - 05.01."
     assert html_response(conn, 200) =~ "Osterferien"
     assert html_response(conn, 200) =~ "20.03. - 04.04."
+
     refute html_response(conn, 200) =~ "22.12. - 10.01."
 
     conn = get(conn, ~p"/ferien/hessen/2040")
     assert html_response(conn, 200) =~ "Schulferien Hessen 2040"
-    assert html_response(conn, 200) =~ "Weihnachtsferien"
+    assert html_response(conn, 200) =~ "Weih&shy;nachts&shy;ferien 2039"
     assert html_response(conn, 200) =~ "22.12. - 05.01."
-    assert html_response(conn, 200) =~ "Osterferien"
+    assert html_response(conn, 200) =~ "Oster&shy;ferien"
     assert html_response(conn, 200) =~ "20.03. - 04.04."
+
+    refute html_response(conn, 200) =~ "Weih&shy;nachts&shy;ferien 2041"
     refute html_response(conn, 200) =~ "22.12. - 10.01."
 
     conn = get(conn, ~p"/ferien/hessen/2040-2041")
     assert html_response(conn, 200) =~ "Ferien Hessen Schuljahr 2040-2041"
-    refute html_response(conn, 200) =~ "Weihnachtsferien"
-    refute html_response(conn, 200) =~ "22.12. - 05.01."
-    refute html_response(conn, 200) =~ "Osterferien"
-    refute html_response(conn, 200) =~ "20.03. - 04.04."
-    refute html_response(conn, 200) =~ "22.12. - 10.01."
-    assert html_response(conn, 200) =~ "Herbstferien"
+    assert html_response(conn, 200) =~ "Herbst&shy;ferien 2040"
     assert html_response(conn, 200) =~ "01.10. - 14.10."
+    assert html_response(conn, 200) =~ "Weih&shy;nachts&shy;ferien 2040"
+    assert html_response(conn, 200) =~ "22.12. - 05.01."
+    assert html_response(conn, 200) =~ "Oster&shy;ferien 2041"
+    refute html_response(conn, 200) =~ "Oster&shy;ferien 2042"
 
     conn = get(conn, ~p"/ferien/")
     assert html_response(conn, 200) =~ "Jahres- und Schuljahresübersicht"
+
+    # conn = get(conn, ~p"/ferien/hessen/2030-2031")
+    # assert html_response(conn, 200) =~ "Ferien Sommerferien Hessen Schuljahr 2030-2031"
+    # refute html_response(conn, 200) =~ "Sommer&shy;ferien 2030"
+    # refute html_response(conn, 200) =~ "01.07. - 01.08."
+    # assert html_response(conn, 200) =~ "Sommer&shy;ferien 2030"
+    # assert html_response(conn, 200) =~ "Sommer&shy;ferien 2031"
+    # assert html_response(conn, 200) =~ "02.07. - 15.08."
+    # refute html_response(conn, 200) =~ "Sommer&shy;ferien 2029"
   end
 end
