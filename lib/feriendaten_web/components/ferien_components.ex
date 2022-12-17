@@ -142,45 +142,47 @@ defmodule FeriendatenWeb.FerienComponents do
 
   def render_ferien_entry(%{multi_locations: true, entry: %{colloquial: _}} = assigns) do
     ~H"""
-    <.link
-      class="text-blue-600 hover:underline dark:text-blue-400"
-      navigate={~p"/#{@entry.vacation_slug}/#{@entry.location_slug}/#{@entry.starts_on.year}"}
-    >
+    <.ferien_entry_link entry={@entry}>
       <%= raw(hyphonate_string(@entry.colloquial)) %> <%= raw(hyphonate_string(@entry.location_name)) %> <%= @entry.starts_on.year %>
-    </.link>
+    </.ferien_entry_link>
     """
   end
 
   def render_ferien_entry(%{is_school_year: true, entry: %{colloquial: _}} = assigns) do
     ~H"""
-    <.link
-      class="text-blue-600 hover:underline dark:text-blue-400"
-      navigate={~p"/#{@entry.vacation_slug}/#{@entry.location_slug}/#{@entry.starts_on.year}"}
-    >
+    <.ferien_entry_link entry={@entry}>
       <%= raw(hyphonate_string(@entry.colloquial)) %> <%= @entry.starts_on.year %>
-    </.link>
+    </.ferien_entry_link>
     """
   end
 
   def render_ferien_entry(%{dont_list_year: dont_list_year, entry: %{colloquial: _}} = assigns)
       when is_integer(dont_list_year) do
     ~H"""
-    <.link
-      class="text-blue-600 hover:underline dark:text-blue-400"
-      navigate={~p"/#{@entry.vacation_slug}/#{@entry.location_slug}/#{@entry.starts_on.year}"}
-    >
+    <.ferien_entry_link entry={@entry}>
       <%= raw(hyphonate_string(@entry.colloquial)) %>
-    </.link>
+    </.ferien_entry_link>
     """
   end
 
   def render_ferien_entry(%{entry: %{colloquial: _}} = assigns) do
     ~H"""
+    <.ferien_entry_link entry={@entry}>
+      <%= raw(hyphonate_string(@entry.colloquial)) %> <%= @entry.starts_on.year %>
+    </.ferien_entry_link>
+    """
+  end
+
+  slot :inner_block, required: true
+  attr :entry, :any, required: true
+
+  def ferien_entry_link(assigns) do
+    ~H"""
     <.link
       class="text-blue-600 hover:underline dark:text-blue-400"
       navigate={~p"/#{@entry.vacation_slug}/#{@entry.location_slug}/#{@entry.starts_on.year}"}
     >
-      <%= raw(hyphonate_string(@entry.colloquial)) %> <%= @entry.starts_on.year %>
+      <%= render_slot(@inner_block) %>
     </.link>
     """
   end
