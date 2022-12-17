@@ -8,6 +8,7 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
   attr :entries, :list, required: true
   attr :requested_date, :any, required: true
   attr :year, :integer, required: true
+  attr :is_school_year, :boolean, default: false
 
   def location_year_faq(assigns) do
     ~H"""
@@ -25,69 +26,132 @@ defmodule FeriendatenWeb.LocationYearFaqComponents do
           </div>
           <div class="mt-12 lg:col-span-2 lg:mt-0">
             <dl class="space-y-12">
-              <div>
-                <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
-                  Wann sind Ferien in <%= @location.name %> <%= @year %>?
-                </dt>
-                <dd class="mt-2 text-base text-gray-500">
-                  <.answer_wann_sind_ferien_in
-                    location={@location}
-                    entries={@entries}
-                    requested_date={@requested_date}
-                    year={@year}
-                  />
-                </dd>
-              </div>
-              <div>
-                <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
-                  Hat <%= @location.name %> Ferien <%= @year %>?
-                </dt>
-                <dd class="mt-2 text-base text-gray-500">
-                  <.answer_wann_sind_ferien_in
-                    location={@location}
-                    entries={@entries}
-                    requested_date={@requested_date}
-                    year={@year}
-                  />
-                </dd>
-              </div>
-              <div>
-                <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
-                  Wann Ferien in <%= @location.code %> <%= @year %>?
-                </dt>
-                <dd class="mt-2 text-base text-gray-500">
-                  <.answer_wann_sind_ferien_in
-                    location={@location}
-                    entries={@entries}
-                    requested_date={@requested_date}
-                    year={@year}
-                  />
-                </dd>
-              </div>
-              <div>
-                <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
-                  Wie viele Ferientage hat <%= @location.code %> <%= @year %>?
-                </dt>
-                <dd class="mt-2 text-base text-gray-500">
-                  Insgesamt gibt es in <%= @location.name %> <%= sum_of_days(@entries, @year) %> Ferientage im Jahr <%= @year %>.
-                </dd>
-              </div>
-              <div>
-                <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
-                  Wie viele Tage Ferien hat <%= @location.name %> <%= @year %>?
-                </dt>
-                <dd class="mt-2 text-base text-gray-500">
-                  Insgesamt gibt es in <%= @location.name %> <%= sum_of_days(@entries, @year) %> Ferientage im Jahr <%= @year %>.
-                </dd>
-              </div>
-              <div>
-                <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
-                  Wann gibt es Zeugnisse in <%= @location.name %> <%= @year %>?
-                </dt>
-                <dd class="mt-2 text-base text-gray-500">
-                  <.zeugnisausgabetermin location={@location} entries={@entries} />
-                </dd>
-              </div>
+              <%= if @is_school_year do %>
+                <div>
+                  <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                    Ferien <%= @location.code %> <%= "#{@year}/#{String.to_integer(@year) + 1}" %>?
+                  </dt>
+                  <dd class="mt-2 text-base text-gray-500">
+                    <.answer_wann_sind_ferien_in
+                      location={@location}
+                      entries={@entries}
+                      requested_date={@requested_date}
+                      year={@year}
+                    />
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                    Wann gibt es Zeugnisse in <%= @location.name %> <%= String.to_integer(@year) + 1 %>?
+                  </dt>
+                  <dd class="mt-2 text-base text-gray-500">
+                    <.zeugnisausgabetermin location={@location} entries={@entries} />
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                    Zeugnisse <%= @location.code %> <%= String.to_integer(@year) + 1 %>?
+                  </dt>
+                  <dd class="mt-2 text-base text-gray-500">
+                    <.zeugnisausgabetermin location={@location} entries={@entries} />
+                  </dd>
+                </div>
+              <% else %>
+                <div>
+                  <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                    Schulferien <%= @location.name %> <%= @year %>?
+                  </dt>
+                  <dd class="mt-2 text-base text-gray-500">
+                    <.answer_wann_sind_ferien_in
+                      location={@location}
+                      entries={@entries}
+                      requested_date={@requested_date}
+                      year={@year}
+                    />
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                    Wann sind Ferien in <%= @location.name %> <%= @year %>?
+                  </dt>
+                  <dd class="mt-2 text-base text-gray-500">
+                    <.answer_wann_sind_ferien_in
+                      location={@location}
+                      entries={@entries}
+                      requested_date={@requested_date}
+                      year={@year}
+                    />
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                    Hat <%= @location.name %> Ferien <%= @year %>?
+                  </dt>
+                  <dd class="mt-2 text-base text-gray-500">
+                    <.answer_wann_sind_ferien_in
+                      location={@location}
+                      entries={@entries}
+                      requested_date={@requested_date}
+                      year={@year}
+                    />
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                    Wann Ferien in <%= @location.code %> <%= @year %>?
+                  </dt>
+                  <dd class="mt-2 text-base text-gray-500">
+                    <.answer_wann_sind_ferien_in
+                      location={@location}
+                      entries={@entries}
+                      requested_date={@requested_date}
+                      year={@year}
+                    />
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                    Ferien <%= @year %> <%= @location.code %>?
+                  </dt>
+                  <dd class="mt-2 text-base text-gray-500">
+                    <.answer_wann_sind_ferien_in
+                      location={@location}
+                      entries={@entries}
+                      requested_date={@requested_date}
+                      year={@year}
+                    />
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                    Ferien <%= @location.name %> <%= @year %>?
+                  </dt>
+                  <dd class="mt-2 text-base text-gray-500">
+                    <.answer_wann_sind_ferien_in
+                      location={@location}
+                      entries={@entries}
+                      requested_date={@requested_date}
+                      year={@year}
+                    />
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                    Wie viele Ferientage hat <%= @location.code %> <%= @year %>?
+                  </dt>
+                  <dd class="mt-2 text-base text-gray-500">
+                    Insgesamt gibt es in <%= @location.name %> <%= sum_of_days(@entries, @year) %> Ferientage im Jahr <%= @year %>.
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                    Wie viele Tage Ferien hat <%= @location.name %> <%= @year %>?
+                  </dt>
+                  <dd class="mt-2 text-base text-gray-500">
+                    Insgesamt gibt es in <%= @location.name %> <%= sum_of_days(@entries, @year) %> Ferientage im Jahr <%= @year %>.
+                  </dd>
+                </div>
+              <% end %>
             </dl>
           </div>
         </div>
