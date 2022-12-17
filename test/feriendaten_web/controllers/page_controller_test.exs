@@ -191,7 +191,7 @@ defmodule FeriendatenWeb.PageControllerTest do
     assert html_response(conn, 200) =~ "Schulferien Deutschland"
     assert html_response(conn, 200) =~ "Sommer"
     assert html_response(conn, 200) =~ "01.07. - 08.08."
-    assert html_response(conn, 200) =~ "Hessen"
+    assert html_response(conn, 200) =~ "Hes&shy;sen"
     assert html_response(conn, 200) =~ "Herbst"
     refute html_response(conn, 200) =~ "Not active Example Federal State"
 

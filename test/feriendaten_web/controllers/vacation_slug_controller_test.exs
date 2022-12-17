@@ -143,10 +143,10 @@ defmodule FeriendatenWeb.VacationSlugControllerTest do
     refute html_response(conn, 200) =~ "Sommer&shy;ferien 2031"
 
     conn = get(conn, ~p"/sommerferien")
-    assert html_response(conn, 200) =~ "Sommerferien Hessen 2029"
-    assert html_response(conn, 200) =~ "Sommer&shy;ferien Bayern 2029"
+    assert html_response(conn, 200) =~ "Sommer&shy;ferien Hes&shy;sen 2029"
+    assert html_response(conn, 200) =~ "Sommer&shy;ferien Bay&shy;ern 2029"
     assert html_response(conn, 200) =~ "01.07. - 08.08."
-    assert html_response(conn, 200) =~ "Sommer&shy;ferien Hessen 2030"
+    assert html_response(conn, 200) =~ "Sommer&shy;ferien Hes&shy;sen 2030"
     assert html_response(conn, 200) =~ "10.07. - 10.08."
   end
 end
