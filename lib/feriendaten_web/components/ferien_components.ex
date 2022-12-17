@@ -67,11 +67,11 @@ defmodule FeriendatenWeb.FerienComponents do
             scope="col"
             class="py-2.5 pl-4 pr-3 text-left font-semibold text-gray-900 sm:pl-6 lg:pl-8 dark:text-zinc-100"
           >
-            Ferien
+            Fer&shy;ien
           </th>
 
           <th scope="col" class="px-3 py-2.5 text-left font-semibold text-gray-900 dark:text-zinc-100">
-            Zeitraum
+            Zeit&shy;raum
           </th>
           <th
             scope="col"
@@ -396,5 +396,6 @@ defmodule FeriendatenWeb.FerienComponents do
     |> String.replace("Westfalen", "West&shy;falen")
     |> String.replace("Rheinland", "Rhein&shy;land")
     |> String.replace("Schleswig", "Schles&shy;wig")
+    |> String.replace("Ferien", "Fe&shy;ri&shy;en")
   end
 end
