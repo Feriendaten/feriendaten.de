@@ -193,13 +193,12 @@ defmodule FeriendatenWeb.FaqTest do
     assert html_response(conn, 200) =~ "Herbstferien"
     assert html_response(conn, 200) =~ "01.10. - 07.10."
     assert html_response(conn, 200) =~ "FAQ"
-    assert html_response(conn, 200) =~ "Warum Herbstferien kürzer?"
-    assert html_response(conn, 200) =~ "Warum nur 1 Woche Herbstferien Hessen?"
     assert html_response(conn, 200) =~ "Wann sind 2040 Herbstferien in Hessen?"
 
     assert html_response(conn, 200) =~
              "Die Herbstferien in Hessen beginnen am 01.10.2040 (ein Montag). Bis dahin sind es noch 274 Tage."
 
+    conn = get(conn, ~p"/herbstferien/hessen?datum=2040-01-01")
     assert html_response(conn, 200) =~ "Wann beginnen die Herbstferien in Hessen?"
 
     conn = get(conn, ~p"/herbstferien/bayern/2040?datum=2040-01-01")

@@ -41,16 +41,6 @@ defmodule FeriendatenWeb.FerienComponents do
   attr :location, :any, default: nil
 
   def vacations_table_table_only(assigns) do
-    # Check if this is two Weihnachtsferien. In that case just take the last one.
-    assigns =
-      if length(assigns.entries) == 2 &&
-           Enum.at(assigns.entries, -1).colloquial == "Weihnachtsferien" &&
-           Enum.at(assigns.entries, -2).colloquial == "Weihnachtsferien" do
-        assign(assigns, :entries, [Enum.at(assigns.entries, -1)])
-      else
-        assigns
-      end
-
     number_of_federal_states =
       assigns.entries |> Enum.map(fn x -> x.location_name end) |> Enum.uniq() |> length
 

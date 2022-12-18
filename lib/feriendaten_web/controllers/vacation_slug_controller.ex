@@ -56,6 +56,7 @@ defmodule FeriendatenWeb.VacationSlugController do
         starts_on,
         ends_on
       )
+      |> Enum.filter(fn entry -> entry.starts_on.year == String.to_integer(year) end)
 
     vacation_colloquial = hd(entries) |> Map.get(:colloquial)
     vacation_slug = hd(entries) |> Map.get(:vacation_slug)

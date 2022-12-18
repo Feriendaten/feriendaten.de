@@ -17,9 +17,56 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
       |> Map.put_new(:faq_entries, [])
       |> add_wann_ist_der_letzte_schultag_vor_den_vacations()
       |> add_wie_lang_sind_die_vacations_in_location()
+      |> add_wann_beginnen_die_vacations_in_location()
 
     render_faq(assigns)
   end
+
+  def add_wann_beginnen_die_vacations_in_location(assigns) do
+    vacation_colloquial = hd(assigns.entries) |> Map.get(:colloquial)
+
+    faq_entries = assigns.faq_entries
+
+    preposition =
+      case assigns.location.name do
+        "Saarland" -> "im"
+        _ -> "in"
+      end
+
+    first_hit =
+      Enum.find(assigns.entries, fn entry -> entry.colloquial == vacation_colloquial end)
+
+    bonus_answer =
+      case Date.compare(first_hit.starts_on, assigns.requested_date) do
+        :gt ->
+          "Bis dahin sind es noch #{Date.diff(first_hit.starts_on, assigns.requested_date)} Tage."
+
+        _ ->
+          ""
+      end
+
+    faq_entries = [
+      %{
+        question:
+          "Wann beginnen die #{vacation_colloquial} #{preposition} #{assigns.location.name}?",
+        answer:
+          "Die #{vacation_colloquial} #{first_hit.starts_on.year} #{preposition} #{assigns.location.name} beginnen am #{Calendar.strftime(first_hit.starts_on, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_hit.starts_on)}). #{bonus_answer}"
+      }
+      | faq_entries
+    ]
+
+    Map.put(assigns, :faq_entries, faq_entries)
+  end
+
+  # faq_entries = [
+  #   %{
+  #     question:
+  #       "Wann beginnen die #{vacation_colloquial} #{preposition} #{assigns.location.name}?",
+  #     answer:
+  #       "Die #{vacation_colloquial} #{preposition} #{assigns.location.name} beginnen am #{Calendar.strftime(first_hit.starts_on, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_hit.starts_on)}). #{bonus_answer}"
+  #   }
+  #   | faq_entries
+  # ]
 
   def add_wie_lang_sind_die_vacations_in_location(assigns) do
     faq_entries = assigns.faq_entries
@@ -161,8 +208,6 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
     assigns =
       assigns
       |> Map.put_new(:faq_entries, [])
-      |> add_warum_drei_wochen_osterferien()
-      |> add_warum_nur_eine_woche_herbstferien()
       |> FederalStateFaq.add_wann_sind_in_location_year_vaction?()
       |> add_wann_beginnen_vacation_in_location_year()
 
@@ -174,55 +219,6 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
     assigns
     |> Map.put(:first_half, first_half)
     |> Map.put(:second_half, second_half)
-  end
-
-  def add_warum_drei_wochen_osterferien(assigns) do
-    days =
-      Enum.filter(assigns.entries, fn entry -> entry.colloquial == "Osterferien" end)
-      |> Enum.map(fn entry -> entry.days end)
-      |> Enum.sum()
-
-    new_entry =
-      if days > 15 do
-        [
-          %{
-            question: "Warum hat #{assigns.location.name} 3 Wochen Osterferien?",
-            answer:
-              "#{assigns.location.name} hat im Jahr #{assigns.year} nur eine Woche Herbstferien, weil die Sommerferien spät zu Ende gehen. Als Ausgleich dafür wurden die Osterferien verlängert."
-          }
-        ]
-      else
-        []
-      end
-
-    Map.put(assigns, :faq_entries, assigns.faq_entries ++ new_entry)
-  end
-
-  def add_warum_nur_eine_woche_herbstferien(assigns) do
-    days =
-      Enum.filter(assigns.entries, fn entry -> entry.colloquial == "Herbstferien" end)
-      |> Enum.map(fn entry -> entry.days end)
-      |> Enum.sum()
-
-    new_entries =
-      if days < 9 do
-        [
-          %{
-            question: "Warum nur 1 Woche Herbstferien #{assigns.location.name}?",
-            answer:
-              "#{assigns.location.name} hat im Jahr #{assigns.year} nur eine Woche Herbstferien, weil die Sommerferien spät zu Ende gehen. Als Ausgleich dafür wurden die Osterferien verlängert."
-          },
-          %{
-            question: "Warum Herbstferien kürzer?",
-            answer:
-              "#{assigns.location.name} hat im Jahr #{assigns.year} nur eine Woche Herbstferien, weil die Sommerferien spät zu Ende gehen. Als Ausgleich für dafür wurden die Osterferien verlängert."
-          }
-        ]
-      else
-        []
-      end
-
-    Map.put(assigns, :faq_entries, assigns.faq_entries ++ new_entries)
   end
 
   def add_wann_beginnen_vacation_in_location_year(assigns) do
@@ -247,16 +243,6 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
         _ ->
           ""
       end
-
-    faq_entries = [
-      %{
-        question:
-          "Wann beginnen die #{vacation_colloquial} #{preposition} #{assigns.location.name}?",
-        answer:
-          "Die #{vacation_colloquial} #{preposition} #{assigns.location.name} beginnen am #{Calendar.strftime(first_hit.starts_on, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_hit.starts_on)}). #{bonus_answer}"
-      }
-      | faq_entries
-    ]
 
     faq_entries = [
       %{
