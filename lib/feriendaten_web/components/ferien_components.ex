@@ -238,12 +238,7 @@ defmodule FeriendatenWeb.FerienComponents do
       class="flex text-sm bg-white border-b border-gray-200 dark:bg-gray-800 md:text-base"
       aria-label="Breadcrumb"
     >
-      <ol
-        role="list"
-        class="flex w-full max-w-screen-xl px-4 mx-auto space-x-4 sm:px-6 lg:px-8"
-        itemscope
-        itemtype="https://schema.org/BreadcrumbList"
-      >
+      <ol role="list" class="flex w-full max-w-screen-xl px-4 mx-auto space-x-4 sm:px-6 lg:px-8">
         <li class="flex">
           <div class="flex items-center text-gray-400">
             <!-- Heroicon name: mini/home -->
@@ -264,12 +259,7 @@ defmodule FeriendatenWeb.FerienComponents do
           </div>
         </li>
 
-        <%= for {entry, index} <- Enum.with_index(@nav_bar_entries) do %>
-          <.top_nav_bar_item item={entry} index={index} />
-        <% end %>
-        <%= if @nav_bar_entries == [] do %>
-          <.top_nav_bar_item item="" index={1} />
-        <% end %>
+        <.top_nav_bar_item item={["", nil]} index={0} />
       </ol>
     </nav>
     """
@@ -327,12 +317,30 @@ defmodule FeriendatenWeb.FerienComponents do
   attr :item, :any, required: true
   attr :index, :integer, required: true
 
+  # Edge case for the index page
+  defp top_nav_bar_item(%{item: ["" = _text, nil = _link], index: 0} = assigns) do
+    ~H"""
+    <div class="flex items-center">
+      <svg
+        class="flex-shrink-0 w-6 h-full text-gray-200"
+        viewBox="0 0 24 44"
+        preserveAspectRatio="none"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+      </svg>
+    </div>
+    """
+  end
+
   defp top_nav_bar_item(%{item: [text, link]} = assigns) do
     assigns = assign(assigns, :text, text)
     assigns = assign(assigns, :link, link)
 
-    if text == "" && link == nil do
-      ~H"""
+    ~H"""
+    <li class="flex" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
       <div class="flex items-center">
         <svg
           class="flex-shrink-0 w-6 h-full text-gray-200"
@@ -344,36 +352,19 @@ defmodule FeriendatenWeb.FerienComponents do
         >
           <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
         </svg>
-      </div>
-      """
-    else
-      ~H"""
-      <li class="flex" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-        <div class="flex items-center">
-          <svg
-            class="flex-shrink-0 w-6 h-full text-gray-200"
-            viewBox="0 0 24 44"
-            preserveAspectRatio="none"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
-          </svg>
-          <div class="ml-4 font-medium text-gray-500 dark:text-zinc-400">
-            <%= if @link do %>
-              <a itemprop="item" class="text-blue-600 hover:underline dark:text-blue-400" href={@link}>
-                <span itemprop="name"><%= raw(hyphonate_string(@text)) %></span>
-              </a>
-            <% else %>
+        <div class="ml-4 font-medium text-gray-500 dark:text-zinc-400">
+          <%= if @link do %>
+            <a itemprop="item" class="text-blue-600 hover:underline dark:text-blue-400" href={@link}>
               <span itemprop="name"><%= raw(hyphonate_string(@text)) %></span>
-            <% end %>
-            <meta itemprop="position" content={@index + 1} />
-          </div>
+            </a>
+          <% else %>
+            <span itemprop="name"><%= raw(hyphonate_string(@text)) %></span>
+          <% end %>
+          <meta itemprop="position" content={@index + 1} />
         </div>
-      </li>
-      """
-    end
+      </div>
+    </li>
+    """
   end
 
   defp top_nav_bar_item(%{item: text} = assigns) do
