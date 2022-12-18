@@ -4,7 +4,7 @@ defmodule Feriendaten.MixProject do
   def project do
     [
       app: :feriendaten,
-      version: "0.2.71",
+      version: "0.2.72",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
