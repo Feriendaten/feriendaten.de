@@ -6,6 +6,110 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
 
   alias FeriendatenWeb.FederalStateFaq
 
+  # /osterferien/hessen
+  attr :entries, :list, required: true
+  attr :location, :string, required: true
+  attr :requested_date, :any, required: true
+
+  def vacation_location_faq(assigns) do
+    assigns =
+      assigns
+      |> Map.put_new(:faq_entries, [])
+      |> add_wann_ist_der_letzte_schultag_vor_den_vacations()
+      |> add_wie_lang_sind_die_vacations_in_location()
+
+    render_faq(assigns)
+  end
+
+  def add_wie_lang_sind_die_vacations_in_location(assigns) do
+    faq_entries = assigns.faq_entries
+
+    vacation_colloquial = hd(assigns.entries) |> Map.get(:colloquial)
+
+    first_hit =
+      Enum.find(assigns.entries, fn entry -> entry.colloquial == vacation_colloquial end)
+
+    preposition =
+      case assigns.location.name do
+        "Saarland" -> "im"
+        _ -> "in"
+      end
+
+    faq_entries = [
+      %{
+        question: "Wie lange sind die #{vacation_colloquial} in #{assigns.location.code}?",
+        answer:
+          "Die #{vacation_colloquial} #{first_hit.starts_on.year} #{preposition} #{assigns.location.name} dauern #{first_hit.days} Tag. Sie beginnen am #{Calendar.strftime(first_hit.starts_on, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_hit.starts_on)}) und enden am #{Calendar.strftime(first_hit.ends_on, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_hit.ends_on)})."
+      }
+      | faq_entries
+    ]
+
+    Map.put(assigns, :faq_entries, faq_entries)
+  end
+
+  def add_wann_ist_der_letzte_schultag_vor_den_vacations(assigns) do
+    faq_entries = assigns.faq_entries
+
+    vacation_colloquial = hd(assigns.entries) |> Map.get(:colloquial)
+
+    first_hit =
+      Enum.find(assigns.entries, fn entry -> entry.colloquial == vacation_colloquial end)
+
+    preposition =
+      case assigns.location.name do
+        "Saarland" -> "im"
+        _ -> "in"
+      end
+
+    first_vacation_day = first_hit.starts_on
+
+    last_school_day =
+      case FeriendatenWeb.LocationYearFaqComponents.wochentag(first_vacation_day) do
+        "Sonntag" -> Date.add(first_vacation_day, -2)
+        "Samstag" -> Date.add(first_vacation_day, -1)
+        _ -> Date.add(first_vacation_day, -1)
+      end
+
+    bonus_answer =
+      case Date.compare(first_vacation_day, assigns.requested_date) do
+        :gt ->
+          "Bis dahin sind es noch #{Date.diff(last_school_day, assigns.requested_date)} Tage."
+
+        _ ->
+          ""
+      end
+
+    faq_entries = [
+      %{
+        question:
+          "Wann ist der letzte Schultag vor den #{vacation_colloquial} #{assigns.location.code}?",
+        answer:
+          "Die #{vacation_colloquial} #{preposition} #{assigns.location.name} beginnen am #{Calendar.strftime(first_vacation_day, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_vacation_day)}). Der letzte Schultag ist der #{Calendar.strftime(last_school_day, "%d.%m.%Y")}. #{bonus_answer}"
+      }
+      | faq_entries
+    ]
+
+    faq_entries = [
+      %{
+        question: "Wann haben wir in #{assigns.location.code} #{vacation_colloquial}?",
+        answer:
+          "Die #{vacation_colloquial} #{preposition} #{assigns.location.name} beginnen am #{Calendar.strftime(first_vacation_day, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_vacation_day)}). Der letzte Schultag ist der #{Calendar.strftime(last_school_day, "%d.%m.%Y")}. #{bonus_answer}"
+      }
+      | faq_entries
+    ]
+
+    faq_entries = [
+      %{
+        question: "Wann ist die #{vacation_colloquial} #{assigns.location.code}?",
+        answer:
+          "Die #{vacation_colloquial} #{preposition} #{assigns.location.name} beginnen am #{Calendar.strftime(first_vacation_day, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_vacation_day)}). Der letzte Schultag ist der #{Calendar.strftime(last_school_day, "%d.%m.%Y")}. #{bonus_answer}"
+      }
+      | faq_entries
+    ]
+
+    Map.put(assigns, :faq_entries, faq_entries)
+  end
+
   # /osterferien/hessen/2023
   attr :entries, :list, required: true
   attr :location, :string, required: true
@@ -29,6 +133,10 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
     <h2 class="pt-4 mb-8 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
       FAQ
     </h2>
+
+    <p class="mb-8 text-base tracking-tight text-gray-900 dark:text-white">
+      Nachfolgend finden Sie eine Auflistung typischer Suchmaschinen Anfragen.
+    </p>
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2" itemscope itemtype="https://schema.org/FAQPage">
       <%= for faq_entry <- @faq_entries do %>

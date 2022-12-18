@@ -63,6 +63,14 @@
         year={@year}
         requested_date={@requested_date}
       />
+    <% else %>
+      <%= if assigns[:location] && length(@entries) > 0 do %>
+        <.vacation_location_faq
+          entries={@entries}
+          location={@location}
+          requested_date={@requested_date}
+        />
+      <% end %>
     <% end %>
   </div>
 </div>
