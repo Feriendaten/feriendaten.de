@@ -1,4 +1,4 @@
-defmodule FeriendatenWeb.VacationSlugControllerTest do
+defmodule FeriendatenWeb.VacationSlugYearControllerTest do
   use FeriendatenWeb.ConnCase
 
   alias Feriendaten.Maps
@@ -110,26 +110,27 @@ defmodule FeriendatenWeb.VacationSlugControllerTest do
         school_vacation: true
       })
 
-    conn = get(conn, ~p"/sommerferien/hessen")
-    assert html_response(conn, 200) =~ "Sommerferien Hessen"
-    assert html_response(conn, 200) =~ "Sommerferien 2029"
+    conn = get(conn, ~p"/sommerferien/hessen/2029")
+    assert html_response(conn, 200) =~ "Sommerferien Hessen 2029"
     assert html_response(conn, 200) =~ "10.07. - 10.08."
     assert html_response(conn, 200) =~ "32 Tage"
-    assert html_response(conn, 200) =~ "Sommerferien 2030"
-    assert html_response(conn, 200) =~ "02.07. - 15.08."
-    assert html_response(conn, 200) =~ "Sommerferien 2031"
+    refute html_response(conn, 200) =~ "02.07. - 15.08."
 
-    conn = get(conn, ~p"/sommerferien/hessen?datum=2030-01-01")
-    assert html_response(conn, 200) =~ "Sommerferien Hessen"
-    refute html_response(conn, 200) =~ "Sommerferien 2029"
-    assert html_response(conn, 200) =~ "Sommerferien 2030"
-    assert html_response(conn, 200) =~ "Sommerferien 2031"
+    assert html_response(conn, 200) =~ ~S"""
+           <meta name="description" content="Termine und weitere Informationen zu den Sommerferien Hessen 2029: 10.07. - 10.08.">
+           """
 
-    conn = get(conn, ~p"/sommerferien")
-    assert html_response(conn, 200) =~ "Sommer&shy;ferien Hes&shy;sen 2029"
-    assert html_response(conn, 200) =~ "Sommer&shy;ferien Bay&shy;ern 2029"
-    assert html_response(conn, 200) =~ "01.07. - 08.08."
-    assert html_response(conn, 200) =~ "Sommer&shy;ferien Hes&shy;sen 2030"
-    assert html_response(conn, 200) =~ "10.07. - 10.08."
+    assert html_response(conn, 200) =~ ~S"""
+           <meta name="twitter:title" content="Sommerferien Hessen 2029">
+           """
+
+    assert html_response(conn, 200) =~ ~S"""
+           <meta property="og:title" content="Sommerferien Hessen 2029">
+           """
+
+    conn = get(conn, ~p"/sommerferien/hessen/2030")
+    assert html_response(conn, 200) =~ "Sommerferien Hessen 2030"
+    assert html_response(conn, 200) =~ "01.07. - 01.08."
+    refute html_response(conn, 200) =~ "10.07. - 10.08."
   end
 end

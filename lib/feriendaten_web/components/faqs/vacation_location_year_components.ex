@@ -58,16 +58,6 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
     Map.put(assigns, :faq_entries, faq_entries)
   end
 
-  # faq_entries = [
-  #   %{
-  #     question:
-  #       "Wann beginnen die #{vacation_colloquial} #{preposition} #{assigns.location.name}?",
-  #     answer:
-  #       "Die #{vacation_colloquial} #{preposition} #{assigns.location.name} beginnen am #{Calendar.strftime(first_hit.starts_on, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_hit.starts_on)}). #{bonus_answer}"
-  #   }
-  #   | faq_entries
-  # ]
-
   def add_wie_lang_sind_die_vacations_in_location(assigns) do
     faq_entries = assigns.faq_entries
 
@@ -159,11 +149,12 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
 
   # /osterferien/hessen/2023
   attr :entries, :list, required: true
-  attr :location, :string, required: true
+  attr :location, :string, required: false
   attr :year, :string, required: true
   attr :requested_date, :any, required: true
+  attr :location_name, :string, required: false
 
-  def vacation_location_year_faq(assigns) do
+  def vacation_location_year_faq(%{location: %Feriendaten.Maps.Location{}} = assigns) do
     assigns = enrich_with_faq_entries(assigns)
 
     render_faq(assigns)

@@ -47,22 +47,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <%= if assigns[:twitter_card] && @twitter_card != %{} do %>
-      <meta name="twitter:card" content="summary" />
-      <meta name="twitter:creator" content="@wintermeyer" />
-      <meta name="twitter:title" content={@twitter_card[:title]} />
-      <meta name="twitter:description" content={@twitter_card[:description]} />
-      <meta name="twitter:image" content={@twitter_card[:image]} />
-
-      <meta property="og:title" content={@twitter_card[:title]} />
-      <meta property="og:description" content={@twitter_card[:description]} />
-      <%= if @twitter_card[:image_16_9] do %>
-        <meta property="og:image" content={@twitter_card[:image_16_9]} />
-      <% else %>
-        <meta property="og:image" content={@twitter_card[:image]} />
-      <% end %>
-      <meta property="og:url" content={@twitter_card[:url]} />
-      <meta property="og:type" content="website" />
+    <%= if assigns[:twitter_card] do %>
+      <.twitter_card twitter_card={@twitter_card} />
     <% end %>
   </head>
   <body class="antialiased bg-white dark:bg-gray-900">
