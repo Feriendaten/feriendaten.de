@@ -13,7 +13,7 @@
 
     <% css_file_name = "#{Application.app_dir(:feriendaten)}/priv/static/assets/app.css" %>
 
-    <%= if Mix.env == :prod && File.exists?(css_file_name) do %>
+    <%= if File.exists?(css_file_name) do %>
       <style>
         <% {:ok, css} = File.read(css_file_name) %>
         <%= raw css %>
