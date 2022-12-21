@@ -12,7 +12,7 @@ defmodule FeriendatenWeb.VacationsTableComponents do
       <thead class="bg-gray-100 dark:bg-gray-800">
         <tr>
           <th scope="col" class="px-3 py-2.5 text-left font-semibold text-gray-900 dark:text-zinc-100">
-            Zeit&shy;raum
+            Ferien&shy;termin
           </th>
 
           <th

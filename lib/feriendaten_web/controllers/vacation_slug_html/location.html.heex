@@ -38,9 +38,6 @@
       year={if assigns.year, do: @year, else: nil}
       location={if assigns.location, do: @location, else: nil}
     />
-    <p class="mt-2 text-sm text-gray-700 md:text-base dark:text-gray-100">
-      In Kürze finden Sie an dieser Stelle zusätzlich einen iCal Export und einen Schuljahreskalender als PDF im DIN A4 und DIN A3 Format.
-    </p>
   </div>
 
   <%= if File.exists?(system_path_file_name) do %>

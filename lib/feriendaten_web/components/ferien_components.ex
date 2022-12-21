@@ -63,7 +63,7 @@ defmodule FeriendatenWeb.FerienComponents do
           </th>
 
           <th scope="col" class="px-3 py-2.5 text-left font-semibold text-gray-900 dark:text-zinc-100">
-            Zeit&shy;raum
+            Termin
           </th>
           <th
             scope="col"

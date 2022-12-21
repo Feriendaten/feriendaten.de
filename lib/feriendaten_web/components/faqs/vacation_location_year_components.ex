@@ -173,7 +173,7 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
     </h2>
 
     <p class="mb-8 text-base tracking-tight text-gray-900 dark:text-white">
-      Nachfolgend finden Sie eine Auflistung typischer Suchmaschinen Anfragen.
+      Nachfolgend finden Sie typische Suchmaschinen Anfragen zu diesem Thema.
     </p>
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2" itemscope itemtype="https://schema.org/FAQPage">
@@ -201,6 +201,11 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
       |> Map.put_new(:faq_entries, [])
       |> FederalStateFaq.add_wann_sind_in_location_year_vaction?()
       |> add_wann_beginnen_vacation_in_location_year()
+
+    # TODO:
+    # Wann beginnen die ersten Sommerferien 2023?
+    # Wann beginnt das Schuljahr 2023 24 Hessen?
+    # Wann beginnt das Schuljahr 2023 Hessen?
 
     addon = rem(length(assigns.faq_entries), 2)
     half = length(assigns.faq_entries) |> div(2)
