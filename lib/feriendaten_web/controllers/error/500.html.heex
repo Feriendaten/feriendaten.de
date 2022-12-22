@@ -33,37 +33,6 @@
       </h2>
     </div>
 
-    <footer class="bg-white dark:bg-gray-900">
-      <div class="px-4 py-12 mx-auto overflow-hidden max-w-7xl sm:px-6 lg:px-8">
-        <nav class="flex flex-wrap justify-center -mx-5 -my-2" aria-label="Footer">
-          <div class="px-5 py-2 text-base text-gray-600 dark:text-gray-400">
-            Version <%= FeriendatenWeb.ViewHelpers.version() %>
-          </div>
-          <div class="px-5 py-2">
-            <a
-              href="https://www.wintermeyer-consulting.de/impressum.html"
-              class="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 hover:underline dark:hover:text-gray-100"
-            >
-              Impressum
-            </a>
-          </div>
-
-          <div class="px-5 py-2">
-            <.link
-              phx-track-static
-              rel="stylesheet"
-              href={~p"/datenschutzerklaerung"}
-              class="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 hover:underline dark:hover:text-gray-100"
-            >
-              Datenschutzerklärung
-            </.link>
-          </div>
-        </nav>
-
-        <p class="mt-8 text-base text-center text-gray-600 dark:text-gray-400 hover:text-gray-900 hover:underline dark:hover:text-gray-100">
-          <a href="https://www.wintermeyer-consulting.de">&copy; 2022 Wintermeyer Consulting</a>
-        </p>
-      </div>
-    </footer>
+    <.footer />
   </body>
 </html>

@@ -1,6 +1,8 @@
 defmodule FeriendatenWeb.ErrorHTML do
   use FeriendatenWeb, :html
 
+  import FeriendatenWeb.HelperComponents
+
   # If you want to customize your error pages,
   # uncomment the embed_templates/1 call below
   # and add pages to the error directory:

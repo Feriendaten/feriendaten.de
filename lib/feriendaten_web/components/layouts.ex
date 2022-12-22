@@ -3,6 +3,7 @@ defmodule FeriendatenWeb.Layouts do
 
   import FeriendatenWeb.FerienComponents
   import FeriendatenWeb.HeaderComponents
+  import FeriendatenWeb.HelperComponents
 
   embed_templates "layouts/*"
 end
