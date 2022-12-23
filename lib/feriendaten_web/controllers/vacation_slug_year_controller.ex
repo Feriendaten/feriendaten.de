@@ -45,7 +45,7 @@ defmodule FeriendatenWeb.VacationSlugYearController do
         end
 
       twitter_card =
-        if(File.exists?(system_path_image_file_name) || Mix.env() == :test) do
+        if(File.exists?(system_path_image_file_name)) do
           if(File.exists?(system_path_image_file_name_16_9)) do
             %{
               title: "#{vacation_colloquial} #{location.name} #{year}",
