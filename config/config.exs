@@ -18,7 +18,8 @@ config :feriendaten, FeriendatenWeb.Endpoint,
     layout: false
   ],
   pubsub_server: Feriendaten.PubSub,
-  live_view: [signing_salt: "NfL/RNfo"]
+  live_view: [signing_salt: "NfL/RNfo"],
+  debug_errors: true
 
 # Configures the mailer
 #
