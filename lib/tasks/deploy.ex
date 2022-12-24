@@ -11,6 +11,11 @@ defmodule Mix.Tasks.Deploy do
     _result = System.cmd("git", ["push", "origin", "main"])
 
     IO.puts("")
-    IO.puts("Please ssh feriendaten@feriendaten.de and run the ~/bin/deploy.sh script")
+    IO.puts("Next steps:")
+    IO.puts("")
+    IO.puts("ssh feriendaten@feriendaten.de")
+    IO.puts("")
+    IO.puts("~/bin/deploy.sh")
+    IO.puts("")
   end
 end
