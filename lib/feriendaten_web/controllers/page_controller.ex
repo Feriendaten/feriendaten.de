@@ -5,7 +5,7 @@ defmodule FeriendatenWeb.PageController do
     locations = Feriendaten.Maps.list_locations_by_level_name("Bundesland")
 
     start_date = conn.assigns.requested_date
-    end_date = Date.add(start_date, 365)
+    end_date = Date.add(start_date, 300)
 
     entries =
       Feriendaten.Calendars.school_vacation_periods_for_germany(
