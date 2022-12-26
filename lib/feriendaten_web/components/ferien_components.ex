@@ -100,20 +100,15 @@ defmodule FeriendatenWeb.FerienComponents do
 
             <% termine = String.split(entry.ferientermin, ",") %>
             <td class="px-3 py-4 text-gray-900 align-top dark:text-gray-300 tabular-nums">
-              <.link
-                class="text-blue-600 hover:underline dark:text-blue-400"
-                navigate={~p"/#{entry.vacation_slug}/#{entry.location_slug}/#{entry.starts_on.year}"}
-              >
-                <%= for termin <- termine do %>
-                  <div class="whitespace-nowrap">
-                    <%= termin %><%= if hd(Enum.take(termine, -2)) != termin &&
-                                          List.last(termine) != termin,
-                                        do: "," %>
-                  </div>
-                  <%= if length(termine) != 1 && hd(Enum.take(termine, -2)) == termin,
-                    do: " und" %>
-                <% end %>
-              </.link>
+              <%= for termin <- termine do %>
+                <div class="whitespace-nowrap">
+                  <%= termin %><%= if hd(Enum.take(termine, -2)) != termin &&
+                                        List.last(termine) != termin,
+                                      do: "," %>
+                </div>
+                <%= if length(termine) != 1 && hd(Enum.take(termine, -2)) == termin,
+                  do: " und" %>
+              <% end %>
             </td>
             <td class="hidden px-3 py-4 text-right text-gray-500 align-top whitespace-nowrap dark:text-gray-300 xs:table-cell tabular-nums">
               <%= entry.days %> Tag<%= unless entry.days == 1, do: "e" %>

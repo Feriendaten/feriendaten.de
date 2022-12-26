@@ -66,7 +66,12 @@ defmodule FeriendatenWeb.VacationSlugYearController do
             }
           end
         else
-          %{}
+          %{
+            title: "#{vacation_colloquial} #{location.name} #{year}",
+            description:
+              "#{termin}: #{Feriendaten.Calendars.replace_last_comma_with_und(Feriendaten.Calendars.all_ferientermine_to_string(entries_of_this_year))}",
+            url: "https://feriendaten.de/#{vacation_slug}/#{location_slug}/#{year}"
+          }
         end
 
       conn

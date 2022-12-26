@@ -51,7 +51,7 @@ defmodule FeriendatenWeb.FerienController do
       |> Feriendaten.Calendars.compress_ferientermine()
 
     description =
-      "Übersicht alle Schulferien in #{location.name}. " <>
+      "Schulferien #{location.name}. " <>
         Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
 
     conn
@@ -158,7 +158,7 @@ defmodule FeriendatenWeb.FerienController do
       school_year_slug = "#{start_year}-#{String.to_integer(start_year) + 1}"
 
       description =
-        "Termine und weiter Informationen der Schulferien #{location.name} im Schuljahr #{school_year_slug}. " <>
+        "Schulferien #{location.name} im Schuljahr #{school_year_slug}. " <>
           Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
 
       conn

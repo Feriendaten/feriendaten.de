@@ -21,7 +21,7 @@ defmodule FeriendatenWeb.VacationSlugController do
     vacation_slug = hd(entries) |> Map.get(:vacation_slug)
 
     description =
-      "Alle Termine und weitere Informationen zu den #{vacation_colloquial} #{location.name}. " <>
+      "#{vacation_colloquial} #{location.name}. " <>
         Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
 
     conn

@@ -14,7 +14,9 @@ defmodule FeriendatenWeb.HeaderComponents do
     <meta name="twitter:creator" content="@wintermeyer" />
     <meta name="twitter:title" content={@twitter_card[:title]} />
     <meta name="twitter:description" content={@twitter_card[:description]} />
-    <meta name="twitter:image" content={@twitter_card[:image]} />
+    <%= if @twitter_card[:image] do %>
+      <meta name="twitter:image" content={@twitter_card[:image]} />
+    <% end %>
 
     <meta property="og:title" content={@twitter_card[:title]} />
     <meta property="og:description" content={@twitter_card[:description]} />
