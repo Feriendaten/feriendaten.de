@@ -1,0 +1,40 @@
+<div class="grid gap-4 md:grid-cols-3">
+  <div class="col-span-3">
+    <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+      <%= @vacation_colloquial %> <%= @location.name %>
+    </h1>
+    <p class="mt-2 text-base text-gray-700 dark:text-gray-100">
+      Wann sind die nächsten <%= @vacation_colloquial %> in <%= @location.name %>?
+      Eine Übersicht der Ferien&shy;termine:
+    </p>
+  </div>
+  <div class="col-span-3">
+    <.vacations_table_table_only
+      entries={@entries}
+      year={if assigns.year, do: @year, else: nil}
+      location={if assigns.location, do: @location, else: nil}
+    />
+  </div>
+
+  <%= if length(@entries) > 0 do %>
+    <div class="col-span-3">
+      <.vacation_location_faq
+        entries={@entries}
+        location={@location}
+        requested_date={@requested_date}
+      />
+    </div>
+  <% end %>
+
+  <% path_partial_file_name =
+    "#{Application.app_dir(:feriendaten)}/priv/partials/#{@vacation_slug}/_#{@vacation_slug}_#{@location.slug}.html.heex" %>
+
+  <%= if File.exists?(path_partial_file_name) do %>
+    <div class="col-span-3">
+      <div class="pt-4">
+        <% {:ok, content} = File.read(path_partial_file_name) %>
+        <%= raw(content) %>
+      </div>
+    </div>
+  <% end %>
+</div>

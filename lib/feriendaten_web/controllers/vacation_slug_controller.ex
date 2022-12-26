@@ -3,7 +3,7 @@ defmodule FeriendatenWeb.VacationSlugController do
 
   alias Feriendaten.Calendars
 
-  def location(
+  def show(
         conn,
         %{"vacation_slug" => vacation_slug, "location_slug" => location_slug} = _params
       ) do
@@ -37,7 +37,7 @@ defmodule FeriendatenWeb.VacationSlugController do
     ])
     |> assign(:description, description)
     |> put_root_layout(:ferien)
-    |> render(:location, page_title: "#{vacation_colloquial} #{location.name}")
+    |> render(:show, page_title: "#{vacation_colloquial} #{location.name}")
   end
 
   def index(conn, %{"vacation_slug" => vacation_slug} = _params) do

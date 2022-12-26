@@ -67,7 +67,7 @@ defmodule FeriendatenWeb.Router do
     get "/datenschutzerklaerung", PageController, :datenschutzerklaerung
     get "/ferien/:slug", FerienController, :location
     get "/ferien/:slug/:year", FerienController, :year
-    get "/:vacation_slug/:location_slug", VacationSlugController, :location
+    get "/:vacation_slug/:location_slug", VacationSlugController, :show
     get "/:vacation_slug/:location_slug/:year", VacationSlugYearController, :show
     get "/ferien/", FerienController, :index
     get "/:vacation_slug/", VacationSlugController, :index
