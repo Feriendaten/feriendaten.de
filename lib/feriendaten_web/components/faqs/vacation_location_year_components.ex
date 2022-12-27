@@ -102,6 +102,7 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
 
     last_school_day =
       case FeriendatenWeb.LocationYearFaqComponents.wochentag(first_vacation_day) do
+        "Montag" -> Date.add(first_vacation_day, -3)
         "Sonntag" -> Date.add(first_vacation_day, -2)
         "Samstag" -> Date.add(first_vacation_day, -1)
         _ -> Date.add(first_vacation_day, -1)
