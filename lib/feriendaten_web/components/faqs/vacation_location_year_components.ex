@@ -1,256 +1,217 @@
 defmodule FeriendatenWeb.VacationLocationYearComponents do
   @moduledoc """
-  Provides VacationLocationYear FAQ components for the FeriendatenWeb application.
+  Provides VacationLocation FAQ components for the FeriendatenWeb application.
   """
   use FeriendatenWeb, :html
 
   alias FeriendatenWeb.FederalStateFaq
 
-  # /osterferien/hessen
+  # /osterferien/hessen/2023
   attr :entries, :list, required: true
   attr :location, :string, required: true
   attr :requested_date, :any, required: true
+  attr :vacation_slug, :string, required: true
 
   def vacation_location_faq(assigns) do
-    assigns =
-      assigns
-      |> Map.put_new(:faq_entries, [])
-      |> add_wann_ist_der_letzte_schultag_vor_den_vacations()
-      |> add_wie_lang_sind_die_vacations_in_location()
-      |> add_wann_beginnen_die_vacations_in_location()
+    vacation_colloquial = extract_vacation_colloquial(assigns.entries)
+    preposition = preposition(assigns.location.name)
+    first_entry = first_entry(assigns.entries, vacation_colloquial)
+    year = first_entry.starts_on.year
 
-    render_faq(assigns)
-  end
-
-  def add_wann_beginnen_die_vacations_in_location(assigns) do
-    vacation_colloquial = hd(assigns.entries) |> Map.get(:colloquial)
-
-    faq_entries = assigns.faq_entries
-
-    preposition =
-      case assigns.location.name do
-        "Saarland" -> "im"
-        _ -> "in"
-      end
-
-    first_hit =
-      Enum.find(assigns.entries, fn entry -> entry.colloquial == vacation_colloquial end)
-
-    bonus_answer =
-      case Date.compare(first_hit.starts_on, assigns.requested_date) do
-        :gt ->
-          "Bis dahin sind es noch #{Date.diff(first_hit.starts_on, assigns.requested_date)} Tage."
-
-        _ ->
-          ""
-      end
-
-    faq_entries = [
-      %{
-        question:
-          "Wann beginnen die #{vacation_colloquial} #{preposition} #{assigns.location.name}?",
-        answer:
-          "Die #{vacation_colloquial} #{first_hit.starts_on.year} #{preposition} #{assigns.location.name} beginnen am #{Calendar.strftime(first_hit.starts_on, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_hit.starts_on)}). #{bonus_answer}"
-      }
-      | faq_entries
-    ]
-
-    Map.put(assigns, :faq_entries, faq_entries)
-  end
-
-  def add_wie_lang_sind_die_vacations_in_location(assigns) do
-    faq_entries = assigns.faq_entries
-
-    vacation_colloquial = hd(assigns.entries) |> Map.get(:colloquial)
-
-    first_hit =
-      Enum.find(assigns.entries, fn entry -> entry.colloquial == vacation_colloquial end)
-
-    preposition =
-      case assigns.location.name do
-        "Saarland" -> "im"
-        _ -> "in"
-      end
-
-    faq_entries = [
-      %{
-        question: "Wie lange sind die #{vacation_colloquial} in #{assigns.location.code}?",
-        answer:
-          "Die #{vacation_colloquial} #{first_hit.starts_on.year} #{preposition} #{assigns.location.name} dauern #{first_hit.days} Tag. Sie beginnen am #{Calendar.strftime(first_hit.starts_on, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_hit.starts_on)}) und enden am #{Calendar.strftime(first_hit.ends_on, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_hit.ends_on)})."
-      }
-      | faq_entries
-    ]
-
-    Map.put(assigns, :faq_entries, faq_entries)
-  end
-
-  def add_wann_ist_der_letzte_schultag_vor_den_vacations(assigns) do
-    faq_entries = assigns.faq_entries
-
-    vacation_colloquial = hd(assigns.entries) |> Map.get(:colloquial)
-
-    first_hit =
-      Enum.find(assigns.entries, fn entry -> entry.colloquial == vacation_colloquial end)
-
-    preposition =
-      case assigns.location.name do
-        "Saarland" -> "im"
-        _ -> "in"
-      end
-
-    first_vacation_day = first_hit.starts_on
-
-    last_school_day =
-      case FeriendatenWeb.LocationYearFaqComponents.wochentag(first_vacation_day) do
-        "Montag" -> Date.add(first_vacation_day, -3)
-        "Sonntag" -> Date.add(first_vacation_day, -2)
-        "Samstag" -> Date.add(first_vacation_day, -1)
-        _ -> Date.add(first_vacation_day, -1)
-      end
-
-    bonus_answer =
-      case Date.compare(first_vacation_day, assigns.requested_date) do
-        :gt ->
-          "Bis dahin sind es noch #{Date.diff(last_school_day, assigns.requested_date)} Tage."
-
-        _ ->
-          ""
-      end
-
-    faq_entries = [
-      %{
-        question:
-          "Wann ist der letzte Schultag vor den #{vacation_colloquial} #{assigns.location.code}?",
-        answer:
-          "Die #{vacation_colloquial} #{preposition} #{assigns.location.name} beginnen am #{Calendar.strftime(first_vacation_day, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_vacation_day)}). Der letzte Schultag ist der #{Calendar.strftime(last_school_day, "%d.%m.%Y")}. #{bonus_answer}"
-      }
-      | faq_entries
-    ]
-
-    faq_entries = [
-      %{
-        question: "Wann haben wir in #{assigns.location.code} #{vacation_colloquial}?",
-        answer:
-          "Die #{vacation_colloquial} #{preposition} #{assigns.location.name} beginnen am #{Calendar.strftime(first_vacation_day, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_vacation_day)}). Der letzte Schultag ist der #{Calendar.strftime(last_school_day, "%d.%m.%Y")}. #{bonus_answer}"
-      }
-      | faq_entries
-    ]
-
-    faq_entries = [
-      %{
-        question: "Wann ist die #{vacation_colloquial} #{assigns.location.code}?",
-        answer:
-          "Die #{vacation_colloquial} #{preposition} #{assigns.location.name} beginnen am #{Calendar.strftime(first_vacation_day, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_vacation_day)}). Der letzte Schultag ist der #{Calendar.strftime(last_school_day, "%d.%m.%Y")}. #{bonus_answer}"
-      }
-      | faq_entries
-    ]
-
-    Map.put(assigns, :faq_entries, faq_entries)
-  end
-
-  # /osterferien/hessen/2023
-  attr :entries, :list, required: true
-  attr :location, :string, required: false
-  attr :year, :string, required: true
-  attr :requested_date, :any, required: true
-  attr :location_name, :string, required: false
-
-  def vacation_location_year_faq(%{location: %Feriendaten.Maps.Location{}} = assigns) do
-    assigns = enrich_with_faq_entries(assigns)
-
-    render_faq(assigns)
-  end
-
-  defp render_faq(%{faq_entries: []} = assigns) do
     ~H"""
-    <!-- No FAQ entries -->
-    """
-  end
+    <div class="col-span-3">
+      <h2 class="pt-4 mb-8 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
+        FAQ
+      </h2>
 
-  defp render_faq(assigns) do
-    ~H"""
-    <h2 class="pt-4 mb-8 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
-      FAQ
-    </h2>
+      <p class="mb-8 text-base tracking-tight text-gray-900 dark:text-white">
+        Nachfolgend finden Sie typische Suchmaschinen Anfragen zu diesem Thema.
+      </p>
 
-    <p class="mb-8 text-base tracking-tight text-gray-900 dark:text-white">
-      Nachfolgend finden Sie typische Suchmaschinen Anfragen zu diesem Thema.
-    </p>
+      <div
+        class="grid grid-cols-1 gap-4 md:grid-cols-2"
+        itemscope=""
+        itemtype="https://schema.org/FAQPage"
+      >
+        <.generic_wann_sind_x_ferien_in
+          frage={"Wann sind #{vacation_colloquial} #{preposition} #{@location.name} #{year}?"}
+          entries={@entries}
+          location={@location}
+          requested_date={@requested_date}
+          vacation_slug={@vacation_slug}
+        />
 
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2" itemscope itemtype="https://schema.org/FAQPage">
-      <%= for faq_entry <- @faq_entries do %>
-        <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
-            <div itemprop="name">
-              <%= faq_entry[:question] %>
-            </div>
-          </h3>
-          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p class="text-gray-500 dark:text-gray-400" itemprop="text">
-              <%= faq_entry[:answer] %>
-            </p>
-          </div>
-        </div>
-      <% end %>
+        <.generic_wann_sind_x_ferien_in
+          frage={"Wann beginnen die #{vacation_colloquial} #{preposition} #{@location.name} #{year}?"}
+          entries={@entries}
+          location={@location}
+          requested_date={@requested_date}
+          vacation_slug={@vacation_slug}
+        />
+
+        <.generic_wann_sind_x_ferien_in
+          frage={"Wann sind #{vacation_colloquial} #{year} #{@location.name} ?"}
+          entries={@entries}
+          location={@location}
+          requested_date={@requested_date}
+          vacation_slug={@vacation_slug}
+        />
+
+        <.wie_lange_sind_x_ferien_in_location
+          entries={@entries}
+          location={@location}
+          requested_date={@requested_date}
+          vacation_slug={@vacation_slug}
+          year={year}
+        />
+
+        <.wann_ist_der_letzte_schultag_vor_den_x_ferien_location
+          entries={@entries}
+          location={@location}
+          requested_date={@requested_date}
+          vacation_slug={@vacation_slug}
+          year={year}
+        />
+      </div>
     </div>
     """
   end
 
-  defp enrich_with_faq_entries(assigns) do
-    assigns =
-      assigns
-      |> Map.put_new(:faq_entries, [])
-      |> FederalStateFaq.add_wann_sind_in_location_year_vaction?()
-      |> add_wann_beginnen_vacation_in_location_year()
+  def generic_wann_sind_x_ferien_in(assigns) do
+    vacation_colloquial = extract_vacation_colloquial(assigns.entries)
+    preposition = preposition(assigns.location.name)
+    first_entry = first_entry(assigns.entries, vacation_colloquial)
 
-    # TODO:
-    # Wann beginnen die ersten Sommerferien 2023?
-    # Wann beginnt das Schuljahr 2023 24 Hessen?
-    # Wann beginnt das Schuljahr 2023 Hessen?
-
-    addon = rem(length(assigns.faq_entries), 2)
-    half = length(assigns.faq_entries) |> div(2)
-
-    {first_half, second_half} = Enum.split(assigns.faq_entries, half + addon)
-
-    assigns
-    |> Map.put(:first_half, first_half)
-    |> Map.put(:second_half, second_half)
+    if Enum.member?([:gt, :eq], Date.compare(assigns.requested_date, first_entry.starts_on)) &&
+         Enum.member?([:lt, :eq], Date.compare(assigns.requested_date, first_entry.ends_on)) do
+      ~H"""
+      <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
+          <div itemprop="name">
+            <%= @frage %>
+          </div>
+        </h3>
+        <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p class="text-gray-500 dark:text-gray-400" itemprop="text">
+            Gerade sind die <%= vacation_colloquial %> <%= @location.name %> <%= first_entry.starts_on.year %>.
+            Sie starteten am <%= Calendar.strftime(first_entry.starts_on, "%d.%m.%y") %> (<%= FeriendatenWeb.LocationYearFaqComponents.wochentag(
+              first_entry.starts_on
+            ) %>) und enden am <%= Calendar.strftime(
+              first_entry.ends_on,
+              "%d.%m.%y"
+            ) %> (<%= FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.ends_on) %>).
+          </p>
+        </div>
+      </div>
+      """
+    else
+      ~H"""
+      <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
+          <div itemprop="name">
+            <%= @frage %>
+          </div>
+        </h3>
+        <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p class="text-gray-500 dark:text-gray-400" itemprop="text">
+            <%= if Date.diff(first_entry.starts_on, assigns.requested_date) == 1 do %>
+              Morgen
+            <% else %>
+              In <%= Date.diff(first_entry.starts_on, assigns.requested_date) %> Tagen
+            <% end %>
+            beginnen die <%= vacation_colloquial %> <%= @location.name %> <%= first_entry.starts_on.year %>.
+            Sie starten am <%= Calendar.strftime(first_entry.starts_on, "%d.%m.%y") %> (<%= FeriendatenWeb.LocationYearFaqComponents.wochentag(
+              first_entry.starts_on
+            ) %>) und enden am <%= Calendar.strftime(
+              first_entry.ends_on,
+              "%d.%m.%y"
+            ) %> (<%= FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.ends_on) %>).
+          </p>
+        </div>
+      </div>
+      """
+    end
   end
 
-  def add_wann_beginnen_vacation_in_location_year(assigns) do
-    vacation_colloquial = hd(assigns.entries) |> Map.get(:colloquial)
+  def wie_lange_sind_x_ferien_in_location(assigns) do
+    vacation_colloquial = extract_vacation_colloquial(assigns.entries)
+    preposition = preposition(assigns.location.name)
+    first_entry = first_entry(assigns.entries, vacation_colloquial)
 
-    faq_entries = assigns.faq_entries
+    ~H"""
+    <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
+        <div itemprop="name">
+          Wie lange sind die <%= vacation_colloquial %> <%= @year %> in <%= @location.name %>?
+        </div>
+      </h3>
+      <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+        <p class="text-gray-500 dark:text-gray-400" itemprop="text">
+          Die <%= vacation_colloquial %> <%= @location.name %> <%= first_entry.starts_on.year %> dauern <%= Date.diff(
+            first_entry.ends_on,
+            first_entry.starts_on
+          ) + 1 %> Tage.
+          Sie beginnen am <%= Calendar.strftime(first_entry.starts_on, "%d.%m.%y") %> (<%= FeriendatenWeb.LocationYearFaqComponents.wochentag(
+            first_entry.starts_on
+          ) %>) und enden am <%= Calendar.strftime(
+            first_entry.ends_on,
+            "%d.%m.%y"
+          ) %> (<%= FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.ends_on) %>).
+        </p>
+      </div>
+    </div>
+    """
+  end
 
-    preposition =
-      case assigns.location.name do
-        "Saarland" -> "im"
-        _ -> "in"
+  def wann_ist_der_letzte_schultag_vor_den_x_ferien_location(assigns) do
+    vacation_colloquial = extract_vacation_colloquial(assigns.entries)
+    preposition = preposition(assigns.location.name)
+    first_entry = first_entry(assigns.entries, vacation_colloquial)
+
+    last_school_day =
+      case FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.starts_on) do
+        "Montag" -> Date.add(first_entry.starts_on, -3)
+        "Sonntag" -> Date.add(first_entry.starts_on, -2)
+        "Samstag" -> Date.add(first_entry.starts_on, -1)
+        _ -> Date.add(first_entry.starts_on, -1)
       end
 
-    first_hit =
-      Enum.find(assigns.entries, fn entry -> entry.colloquial == vacation_colloquial end)
+    ~H"""
+    <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
+        <div itemprop="name">
+          Wann ist der letzte Schultag vor den <%= vacation_colloquial %> <%= @year %> <%= @location.name %>?
+        </div>
+      </h3>
+      <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+        <p class="text-gray-500 dark:text-gray-400" itemprop="text">
+          Die <%= vacation_colloquial %> <%= @location.name %> <%= first_entry.starts_on.year %> beginnen am <%= Calendar.strftime(
+            first_entry.starts_on,
+            "%d.%m.%y"
+          ) %> (<%= FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.starts_on) %>). Der letzte Schultag ist <%= FeriendatenWeb.LocationYearFaqComponents.wochentag(
+            last_school_day
+          ) %> der <%= Calendar.strftime(
+            last_school_day,
+            "%d.%m.%y"
+          ) %>.
+        </p>
+      </div>
+    </div>
+    """
+  end
 
-    bonus_answer =
-      case Date.compare(first_hit.starts_on, assigns.requested_date) do
-        :gt ->
-          "Bis dahin sind es noch #{Date.diff(first_hit.starts_on, assigns.requested_date)} Tage."
+  defp extract_vacation_colloquial(entries) do
+    hd(entries) |> Map.get(:colloquial)
+  end
 
-        _ ->
-          ""
-      end
+  defp preposition(location_name) do
+    case location_name do
+      "Saarland" -> "im"
+      _ -> "in"
+    end
+  end
 
-    faq_entries = [
-      %{
-        question:
-          "Wann sind #{assigns.year} #{vacation_colloquial} #{preposition} #{assigns.location.name}?",
-        answer:
-          "Die #{vacation_colloquial} #{preposition} #{assigns.location.name} beginnen am #{Calendar.strftime(first_hit.starts_on, "%d.%m.%Y")} (ein #{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_hit.starts_on)}). #{bonus_answer}"
-      }
-      | faq_entries
-    ]
-
-    Map.put(assigns, :faq_entries, faq_entries)
+  defp first_entry(entries, vacation_colloquial) do
+    Enum.find(entries, fn entry -> entry.colloquial == vacation_colloquial end)
   end
 end

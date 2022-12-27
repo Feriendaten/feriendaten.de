@@ -32,11 +32,12 @@
 
   <%= if @vacation_entries != [] do %>
     <div class="col-span-3">
-      <.vacation_location_year_faq
+      <.vacation_location_faq
         entries={@vacation_entries}
         location={@location}
         year={@year}
         requested_date={@requested_date}
+        vacation_slug={@vacation_slug}
       />
     </div>
   <% end %>
