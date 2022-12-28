@@ -72,9 +72,45 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
           vacation_slug={@vacation_slug}
           year={year}
         />
+
+        <.warum_kurz
+          entries={@entries}
+          location={@location}
+          requested_date={@requested_date}
+          vacation_slug={@vacation_slug}
+          year={year}
+        />
       </div>
     </div>
     """
+  end
+
+  def warum_kurz(assigns) do
+    vacation_colloquial = extract_vacation_colloquial(assigns.entries)
+    preposition = preposition(assigns.location.name)
+    first_entry = first_entry(assigns.entries, vacation_colloquial)
+
+    if Enum.member?(["Herbstferien", "Osterferien"], vacation_colloquial) && first_entry.days < 8 &&
+         length(assigns.entries) == 1 do
+      ~H"""
+      <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
+          <div itemprop="name">
+            Warum sind die <%= vacation_colloquial %> <%= @location.name %> <%= first_entry.starts_on.year %> so kurz?
+          </div>
+        </h3>
+        <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p class="text-gray-500 dark:text-gray-400" itemprop="text">
+            Je nachdem wie die Sommerferien terminlich fallen, werden die <%= vacation_colloquial %> in <%= @location.name %> gekürzt. Wenn die Sommerferien eher spät sind, dann werden die Herbstferien verkürzt und dafür die Osterferien verlängert. Sind die Sommerferien eher früh, dann werden die Herbstferien verlängert und die Osterferien verkürzt.
+          </p>
+        </div>
+      </div>
+      """
+    else
+      ~H"""
+
+      """
+    end
   end
 
   def generic_wann_sind_x_ferien_in(assigns) do

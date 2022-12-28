@@ -54,6 +54,18 @@ defmodule FeriendatenWeb.VacationSlugYearControllerTest do
         school_vacation: true
       })
 
+    {:ok, herbstferien} =
+      Feriendaten.Calendars.create_vacation(%{
+        name: "Herbst",
+        colloquial: "Herbstferien",
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
     {:ok, _entry} =
       Feriendaten.Calendars.create_entry(%{
         starts_on: ~D[2029-07-10],
@@ -110,6 +122,34 @@ defmodule FeriendatenWeb.VacationSlugYearControllerTest do
         school_vacation: true
       })
 
+    {:ok, _entry} =
+      Feriendaten.Calendars.create_entry(%{
+        starts_on: ~D[2030-10-01],
+        ends_on: ~D[2030-10-06],
+        vacation_id: herbstferien.id,
+        location_id: hessen.id,
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
+    {:ok, _entry} =
+      Feriendaten.Calendars.create_entry(%{
+        starts_on: ~D[2030-10-01],
+        ends_on: ~D[2030-10-12],
+        vacation_id: herbstferien.id,
+        location_id: bayern.id,
+        listed: true,
+        for_students: true,
+        for_everybody: false,
+        priority: 5,
+        public_holiday: false,
+        school_vacation: true
+      })
+
     conn = get(conn, ~p"/sommerferien/hessen/2029")
     assert html_response(conn, 200) =~ "Sommerferien Hessen 2029"
     assert html_response(conn, 200) =~ "10.07. - 10.08."
@@ -132,5 +172,11 @@ defmodule FeriendatenWeb.VacationSlugYearControllerTest do
     assert html_response(conn, 200) =~ "Sommerferien Hessen 2030"
     assert html_response(conn, 200) =~ "01.07. - 01.08."
     refute html_response(conn, 200) =~ "10.07. - 10.08."
+
+    conn = get(conn, ~p"/herbstferien/hessen/2030")
+    assert html_response(conn, 200) =~ "Warum sind die Herbstferien Hessen 2030 so kurz?"
+
+    conn = get(conn, ~p"/herbstferien/bayern/2030")
+    refute html_response(conn, 200) =~ "Warum sind die Herbstferien Bayern 2030 so kurz?"
   end
 end

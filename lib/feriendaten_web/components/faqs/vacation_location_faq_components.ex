@@ -4,8 +4,6 @@ defmodule FeriendatenWeb.VacationLocationFaqComponents do
   """
   use FeriendatenWeb, :html
 
-  alias FeriendatenWeb.FederalStateFaq
-
   # /osterferien/hessen
   attr :entries, :list, required: true
   attr :location, :string, required: true
@@ -186,7 +184,6 @@ defmodule FeriendatenWeb.VacationLocationFaqComponents do
 
   def wann_ist_der_letzte_schultag_vor_den_x_ferien_location(assigns) do
     vacation_colloquial = extract_vacation_colloquial(assigns.entries)
-    preposition = preposition(assigns.location.name)
     first_entry = first_entry(assigns.entries, vacation_colloquial)
 
     last_school_day =
