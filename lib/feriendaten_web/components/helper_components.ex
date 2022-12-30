@@ -82,6 +82,15 @@ defmodule FeriendatenWeb.HelperComponents do
               Datenschutzerklärung
             </.link>
           </div>
+
+          <div class="px-5 py-2">
+            <a
+              href="https://github.com/feriendaten/feriendaten.de"
+              class="text-base text-gray-600 dark:text-gray-400 hover:text-gray-900 hover:underline dark:hover:text-gray-100"
+            >
+              GitHub Repository
+            </a>
+          </div>
         </nav>
 
         <p class="mt-8 text-base text-center text-gray-600 dark:text-gray-400 hover:text-gray-900 hover:underline dark:hover:text-gray-100">
