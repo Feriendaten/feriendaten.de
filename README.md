@@ -2,15 +2,22 @@
 
 Anzeige von Schulferien, Feiertagen und anderen Terminen für Deutschland.
 
-# Für Entwickler
+# Entwickler
 
-## Import legacy data
+Unsere Entwickler Dokumentation ist etwas rudimentär. Sorry dafür! Bitte eine E-Mail an sw@wintermeyer-consulting schreiben, falls Fragen aufkommen. Wir freuen uns über jeden neuen Entwickler, Bugreports und auch Pull Requests mit neuen Features oder Bugfixes.
+
+## Datenbank
+
+Wir gehen davon aus, das Sie ebenfalls PostgreSQL als Datenbank benutzen.
+
+In diesem Repo finden Sie alle Daten der Jahre 2022 und 2023 (ohne Schulen). Sie können die Daten wir folgt einspielen:
 
 ```
-$ mix legacy_import
-$ mix activate_most_popular_locations
-$ mix generate_notepads
+$ mix ecto.create
+$ psql feriendaten_dev < priv/repo/feriendaten_dev_seeds.dump
 ```
+
+Schulen können Sie bei Bedarf von Hand anlegen.
 
 ## Start the server
 
@@ -22,12 +29,3 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
