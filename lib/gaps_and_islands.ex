@@ -15,105 +15,83 @@ defmodule Feriendaten.GapsAndIslands do
         ends_on \\ Date.add(Date.utc_today(), 30)
       ) do
     sql_query = ~S"""
-    WITH RECURSIVE cte AS (
-    	SELECT
-    		l.*,
-    		jsonb_build_array (l.id) tree
-    	FROM
-    		locations l
-    	WHERE
-    		l.parent_id IS NULL
-    	UNION ALL
-    	SELECT
-    		l.*,
-    		c.tree || jsonb_build_array (l.id)
-    	FROM
-    		cte c
-    		JOIN locations l ON l.parent_id = c.id
+    with recursive cte(location_id, parent_id) as (
+    -- recursive cte to find the all the levels ("regions") that the location falls under
+    select loc.id, loc.parent_id from locations loc where loc.id = to_be_replaced_location_id -- specificing location id
+    union all
+    select loc.id, loc.parent_id from locations loc join cte c on c.parent_id = loc.id
     ),
-    get_vacations (
-    	id,
-    	t,
-    	h_id,
-    	r_s,
-    	r_e
-    ) AS (
-    	SELECT
-    		c.id,
-    		c.tree,
-    		e.id,
-    		e.starts_on,
-    		e.ends_on
-    	FROM
-    		cte c
-    		JOIN entries e ON EXISTS (
-    			SELECT
-    				1
-    			FROM
-    				jsonb_array_elements(c.tree) v
-    			WHERE (v.value #>>'{}')::int = e.location_id)
-    			WHERE
-    				c.id = required_location_id -- SEARCH CRITERIA
-    				AND e.vacation_id = 2 -- SEARCH CRITERIA
-    			UNION ALL
-    			SELECT
-    				g.id,
-    				g.t,
-    				g.h_id,
-    				least(e.starts_on,
-    					g.r_s),
-    				greatest(e.ends_on,
-    					g.r_e)
-    			FROM
-    				get_vacations g
-    				JOIN entries e ON EXISTS (
-    					SELECT
-    						1
-    					FROM
-    						jsonb_array_elements(g.t) v
-    					WHERE (v.value #>>'{}')::int = e.location_id)
-    						AND e.starts_on = g.r_e
-    						OR e.ends_on = g.r_s
+    days_with_vacations as (
+    -- generates a range of days from start on and end on and joins all the possible holidays/vacations on to each of those dates
+    select all_days.dt, ent.school_vacation, all_days.levels, ent.id * case when ent.school_vacation then 1 else 0 end entry_id, ent.id entry_id_legacy, ent.starts_on, ent.ends_on from (
+    	select date(d) dt, (select json_agg(c.location_id) from cte c) levels
+    		from generate_series('to_be_replaced_starts_on', 'to_be_replaced_ends_on', interval '1 day') d) all_days -- here is where the desired day range is placed
+    left join entries ent on exists (select 1 from json_array_elements(all_days.levels) v
+    				where ent.location_id = (v.value#>>'{}')::int)
+    				and all_days.dt <= ent.ends_on and ent.starts_on <= all_days.dt
+    				and (ent.for_everybody or ent.for_students)
     )
-    				SELECT
-    					e.starts_on,
-    					e.ends_on,
-    					e.ends_on - e.starts_on days,
-    					e.for_everybody,
-    					e.school_vacation,
-    					l.name location_name,
-    					t.r_e - t.r_s total_days,
-    					t.t aggr_location_ids,
-    					t.r_s real_start,
-    					t.r_e real_end
-    				FROM (
-    					SELECT
-    						g.id,
-    						g.t,
-    						g.h_id,
-    						min(g.r_s) r_s,
-    						max(g.r_e) r_e
-    					FROM
-    						get_vacations g
-    					GROUP BY
-    						g.id,
-    						g.t,
-    						g.h_id) t
-    					JOIN entries e ON e.id = t.h_id
-    					JOIN locations l ON l.id = (t.t ->> 1)::int
+    select vacations.entry_id,
+    		vacations.levels_agg,
+    		vacations_master.name vacation_name,
+    		vacations_master.colloquial vacation_colloquial,
+    		vacations_master.slug vacation_slug,
+    		vacations.entries_agg,
+    		ent.starts_on,
+    		ent.ends_on,
+    		lpad(extract(day from ent.starts_on)::text, 2, '0')||'.'||lpad(extract(month from ent.starts_on)::text, 2, '0')||'. - '||lpad(extract(day from ent.ends_on)::text, 2, '0')||'.'||lpad(extract(month from ent.ends_on)::text, 2, '0')||'.' ferientermin,
+    		lpad(extract(day from ent.starts_on)::text, 2, '0')||'.'||lpad(extract(month from ent.starts_on)::text, 2, '0')||'.'||extract(year from ent.starts_on)::int%100||'. - '||lpad(extract(day from ent.ends_on)::text, 2, '0')||'.'||lpad(extract(month from ent.ends_on)::text, 2, '0')||'.'||extract(year from ent.ends_on)::int%100||'.' ferientermin_long,
+    		ent.for_everybody,
+    		ent.for_students,
+    		levels.name level_name,
+    		ent.listed,
+    		loc.name location_name,
+    		loc.slug location_slug,
+    		ent.memo,
+    		vacations_master.priority,
+    		ent.public_holiday,
+    		ent.school_vacation,
+    		vacations_master.for_everybody,
+    		vacations_master.for_students,
+    		federal_state.name federal_state_name,
+    		federal_state.slug federal_state_slug,
+    		vacations.real_start,
+    		vacations.real_end,
+    		ent.ends_on - ent.starts_on + 1 days,
+    		vacations.real_end - vacations.real_start + 1 total_vacation_length
+    from (
+
+    select temp_days_with_vacations.group_num,
+    		-- here, the query creates the "islands" of vacation time
+    		-- below, each "island" is checked to see if valid vacation days (i.e entries.school_vacation = true) exists in it, and then gets the minimum and maximum dates in island, corresponding to the real_start and real_end
+    		min(temp_days_with_vacations.dt) real_start,
+    		max(temp_days_with_vacations.dt) real_end,
+    		max(temp_days_with_vacations.levels::text) levels_agg,
+    		max(temp_days_with_vacations.entry_id) entry_id,
+    		json_agg(distinct temp_days_with_vacations.entry_id_legacy) entries_agg
+    from  (select (select sum(case when v.dt <= days.dt and v.school_vacation is null then 1 else 0 end) group_num from days_with_vacations v), days.*
+    							from days_with_vacations days
+    order by days.dt) temp_days_with_vacations
+    where temp_days_with_vacations.school_vacation is not null
+    group by temp_days_with_vacations.group_num) vacations
+    join entries ent on ent.id = vacations.entry_id
+    join vacations vacations_master on vacations_master.id = ent.vacation_id
+    join locations loc on (vacations.levels_agg::json ->> 0)::int = loc.id
+    join locations federal_state on (vacations.levels_agg::json ->> json_array_length(vacations.levels_agg::json) - 2)::int = federal_state.id
+    join levels on levels.id = loc.level_id
     """
 
-    sql_query = String.replace(sql_query, "required_location_id", to_string(location.id))
+    sql_query =
+      sql_query
+      |> String.replace("to_be_replaced_location_id", to_string(location.id))
+      |> String.replace("to_be_replaced_starts_on", Date.to_string(starts_on))
+      |> String.replace("to_be_replaced_ends_on", Date.to_string(ends_on))
 
     sql_result = Ecto.Adapters.SQL.query!(Repo, sql_query, [])
 
-    # Enum.map(sql_result.rows, fn row ->
-    #   columns = Enum.map(sql_result.columns, &String.to_existing_atom/1)
-    #   Map.new(Enum.zip(columns, row))
-    # end)
-
     Enum.map(sql_result.rows, fn row ->
-      Map.new(Enum.zip(sql_result.columns, row))
+      columns = Enum.map(sql_result.columns, &String.to_atom/1)
+      Map.new(Enum.zip(columns, row))
     end)
   end
 end
