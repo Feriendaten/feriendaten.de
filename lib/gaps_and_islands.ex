@@ -9,6 +9,44 @@ defmodule Feriendaten.GapsAndIslands do
   import Ecto.Query, warn: false
   alias Feriendaten.Repo
 
+  @doc """
+  Returns a recursive list of school vacation entries for the given location.
+
+  ## Example
+
+  iex> koblenz = Feriendaten.Maps.get_location_by_slug!("koblenz")
+  iex> list_entries_recursively(koblenz, ~D[2022-12-05], ~D[2023-01-15])
+  [
+  %{
+  	days: 11,
+  	ends_on: ~D[2023-01-02],
+  	entries_agg: [77, 525, 870, 1111, 1114, 1208],
+  	entry_id: 870,
+  	federal_state_name: "Rheinland-Pfalz",
+  	federal_state_slug: "rheinland-pfalz",
+  	ferientermin: "23.12. - 02.01.",
+  	ferientermin_long: "23.12.22. - 02.01.23.",
+  	for_everybody: false,
+  	for_students: true,
+  	level_name: "Landkreis",
+  	levels_agg: "[325, 12, 1]",
+  	listed: true,
+  	location_name: "Koblenz",
+  	location_slug: "koblenz",
+  	memo: nil,
+  	priority: 5,
+  	public_holiday: false,
+  	real_end: ~D[2023-01-02],
+  	real_start: ~D[2022-12-23],
+  	school_vacation: true,
+  	starts_on: ~D[2022-12-23],
+  	total_vacation_length: 11,
+  	vacation_colloquial: "Weihnachtsferien",
+  	vacation_name: "Weihnachten",
+  	vacation_slug: "weihnachtsferien"
+  }
+  ]
+  """
   def list_entries_recursively(
         location,
         starts_on \\ Date.utc_today(),
