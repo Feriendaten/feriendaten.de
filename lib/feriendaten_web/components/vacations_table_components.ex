@@ -44,8 +44,19 @@ defmodule FeriendatenWeb.VacationsTableComponents do
                   do: " und" %>
               <% end %>
             </td>
-            <td class="hidden px-3 py-4 text-gray-500 align-top whitespace-nowrap dark:text-gray-300 xs:table-cell tabular-nums">
-              <%= entry.days %> Tag<%= unless entry.days == 1, do: "e" %>
+            <td class="hidden px-3 py-4 text-gray-500 align-top dark:text-gray-300 xs:table-cell tabular-nums">
+              <%= if entry.days == entry.total_vacation_length do %>
+                <div class="text-gray-800 dark:text-gray-300">
+                  <%= entry.days %> Tag<%= unless entry.days == 1, do: "e" %>
+                </div>
+              <% else %>
+                <div class="text-gray-800 dark:text-gray-300">
+                  <%= entry.total_vacation_length %> Tage<br />
+                </div>
+                <span class="text-xs text-gray-400 dark:text-gray-500">
+                  inkl. an&shy;grenz&shy;ende Wochen&shy;enden und Feier&shy;tage
+                </span>
+              <% end %>
             </td>
           </tr>
         <% end %>

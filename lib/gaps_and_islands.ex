@@ -1,7 +1,4 @@
 defmodule Feriendaten.GapsAndIslands do
-  alias Feriendaten.Maps.Location
-  alias Feriendaten.Calendars.Entry
-
   @moduledoc """
   The GapsAndIslands context.
   """
@@ -15,7 +12,7 @@ defmodule Feriendaten.GapsAndIslands do
   ## Example
 
   iex> location = Feriendaten.Maps.get_location_by_slug!("brandenburg")
-  iex> list_entries_recursively(location, ~D[2023-01-20], ~D[2023-02-28])
+  iex> list_school_vacation_entries_recursively(location, ~D[2023-01-20], ~D[2023-02-28])
   [
   %{
     days: 5,
@@ -47,7 +44,7 @@ defmodule Feriendaten.GapsAndIslands do
   }
   ]
   """
-  def list_entries_recursively(
+  def list_school_vacation_entries_recursively(
         location,
         starts_on \\ Date.utc_today(),
         ends_on \\ Date.add(Date.utc_today(), 30)
@@ -115,6 +112,7 @@ defmodule Feriendaten.GapsAndIslands do
     		vacations.levels_agg,
     		vacations_master.name vacation_name,
     		vacations_master.colloquial vacation_colloquial,
+    		vacations_master.colloquial colloquial,
     		vacations_master.slug vacation_slug,
     		vacations.entries_agg,
     		ent.starts_on,

@@ -1,8 +1,6 @@
 defmodule FeriendatenWeb.VacationSlugYearController do
   use FeriendatenWeb, :controller
 
-  alias Feriendaten.CalendarQueries
-
   def show(
         conn,
         %{"vacation_slug" => vacation_slug, "location_slug" => location_slug, "year" => year} =
@@ -104,7 +102,7 @@ defmodule FeriendatenWeb.VacationSlugYearController do
 
   def list_entries(location, vacation_slug, year) do
     entries =
-      CalendarQueries.list_entries_recursively(
+      Feriendaten.GapsAndIslands.list_school_vacation_entries_recursively(
         location,
         Date.from_iso8601!(year <> "-01-01"),
         Date.from_iso8601!(year <> "-12-31")

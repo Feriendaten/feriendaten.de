@@ -180,12 +180,15 @@ defmodule FeriendatenWeb.FaqTest do
 
     conn = get(conn, ~p"/herbstferien/hessen/2040?datum=2040-01-01")
     assert html_response(conn, 200) =~ "Herbstferien Hessen 2040"
-    assert html_response(conn, 200) =~ "01.10. - 07.10."
+    assert html_response(conn, 200) =~ "01.10. - 14.10."
+
     assert html_response(conn, 200) =~ "FAQ"
     assert html_response(conn, 200) =~ "Wann sind Herbstferien in Hessen 2040?"
 
+    assert html_response(conn, 200) =~ "In 274 Tagen"
+
     assert html_response(conn, 200) =~
-             "In 274 Tagen\n      \n      beginnen die Herbstferien Hessen 2040.\n      Sie starten am 01.10.40 (Montag) und enden am 07.10.40 (Sonntag)."
+             "Sie starten am 01.10.40 (Montag) und enden am 14.10.40 (Sonntag)."
 
     refute html_response(conn, 200) =~ "Wann beginnen die Herbstferien in Hessen?"
 
@@ -195,7 +198,7 @@ defmodule FeriendatenWeb.FaqTest do
 
     conn = get(conn, ~p"/herbstferien/bayern/2040?datum=2040-01-01")
     assert html_response(conn, 200) =~ "Herbstferien Bayern 2040"
-    assert html_response(conn, 200) =~ "01.10. - 14.10."
+    assert html_response(conn, 200) =~ "01.10. - 07.10."
     assert html_response(conn, 200) =~ "FAQ"
   end
 end
