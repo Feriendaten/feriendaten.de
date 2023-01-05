@@ -24,7 +24,10 @@
             Eigentlich dauern die <%= @vacation_colloquial %> in <%= @location_name %> nur <%= entry.days %> Tag<%= unless entry.days ==
                                                                                                                              1,
                                                                                                                            do:
-                                                                                                                             "e" %>. Aber durch angrenzende Wochenenden bzw. Feiertage ergibt sich in der Summe eine Urlaubszeit von <%= entry.total_vacation_length %> Tagen:<br /><%= "#{Calendar.strftime(entry.real_start, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(entry.real_start)}) - #{Calendar.strftime(entry.real_end, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(entry.real_end)})" %>.
+                                                                                                                             "e" %>. Aber durch angrenzende Wochenenden bzw. Feiertage ergibt sich in der Summe eine Urlaubszeit von <%= entry.total_vacation_length %> Tagen:
+            <span class="whitespace-nowrap">
+              <%= "#{Calendar.strftime(entry.real_start, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(entry.real_start)}) - #{Calendar.strftime(entry.real_end, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(entry.real_end)})" %>
+            </span>
           <% else %>
             Die <%= @vacation_colloquial %> in <%= @location_name %> gehen von <%= FeriendatenWeb.LocationYearFaqComponents.wochentag(
               entry.starts_on

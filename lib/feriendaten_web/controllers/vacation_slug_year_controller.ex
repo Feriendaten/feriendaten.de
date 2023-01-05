@@ -7,7 +7,7 @@ defmodule FeriendatenWeb.VacationSlugYearController do
           _params
       ) do
     location = Feriendaten.Maps.get_location_by_slug!(location_slug)
-    {entries, vacation_entries} = list_entries(location, vacation_slug, year)
+    {_entries, vacation_entries} = list_entries(location, vacation_slug, year)
 
     if Enum.empty?(vacation_entries) do
       conn
@@ -19,8 +19,15 @@ defmodule FeriendatenWeb.VacationSlugYearController do
       vacation_colloquial = first_entry.colloquial
 
       description =
-        "Termine und weitere Informationen zu den #{vacation_colloquial} #{location.name} #{year}: " <>
-          Feriendaten.Calendars.all_ferientermine_to_string(vacation_entries)
+        if length(vacation_entries) == 1 do
+          if first_entry.total_vacation_length > first_entry.days do
+            "#{vacation_colloquial} #{location.name} #{year}: #{first_entry.ferientermin_long} (#{first_entry.days} Tage). Achtung! Durch angrenzende Wochenenden bzw. Feiertage ist die Ferienzeit länger: #{first_entry.total_vacation_length} Tage! #{Calendar.strftime(first_entry.real_start, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.real_start)}) - #{Calendar.strftime(first_entry.real_end, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.real_end)})."
+          else
+            "#{vacation_colloquial} #{location.name} #{year}: #{first_entry.ferientermin_long} (#{first_entry.days} Tage)."
+          end
+        else
+          "Termine und weitere Informationen zu den #{vacation_colloquial} #{location.name} #{year}: #{Feriendaten.Calendars.all_ferientermine_to_string(vacation_entries)}"
+        end
 
       image_file_head = "#{vacation_slug}/#{vacation_slug}-#{location_slug}-#{year}"
       image_file_name = "#{image_file_head}.jpeg"
@@ -32,23 +39,12 @@ defmodule FeriendatenWeb.VacationSlugYearController do
       system_path_image_file_name_16_9 =
         "#{Application.app_dir(:feriendaten)}/priv/static/images/notepad/#{image_file_name_16_9}"
 
-      entries_of_this_year =
-        Enum.filter(entries, fn entry -> entry.starts_on.year == String.to_integer(year) end)
-
-      termin =
-        if length(entries_of_this_year) == 1 do
-          "Termin"
-        else
-          "Termine"
-        end
-
       twitter_card =
         if(File.exists?(system_path_image_file_name)) do
           if(File.exists?(system_path_image_file_name_16_9)) do
             %{
               title: "#{vacation_colloquial} #{location.name} #{year}",
-              description:
-                "#{termin}: #{Feriendaten.Calendars.replace_last_comma_with_und(Feriendaten.Calendars.all_ferientermine_to_string(entries_of_this_year))}",
+              description: description,
               image: "https://feriendaten.de/images/notepad/#{image_file_name}",
               image_16_9: "https://feriendaten.de/images/notepad/#{image_file_name_16_9}",
               url: "https://feriendaten.de/#{vacation_slug}/#{location_slug}/#{year}"
@@ -56,8 +52,7 @@ defmodule FeriendatenWeb.VacationSlugYearController do
           else
             %{
               title: "#{vacation_colloquial} #{location.name} #{year}",
-              description:
-                "#{termin}: #{Feriendaten.Calendars.replace_last_comma_with_und(Feriendaten.Calendars.all_ferientermine_to_string(entries_of_this_year))}",
+              description: description,
               image: "https://feriendaten.de/images/notepad/#{image_file_name}",
               image_16_9: nil,
               url: "https://feriendaten.de/#{vacation_slug}/#{location_slug}/#{year}"
@@ -66,8 +61,7 @@ defmodule FeriendatenWeb.VacationSlugYearController do
         else
           %{
             title: "#{vacation_colloquial} #{location.name} #{year}",
-            description:
-              "#{termin}: #{Feriendaten.Calendars.replace_last_comma_with_und(Feriendaten.Calendars.all_ferientermine_to_string(entries_of_this_year))}",
+            description: description,
             url: "https://feriendaten.de/#{vacation_slug}/#{location_slug}/#{year}"
           }
         end
