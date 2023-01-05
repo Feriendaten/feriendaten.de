@@ -14,36 +14,36 @@ defmodule Feriendaten.GapsAndIslands do
 
   ## Example
 
-  iex> koblenz = Feriendaten.Maps.get_location_by_slug!("koblenz")
-  iex> list_entries_recursively(koblenz, ~D[2022-12-05], ~D[2023-01-15])
+  iex> location = Feriendaten.Maps.get_location_by_slug!("brandenburg")
+  iex> list_entries_recursively(location, ~D[2023-01-20], ~D[2023-02-28])
   [
   %{
-  	days: 11,
-  	ends_on: ~D[2023-01-02],
-  	entries_agg: [77, 525, 870, 1111, 1114, 1208],
-  	entry_id: 870,
-  	federal_state_name: "Rheinland-Pfalz",
-  	federal_state_slug: "rheinland-pfalz",
-  	ferientermin: "23.12. - 02.01.",
-  	ferientermin_long: "23.12.22. - 02.01.23.",
-  	for_everybody: false,
-  	for_students: true,
-  	level_name: "Landkreis",
-  	levels_agg: "[325, 12, 1]",
-  	listed: true,
-  	location_name: "Koblenz",
-  	location_slug: "koblenz",
-  	memo: nil,
-  	priority: 5,
-  	public_holiday: false,
-  	real_end: ~D[2023-01-02],
-  	real_start: ~D[2022-12-23],
-  	school_vacation: true,
-  	starts_on: ~D[2022-12-23],
-  	total_vacation_length: 11,
-  	vacation_colloquial: "Weihnachtsferien",
-  	vacation_name: "Weihnachten",
-  	vacation_slug: "weihnachtsferien"
+    days: 5,
+    ends_on: ~D[2023-02-03],
+    entries_agg: [1087, 1374, 1419],
+    entry_id: 1087,
+    federal_state_name: "Brandenburg",
+    federal_state_slug: "brandenburg",
+    ferientermin: "30.01. - 03.02.",
+    ferientermin_long: "30.01.23. - 03.02.23.",
+    for_everybody: false,
+    for_students: true,
+    level_name: "Bundesland",
+    levels_agg: "[5, 1]",
+    listed: true,
+    location_name: "Brandenburg",
+    location_slug: "brandenburg",
+    memo: nil,
+    priority: 5,
+    public_holiday: false,
+    real_end: ~D[2023-02-05],
+    real_start: ~D[2023-01-28],
+    school_vacation: true,
+    starts_on: ~D[2023-01-30],
+    total_vacation_length: 9,
+    vacation_colloquial: "Winterferien",
+    vacation_name: "Winter",
+    vacation_slug: "winterferien"
   }
   ]
   """
@@ -68,6 +68,48 @@ defmodule Feriendaten.GapsAndIslands do
     				where ent.location_id = (v.value#>>'{}')::int)
     				and all_days.dt <= ent.ends_on and ent.starts_on <= all_days.dt
     				and (ent.for_everybody or ent.for_students)
+    ),
+    prior_vacation_days as (
+    select all_days.dt, ent.school_vacation, all_days.levels, ent.id * case when ent.school_vacation then 1 else 0 end entry_id, ent.id entry_id_legacy, ent.starts_on, ent.ends_on from (
+    select date('to_be_replaced_starts_on'::timestamp - interval '1 day') dt, (select json_agg(c.location_id) from cte c) levels
+    ) all_days
+    join entries ent on exists (select 1 from json_array_elements(all_days.levels) v
+    				where ent.location_id = (v.value#>>'{}')::int)
+    				and all_days.dt <= ent.ends_on and ent.starts_on <= all_days.dt
+    				and (ent.for_everybody or ent.for_students)
+    union all
+    select date(prior_days.dt - interval '1 day') dt, ent.school_vacation, prior_days.levels, ent.id * case when ent.school_vacation then 1 else 0 end entry_id, ent.id entry_id_legacy, ent.starts_on, ent.ends_on
+    from prior_vacation_days prior_days
+    join entries ent on exists (select 1 from json_array_elements(prior_days.levels) v
+    				where ent.location_id = (v.value#>>'{}')::int)
+    				and (prior_days.dt - interval '1 day') <= ent.ends_on and ent.starts_on <= (prior_days.dt - interval '1 day')
+    				and (ent.for_everybody or ent.for_students)
+    ),
+    next_vacation_days as (
+    select all_days.dt, ent.school_vacation, all_days.levels, ent.id * case when ent.school_vacation then 1 else 0 end entry_id, ent.id entry_id_legacy, ent.starts_on, ent.ends_on from (
+    select date('to_be_replaced_ends_on'::timestamp + interval '1 day') dt, (select json_agg(c.location_id) from cte c) levels
+    ) all_days
+    join entries ent on exists (select 1 from json_array_elements(all_days.levels) v
+    				where ent.location_id = (v.value#>>'{}')::int)
+    				and all_days.dt <= ent.ends_on and ent.starts_on <= all_days.dt
+    				and (ent.for_everybody or ent.for_students)
+    union all
+    select date(next_days.dt + interval '1 day') dt, ent.school_vacation, next_days.levels, ent.id * case when ent.school_vacation then 1 else 0 end entry_id, ent.id entry_id_legacy, ent.starts_on, ent.ends_on
+    from next_vacation_days next_days
+    join entries ent on exists (select 1 from json_array_elements(next_days.levels) v
+    				where ent.location_id = (v.value#>>'{}')::int)
+    				and (next_days.dt + interval '1 day') <= ent.ends_on and ent.starts_on <= (next_days.dt + interval '1 day')
+    				and (ent.for_everybody or ent.for_students)
+    ),
+    full_days_with_vacations as (
+    select t.* from (
+    select * from prior_vacation_days
+    union all
+    select * from days_with_vacations
+    union all
+    select * from next_vacation_days
+    ) t
+    order by t.dt
     )
     select vacations.entry_id,
     		vacations.levels_agg,
@@ -98,7 +140,6 @@ defmodule Feriendaten.GapsAndIslands do
     		ent.ends_on - ent.starts_on + 1 days,
     		vacations.real_end - vacations.real_start + 1 total_vacation_length
     from (
-
     select temp_days_with_vacations.group_num,
     		-- here, the query creates the "islands" of vacation time
     		-- below, each "island" is checked to see if valid vacation days (i.e entries.school_vacation = true) exists in it, and then gets the minimum and maximum dates in island, corresponding to the real_start and real_end
@@ -107,8 +148,8 @@ defmodule Feriendaten.GapsAndIslands do
     		max(temp_days_with_vacations.levels::text) levels_agg,
     		max(temp_days_with_vacations.entry_id) entry_id,
     		json_agg(distinct temp_days_with_vacations.entry_id_legacy) entries_agg
-    from  (select (select sum(case when v.dt <= days.dt and v.school_vacation is null then 1 else 0 end) group_num from days_with_vacations v), days.*
-    							from days_with_vacations days
+    from  (select (select sum(case when v.dt <= days.dt and v.school_vacation is null then 1 else 0 end) group_num from full_days_with_vacations v), days.*
+    							from full_days_with_vacations days
     order by days.dt) temp_days_with_vacations
     where temp_days_with_vacations.school_vacation is not null
     group by temp_days_with_vacations.group_num) vacations
