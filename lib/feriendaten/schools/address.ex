@@ -35,7 +35,8 @@ defmodule Feriendaten.Schools.Address do
       :school_type,
       :street,
       :url,
-      :zip_code
+      :zip_code,
+      :location_id
     ])
     |> validate_required([:city, :line1, :zip_code])
   end
