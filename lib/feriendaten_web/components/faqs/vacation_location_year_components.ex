@@ -6,7 +6,7 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
 
   # /osterferien/hessen/2023
   attr :entries, :list, required: true
-  attr :location, :string, required: true
+  attr :location, :any, required: true
   attr :requested_date, :any, required: true
   attr :vacation_slug, :string, required: true
 
@@ -39,7 +39,7 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
         itemtype="https://schema.org/FAQPage"
       >
         <.generic_wann_sind_x_ferien_in
-          frage={"Wann sind #{@vacation_colloquial} #{@preposition} #{@location.name} #{@year}?"}
+          frage={"Wann sind #{@vacation_colloquial} #{@preposition} #{location_name(@location)} #{@year}?"}
           entries={@entries}
           location={@location}
           requested_date={@requested_date}
@@ -47,7 +47,7 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
         />
 
         <.generic_wann_sind_x_ferien_in
-          frage={"Wann beginnen die #{@vacation_colloquial} #{@preposition} #{@location.name} #{@year}?"}
+          frage={"Wann beginnen die #{@vacation_colloquial} #{@preposition} #{location_name(@location)} #{@year}?"}
           entries={@entries}
           location={@location}
           requested_date={@requested_date}
@@ -55,7 +55,7 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
         />
 
         <.generic_wann_sind_x_ferien_in
-          frage={"Wann sind #{@vacation_colloquial} #{@year} #{@location.name} ?"}
+          frage={"Wann sind #{@vacation_colloquial} #{@year} #{location_name(@location)}?"}
           entries={@entries}
           location={@location}
           requested_date={@requested_date}
@@ -105,12 +105,14 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
       <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
         <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
           <div itemprop="name">
-            Warum sind die <%= @vacation_colloquial %> <%= @location.name %> <%= @first_entry.starts_on.year %> so kurz?
+            Warum sind die <%= @vacation_colloquial %> <%= location_name(@location) %> <%= @first_entry.starts_on.year %> so kurz?
           </div>
         </h3>
         <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
           <p class="text-gray-500 dark:text-gray-400" itemprop="text">
-            Je nachdem wie die Sommerferien terminlich fallen, werden die <%= @vacation_colloquial %> in <%= @location.name %> gekürzt. Wenn die Sommerferien eher spät sind, dann werden die Herbstferien verkürzt und dafür die Osterferien verlängert. Sind die Sommerferien eher früh, dann werden die Herbstferien verlängert und die Osterferien verkürzt.
+            Je nachdem wie die Sommerferien terminlich fallen, werden die <%= @vacation_colloquial %> in <%= location_name(
+              @location
+            ) %> gekürzt. Wenn die Sommerferien eher spät sind, dann werden die Herbstferien verkürzt und dafür die Osterferien verlängert. Sind die Sommerferien eher früh, dann werden die Herbstferien verlängert und die Osterferien verkürzt.
           </p>
         </div>
       </div>
@@ -142,7 +144,7 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
         </h3>
         <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
           <p class="text-gray-500 dark:text-gray-400" itemprop="text">
-            Gerade sind die <%= @vacation_colloquial %> <%= @location.name %> <%= @first_entry.starts_on.year %>.
+            Gerade sind die <%= @vacation_colloquial %> <%= location_name(@location) %> <%= @first_entry.starts_on.year %>.
             Sie starteten am <%= Calendar.strftime(@first_entry.starts_on, "%d.%m.%y") %> (<%= FeriendatenWeb.LocationYearFaqComponents.wochentag(
               @first_entry.starts_on
             ) %>) und enden am <%= Calendar.strftime(
@@ -168,7 +170,7 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
             <% else %>
               In <%= Date.diff(@first_entry.starts_on, assigns.requested_date) %> Tagen
             <% end %>
-            beginnen die <%= @vacation_colloquial %> <%= @location.name %> <%= @first_entry.starts_on.year %>.
+            beginnen die <%= @vacation_colloquial %> <%= location_name(@location) %> <%= @first_entry.starts_on.year %>.
             Sie starten am <%= Calendar.strftime(@first_entry.starts_on, "%d.%m.%y") %> (<%= FeriendatenWeb.LocationYearFaqComponents.wochentag(
               @first_entry.starts_on
             ) %>) und enden am <%= Calendar.strftime(
@@ -197,12 +199,14 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
     <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
       <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
         <div itemprop="name">
-          Wie lange sind die <%= @vacation_colloquial %> <%= @year %> <%= @preposition %> <%= @location.name %>?
+          Wie lange sind die <%= @vacation_colloquial %> <%= @year %> <%= @preposition %> <%= location_name(
+            @location
+          ) %>?
         </div>
       </h3>
       <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
         <p class="text-gray-500 dark:text-gray-400" itemprop="text">
-          Die <%= @vacation_colloquial %> <%= @location.name %> <%= @first_entry.starts_on.year %> dauern <%= Date.diff(
+          Die <%= @vacation_colloquial %> <%= location_name(@location) %> <%= @first_entry.starts_on.year %> dauern <%= Date.diff(
             @first_entry.ends_on,
             @first_entry.starts_on
           ) + 1 %> Tage.
@@ -240,12 +244,14 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
     <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
       <h3 class="flex items-center mb-4 text-lg font-medium text-gray-900 dark:text-white">
         <div itemprop="name">
-          Wann ist der letzte Schultag vor den <%= @vacation_colloquial %> <%= @year %> <%= @location.name %>?
+          Wann ist der letzte Schultag vor den <%= @vacation_colloquial %> <%= @year %> <%= location_name(
+            @location
+          ) %>?
         </div>
       </h3>
       <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
         <p class="text-gray-500 dark:text-gray-400" itemprop="text">
-          Die <%= @vacation_colloquial %> <%= @location.name %> <%= @first_entry.starts_on.year %> beginnen am <%= Calendar.strftime(
+          Die <%= @vacation_colloquial %> <%= location_name(@location) %> <%= @first_entry.starts_on.year %> beginnen am <%= Calendar.strftime(
             @first_entry.starts_on,
             "%d.%m.%y"
           ) %> (<%= FeriendatenWeb.LocationYearFaqComponents.wochentag(@first_entry.starts_on) %>). Der letzte Schultag ist <%= FeriendatenWeb.LocationYearFaqComponents.wochentag(
@@ -273,5 +279,13 @@ defmodule FeriendatenWeb.VacationLocationYearComponents do
 
   defp first_entry(entries, vacation_colloquial) do
     Enum.find(entries, fn entry -> entry.colloquial == vacation_colloquial end)
+  end
+
+  defp location_name(location) do
+    if location.name == "Nordrhein-Westfalen" do
+      "NRW"
+    else
+      location.name
+    end
   end
 end

@@ -21,12 +21,12 @@ defmodule FeriendatenWeb.VacationSlugYearController do
       description =
         if length(vacation_entries) == 1 do
           if first_entry.total_vacation_length > first_entry.days do
-            "#{vacation_colloquial} #{location.name} #{year}: #{first_entry.ferientermin_long} (#{first_entry.days} Tage). Achtung! Durch angrenzende Wochenenden bzw. Feiertage ist die Ferienzeit länger: #{first_entry.total_vacation_length} Tage! #{Calendar.strftime(first_entry.real_start, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.real_start)}) - #{Calendar.strftime(first_entry.real_end, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.real_end)})."
+            "#{vacation_colloquial} #{location_name(location.name)} #{year}: #{first_entry.ferientermin_long} (#{first_entry.days} Tage). Achtung! Durch angrenzende Wochenenden bzw. Feiertage ist die Ferienzeit länger: #{first_entry.total_vacation_length} Tage! #{Calendar.strftime(first_entry.real_start, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.real_start)}) - #{Calendar.strftime(first_entry.real_end, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.real_end)})."
           else
-            "#{vacation_colloquial} #{location.name} #{year}: #{first_entry.ferientermin_long} (#{first_entry.days} Tage)."
+            "#{vacation_colloquial} #{location_name(location.name)} #{year}: #{first_entry.ferientermin_long} (#{first_entry.days} Tage)."
           end
         else
-          "Termine und weitere Informationen zu den #{vacation_colloquial} #{location.name} #{year}: #{Feriendaten.Calendars.all_ferientermine_to_string(vacation_entries)}"
+          "Termine und weitere Informationen zu den #{vacation_colloquial} #{location_name(location.name)} #{year}: #{Feriendaten.Calendars.all_ferientermine_to_string(vacation_entries)}"
         end
 
       image_file_head = "#{vacation_slug}/#{vacation_slug}-#{location_slug}-#{year}"
@@ -43,7 +43,7 @@ defmodule FeriendatenWeb.VacationSlugYearController do
         if(File.exists?(system_path_image_file_name)) do
           if(File.exists?(system_path_image_file_name_16_9)) do
             %{
-              title: "#{vacation_colloquial} #{location.name} #{year}",
+              title: "#{vacation_colloquial} #{location_name(location.name)} #{year}",
               description: description,
               image: "https://feriendaten.de/images/notepad/#{image_file_name}",
               image_16_9: "https://feriendaten.de/images/notepad/#{image_file_name_16_9}",
@@ -51,7 +51,7 @@ defmodule FeriendatenWeb.VacationSlugYearController do
             }
           else
             %{
-              title: "#{vacation_colloquial} #{location.name} #{year}",
+              title: "#{vacation_colloquial} #{location_name(location.name)} #{year}",
               description: description,
               image: "https://feriendaten.de/images/notepad/#{image_file_name}",
               image_16_9: nil,
@@ -60,7 +60,7 @@ defmodule FeriendatenWeb.VacationSlugYearController do
           end
         else
           %{
-            title: "#{vacation_colloquial} #{location.name} #{year}",
+            title: "#{vacation_colloquial} #{location_name(location.name)} #{year}",
             description: description,
             url: "https://feriendaten.de/#{vacation_slug}/#{location_slug}/#{year}"
           }
@@ -81,7 +81,7 @@ defmodule FeriendatenWeb.VacationSlugYearController do
       |> assign(:vacation_slug, vacation_slug)
       |> assign(:location_slug, location_slug)
       |> assign(:vacation_colloquial, first_entry.colloquial)
-      |> assign(:location_name, first_entry.location_name)
+      |> assign(:location_name, location_name(first_entry.location_name))
       |> assign(
         :preposition,
         "#{if first_entry.location_name == "Saarland", do: "im", else: "in"}"
@@ -89,7 +89,8 @@ defmodule FeriendatenWeb.VacationSlugYearController do
       |> assign(:vacation_entries, vacation_entries)
       |> put_root_layout(:ferien)
       |> render(:show,
-        page_title: "#{first_entry.colloquial} #{first_entry.location_name} #{year}"
+        page_title:
+          "#{first_entry.colloquial} #{location_name(first_entry.location_name)} #{year}"
       )
     end
   end
@@ -120,5 +121,13 @@ defmodule FeriendatenWeb.VacationSlugYearController do
       ],
       year
     ])
+  end
+
+  defp location_name(location_name) do
+    if location_name == "Nordrhein-Westfalen" do
+      "NRW"
+    else
+      location_name
+    end
   end
 end
