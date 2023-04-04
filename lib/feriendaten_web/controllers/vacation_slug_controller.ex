@@ -22,7 +22,7 @@ defmodule FeriendatenWeb.VacationSlugController do
 
     description =
       "#{vacation_colloquial} #{location.name}. " <>
-        Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
+        Feriendaten.Calendars.join_ferientermine_for_description(entries)
 
     conn
     |> assign(:vacation_colloquial, vacation_colloquial)

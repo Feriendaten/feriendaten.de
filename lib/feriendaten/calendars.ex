@@ -643,12 +643,43 @@ defmodule Feriendaten.Calendars do
     end)
   end
 
-  def join_all_colloquials_and_ferientermine(entries) do
-    entries
-    |> Enum.take(5)
-    |> Enum.map(fn x -> "#{x.colloquial} #{x.starts_on.year}: #{x.ferientermin}" end)
+  def join_ferientermine_for_description(entries) do
+    if entries_consists_of_one_vacation_type_only?(entries) do
+      entries
+      |> Enum.map(fn x -> "#{x.colloquial} #{x.starts_on.year}: #{x.ferientermin}" end)
+    else
+      [first_entry | [second_entry | list]] = entries
+
+      entries =
+        case [first_entry.starts_on.year + 1, second_entry.starts_on.year] do
+          [same_year, same_year] ->
+            # Don't display Weihnachtsferien of the former year
+            [second_entry | list]
+
+          _ ->
+            entries
+        end
+        |> Enum.take(5)
+
+      case [hd(entries).starts_on.year, Enum.at(entries, -1).starts_on.year] do
+        [same_year, same_year] ->
+          entries
+          |> Enum.map(fn x -> "#{x.colloquial}: #{x.ferientermin}" end)
+
+        _ ->
+          entries
+          |> Enum.map(fn x -> "#{x.colloquial} #{x.starts_on.year}: #{x.ferientermin}" end)
+      end
+    end
     |> Enum.join(", ")
     |> String.replace(" - ", "-")
+  end
+
+  def entries_consists_of_one_vacation_type_only?(entries) do
+    entries
+    |> Enum.map(fn x -> x.vacation_slug end)
+    |> Enum.uniq()
+    |> Enum.count() == 1
   end
 
   def join_all_colloquials_and_federal_states_and_ferientermine(entries) do

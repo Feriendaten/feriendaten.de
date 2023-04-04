@@ -52,7 +52,7 @@ defmodule FeriendatenWeb.FerienController do
 
     description =
       "Schulferien #{location.name}. " <>
-        Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
+        Feriendaten.Calendars.join_ferientermine_for_description(entries)
 
     conn
     |> assign(:location, location)
@@ -99,8 +99,8 @@ defmodule FeriendatenWeb.FerienController do
       |> Feriendaten.Calendars.compress_ferientermine()
 
     description =
-      "Termine und weiter Informationen der Schulferien #{location.name} #{year}. " <>
-        Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
+      "Termine der Schulferien #{location.name} #{year}. " <>
+        Feriendaten.Calendars.join_ferientermine_for_description(entries)
 
     conn
     |> assign(:location, location)
@@ -159,7 +159,7 @@ defmodule FeriendatenWeb.FerienController do
 
       description =
         "Schulferien #{location.name} im Schuljahr #{school_year_slug}. " <>
-          Feriendaten.Calendars.join_all_colloquials_and_ferientermine(entries)
+          Feriendaten.Calendars.join_ferientermine_for_description(entries)
 
       conn
       |> assign(:location, location)
