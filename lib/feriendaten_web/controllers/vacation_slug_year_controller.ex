@@ -20,10 +20,12 @@ defmodule FeriendatenWeb.VacationSlugYearController do
 
       description =
         if length(vacation_entries) == 1 do
+          bonus_days = first_entry.total_vacation_length - first_entry.days
+
           if first_entry.total_vacation_length > first_entry.days do
-            "#{vacation_colloquial} #{location_name(location.name)} #{year}: #{first_entry.ferientermin_long} (#{first_entry.days} Tage). Achtung! Durch angrenzende Wochenenden bzw. Feiertage ist die Ferienzeit länger: #{first_entry.total_vacation_length} Tage! #{Calendar.strftime(first_entry.real_start, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.real_start)}) - #{Calendar.strftime(first_entry.real_end, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.real_end)})."
+            "#{first_entry.ferientermin_long} (#{first_entry.days} Tage). Bonus: #{bonus_days} #{if bonus_days > 1, do: "Tage", else: "Tag"} angrenzendes Wochenende bzw. Feiertage. #{Calendar.strftime(first_entry.real_start, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.real_start)}) - #{Calendar.strftime(first_entry.real_end, "%d.%m.%y")} (#{FeriendatenWeb.LocationYearFaqComponents.wochentag(first_entry.real_end)}). #{first_entry.total_vacation_length} Tage!"
           else
-            "#{vacation_colloquial} #{location_name(location.name)} #{year}: #{first_entry.ferientermin_long} (#{first_entry.days} Tage)."
+            "#{first_entry.ferientermin_long} (#{first_entry.days} Tage)."
           end
         else
           "Termine und weitere Informationen zu den #{vacation_colloquial} #{location_name(location.name)} #{year}: #{Feriendaten.Calendars.all_ferientermine_to_string(vacation_entries)}"
