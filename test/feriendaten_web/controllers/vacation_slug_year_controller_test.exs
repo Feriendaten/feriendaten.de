@@ -157,7 +157,7 @@ defmodule FeriendatenWeb.VacationSlugYearControllerTest do
     refute html_response(conn, 200) =~ "02.07. - 15.08."
 
     assert html_response(conn, 200) =~ ~S"""
-           <meta name="description" content="Sommerferien Hessen 2029: 10.07.29 - 10.08.29 (32 Tage).">
+           <meta name="description" content="10.07.29 - 10.08.29 (32 Tage).">
            """
 
     assert html_response(conn, 200) =~ ~S"""
